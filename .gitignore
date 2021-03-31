@@ -1,0 +1,21 @@
+# --- FRONTEND ---
+# TODO: Fill frontend .gitignore
+
+# --- BACKEND ---
+
+# Java class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Build temporary files
+target/
+.mvn
+
+# IntelliJ files
+.iml
+.idea
+
