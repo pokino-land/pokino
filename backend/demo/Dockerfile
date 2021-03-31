@@ -1,9 +1,11 @@
-FROM openjdk:8-jdk-alpine
+FROM amazoncorretto:11-alpine-jdk
 
-WORKDIR /usr/var/app
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
 
-ARG JAR_FILE=target/*.jar
+WORKDIR /app
+COPY target/demo-0.0.1-SNAPSHOT.jar .
 
-COPY ${JAR_FILE} app.jar
+EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-jar", "demo-0.0.1-SNAPSHOT.jar"]
