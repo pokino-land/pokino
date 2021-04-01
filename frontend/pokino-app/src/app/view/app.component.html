@@ -1,0 +1,19 @@
+<div class="header">
+  <h1>POKINO</h1>
+</div>
+<div class="mainMenu">
+	<div class="container">
+		<img src="../../assets/images/squirtle_probably_copyrighted.png"/>
+	</div>
+	<div class="container">
+		<button class="button" (click)="this.toggleReady()">I Am Ready</button>
+		<button class="button">Leaderboard</button>
+			<h3>Active Players:</h3>
+			<ul>
+				<li<span class="playerName playerMe" ><td>Me ({{this.getReadyMessage()}})</td></span></li>
+				<li><span class="playerName ready"><td>Another player (ready)</td></span></li>
+			</ul>
+	</div>
+</div>
+
+<router-outlet></router-outlet>
