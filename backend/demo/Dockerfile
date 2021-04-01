@@ -1,11 +1,16 @@
 FROM amazoncorretto:11-alpine-jdk
 
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
+# Does fail in ./mvnw clean install because it needs to create a folder
+# RUN addgroup -S spring && adduser -S spring -G spring
+# USER spring:spring
 
 WORKDIR /app
-COPY target/demo-0.0.1-SNAPSHOT.jar .
+RUN mkdir target
+
+COPY . .
+
+RUN ./mvnw clean install
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
