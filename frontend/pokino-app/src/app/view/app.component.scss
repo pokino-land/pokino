@@ -1,0 +1,59 @@
+.header {
+    height: 60px;
+    display: block;
+    align-items: center;
+    vertical-align: center;
+    background-color: #44BB55;
+    color: #fff;
+    font-weight: 6000;
+	font-family: "Courier New";
+	margin-bottom: 5%;
+  }
+  
+  div > h1 {
+	text-align: center;
+	padding-top: .7%;
+	margin: auto;
+	
+  }
+  
+  .button {
+	  display: block;
+	  width: 80%;
+	  border: none;
+	  background-color: #33AA44;
+	  color: #fff;
+	  padding: 14px 28px;
+	  font-size: 16px;
+	  margin: 1%;
+	  text-align: center;
+	  font-weight: bold;
+	  cursor: pointer;
+	}
+	
+	.playerName {
+	  cursor: pointer;
+		color: red;
+	}
+	
+	.ready {
+	  color: green;
+	}
+	
+	.button:hover {
+		background-color: #66CC00;
+		color: #333;
+		box-shadow: 2px -2px 2px #55BF55;
+	}
+	
+	
+	.mainMenu {
+		width: 100%;
+		display: flex;
+	}
+	.container {
+		display: inline-block;
+		width: 49%;
+		float: left;
+		margin: auto;
+	}

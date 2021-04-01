@@ -1,5 +1,6 @@
 # --- FRONTEND ---
 # TODO: Fill frontend .gitignore
+node_modules
 
 # --- BACKEND ---
 
