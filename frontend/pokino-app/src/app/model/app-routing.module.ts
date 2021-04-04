@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-const routes: Routes = [];
+import { RenderComponent } from '../view/render/render.component';
+const routes: Routes = [
+  {path: 'gameScreen', component:RenderComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
