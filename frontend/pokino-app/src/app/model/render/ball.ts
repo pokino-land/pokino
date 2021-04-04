@@ -3,8 +3,8 @@ import { physics } from './physics';
 
 export class ball{
    
-    m_mesh:THREE.Mesh;
-    m_physics:physics;
+    m_mesh: THREE.Mesh;
+    m_physics: physics;
     constructor(){
 
         const geometry = new THREE.PlaneGeometry(5,5,32);
@@ -17,7 +17,7 @@ export class ball{
     update(){
 
         this.m_physics.updatePositionAccordingToVeloctiy();
-        
+
     }
 
 }

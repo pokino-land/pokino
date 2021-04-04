@@ -1,19 +1,27 @@
 import * as THREE from 'three';
+
 import {ball} from "../../model/render/ball"
 import {mouseInfo} from "../../model/render/handleInput"
 
 export class player{
 
     //the players mesh
-    m_mesh:THREE.Mesh;
-    m_ball:ball;
-
+    m_mesh: THREE.Mesh;
+    m_ball: ball;
+    width = 600;
+    height = 300;
     constructor(){
 
-        const geometry = new THREE.PlaneGeometry(50,50,32);
-        const material = new THREE.MeshBasicMaterial({color: 0x00ff11});
+        var playerWidth = 100;
+        var playerHeight = 100;
+
+        const geometry = new THREE.PlaneGeometry(playerWidth,playerHeight,32);
+        const loader = new THREE.TextureLoader();
+        const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/ash.png')});
         this.m_mesh = new THREE.Mesh(geometry, material);
-        this.m_mesh.translateX(-50);
+
+        this.m_mesh.translateX(- this.width/2 + playerWidth/2);
+        this.m_mesh.translateY(- this.height/2 + playerHeight/2);
 
         this.m_ball = new ball();
     }

@@ -32,16 +32,18 @@ export class RenderComponent implements OnInit {
 
   renderer = new THREE.WebGLRenderer();
 
-  width:number = 300;
-  height:number = 300;
+  width: number = 600;
+  height: number = 300;
   m_scene: PokinoScene;
   m_player: player;
   m_enemy: enemy;
-  m_mouseInfo:mouseInfo;
+  m_mouseInfo: mouseInfo;
   constructor() { 
     this.m_scene = new PokinoScene();
-    this.m_scene.init(this.width,this.height);
+    this.m_scene.init(this.width, this.height);
     this.m_player = new player();
+    this.m_player.width = this.width;
+    this.m_player.height = this.height;
     this.m_enemy = new enemy();
 
     this.m_scene.addPlayer(this.m_player);
