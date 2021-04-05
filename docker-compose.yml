@@ -4,3 +4,7 @@ services:
     build: ./backend/demo
     ports:
       - "8000:8080"
+  frontend:
+    build: ./frontend/pokino-app
+    ports:
+      - "4200:80"
