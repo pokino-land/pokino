@@ -10,8 +10,10 @@ export class PokinoScene extends THREE.Scene{
         //setup camera
         this.m_camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2,height / - 2, 1, 1000 );
         this.m_camera.position.z = 1000;
-        
-       
+
+        const loader = new THREE.TextureLoader();
+        const bgTexture = loader.load('../../assets/images/bg.jpg');
+        this.background = bgTexture;
 
 
     }

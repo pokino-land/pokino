@@ -11,7 +11,7 @@ export class enemy{
 
      const geometry = new THREE.PlaneGeometry(50,50,32);
      const loader = new THREE.TextureLoader();
-    const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/pikachu.png')});
+    const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/pikachu.png'), transparent: true, alphaTest: 0.5});
      this.m_mesh = new THREE.Mesh(geometry, material);
      this.m_mesh.translateX(-this.amplitude * 10);
      this.m_mesh.translateY(- 300/2 + 50/2);

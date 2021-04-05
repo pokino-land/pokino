@@ -17,7 +17,7 @@ export class player{
 
         const geometry = new THREE.PlaneGeometry(playerWidth,playerHeight,32);
         const loader = new THREE.TextureLoader();
-        const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/ash.png')});
+        const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/ash.png'), transparent: true, alphaTest: 0.5});
         this.m_mesh = new THREE.Mesh(geometry, material);
 
         this.m_mesh.translateX(- this.width/2 + playerWidth/2);
@@ -30,14 +30,11 @@ export class player{
 
     update(mouseInfo:mouseInfo){
         if(mouseInfo.isPressed){
-            console.log(mouseInfo.x);
-            console.log(mouseInfo.y);
+            this.m_ball.setPosition(-250, -100);
+            this.m_ball.updateVelocity();
         }
          
-
-         //if clicked update m_ball with some velocity 
-         //if mouse is pressed
-         //m_ball.update(velocitiy: 100m/s)
+        this.m_ball.update();
 
     }
 }
