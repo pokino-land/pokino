@@ -9,7 +9,7 @@
 		<button class="button" (click)="gotoGameScreen()">test Game</button>
 		<button class="button" (click)="this.toggleReady()">I Am Ready</button>
 		<button class="button">Leaderboard</button>
-		<button class="button">API Test</button>
+		<button class="button" (click)="this.demoApiTest()">API Test</button>
 			<h3>Active Players:</h3>
 			<ul>
 				<li><span class="playerName playerMe" >Me ({{this.getReadyMessage()}})</span></li>
