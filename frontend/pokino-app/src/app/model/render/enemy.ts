@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { enemyPhysicsObject } from './physics';
 
 
 export class enemy{
@@ -6,6 +7,8 @@ export class enemy{
  //the players mesh
  m_mesh: THREE.Mesh;
  amplitude: number = 10;
+
+ m_enemyBody:enemyPhysicsObject;
 
  constructor(){
 
@@ -15,6 +18,8 @@ export class enemy{
      this.m_mesh = new THREE.Mesh(geometry, material);
      this.m_mesh.translateX(-this.amplitude * 10);
      this.m_mesh.translateY(- 300/2 + 50/2);
+
+     this.m_enemyBody = new enemyPhysicsObject(50,50);
  }
 
 
@@ -30,6 +35,7 @@ x: number = 0;
      if(f <= -this.amplitude +0.05)
      this.m_mesh.scale.x = 1;
 
+     //this.setPosition(enemenyBody.position)...
 
  }
 

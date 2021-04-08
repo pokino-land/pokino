@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import {ball} from "../../model/render/ball"
-import {mouseInfo} from "../../model/render/handleInput"
+import {ball} from "./ball"
+import {mouseInfo} from "./handleInput"
 
 export class player{
 
@@ -23,7 +23,7 @@ export class player{
         this.m_mesh.translateX(- this.width/2 + playerWidth/2);
         this.m_mesh.translateY(- this.height/2 + playerHeight/2);
 
-        this.m_ball = new ball();
+        this.m_ball = new ball(20);
     }
 
 

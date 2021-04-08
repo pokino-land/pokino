@@ -4,6 +4,8 @@ import {PokinoScene} from "../../model/render/PokinoScene"
 import {player} from "../../model/render/player"
 import {enemy} from "../../model/render/enemy"
 import {mouseInfo} from "../../model/render/handleInput"
+import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
+
 
 @Component({
   selector: 'app-render',
@@ -37,19 +39,24 @@ export class RenderComponent implements OnInit {
   m_scene: PokinoScene;
   m_player: player;
   m_enemy: enemy;
+  m_physics: physics;
   m_mouseInfo: mouseInfo;
   constructor() { 
     this.m_scene = new PokinoScene();
     this.m_scene.init(this.width, this.height);
     this.m_player = new player();
-    this.m_player.width = this.width;
-    this.m_player.height = this.height;
+    
     this.m_enemy = new enemy();
 
     this.m_scene.addPlayer(this.m_player);
     this.m_scene.addEnemy(this.m_enemy);
 
     this.m_mouseInfo = new mouseInfo();
+    this.m_physics = new physics();
+
+    //add ball and enemy to physics entities
+    this.m_physics.ball = this.m_player.m_ball.m_ballBody;
+    this.m_physics.enemy = this.m_enemy.m_enemyBody;
 
   }
 
@@ -67,6 +74,8 @@ export class RenderComponent implements OnInit {
     window.requestAnimationFrame(() => this.renderScene());
 
     //update
+    this.m_physics.updatePositionAccordingToVeloctiy();
+
     this.m_player.update(this.m_mouseInfo);
     this.m_enemy.update();
     this.m_scene.update();

@@ -1,19 +1,28 @@
 import * as THREE from 'three';
-import { physics } from './physics';
+import { ballPhysicsObject, physics } from './physics';
 
 export class ball{
    
     m_mesh: THREE.Mesh;
-    m_physics: physics;
-    m_veloctiy: boolean = false;
-    constructor(){
+    
 
-        const geometry = new THREE.PlaneGeometry(25,25,32);
+    m_ballBody:ballPhysicsObject; 
+
+    radius:number;
+    position:THREE.Vector2 = new THREE.Vector2(0,0);
+
+    constructor(r:number){
+
+        this.radius = r;
+        const geometry = new THREE.CircleGeometry(r, 32);
+
         const loader = new THREE.TextureLoader();
         const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/pokeball.png'), transparent: true, alphaTest: 0.5});
         this.m_mesh = new THREE.Mesh(geometry, material);
-        this.m_physics = new physics();
+        
         this.setPosition(400, 0);
+
+        this.m_ballBody = new ballPhysicsObject(r, new THREE.Vector2(400,0));
 
     }
 
@@ -22,13 +31,12 @@ export class ball{
     }
 
     updateVelocity(){
-        this.m_veloctiy = true;
+        this.m_ballBody.m_veloctiy = true;
     }
 
     update(){
-        if(this.m_veloctiy){
-            var newPos: THREE.Vector2 = this.m_physics.updatePositionAccordingToVeloctiy();
-            this.setPosition(newPos.x, newPos.y);
-        }       
+        
+        this.setPosition(this.m_ballBody.position.x, this.m_ballBody.position.y);
+            
     }
 }
