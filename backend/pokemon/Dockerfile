@@ -8,9 +8,11 @@ WORKDIR /app
 RUN mkdir target
 
 COPY . .
+
 RUN sed -i 's/\r$//' mvnw
+
 RUN ./mvnw clean install
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "target/pokemon-0.0.1-SNAPSHOT.jar"]
