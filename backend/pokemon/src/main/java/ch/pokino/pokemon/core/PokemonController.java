@@ -1,12 +1,10 @@
 package ch.pokino.pokemon.core;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/pokemon")
 public class PokemonController {
@@ -27,4 +25,9 @@ public class PokemonController {
         return this.pokemonService.getPokemon(id);
     }
 
+    @GetMapping("/random")
+    public Optional<Pokemon> getRandomPokemon() {
+        Long randomId = 1L;
+        return this.pokemonService.getPokemon(randomId);
+    }
 }
