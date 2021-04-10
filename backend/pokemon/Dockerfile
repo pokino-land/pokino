@@ -9,6 +9,8 @@ RUN mkdir target
 
 COPY . .
 
+RUN sed -i 's/\r$//' mvnw
+
 RUN ./mvnw clean install
 
 EXPOSE 8080
