@@ -1,0 +1,16 @@
+<div class="mainMenu">
+	<div class="container">
+		<img src="../../assets/images/squirtle_probably_copyrighted.png"/>
+	</div>
+	<div class="container">
+		<button class="button" (click)="gotoGameScreen()">test Game</button>
+		<button class="button" (click)="this.toggleReady()">I Am Ready</button>
+		<button class="button" (click)="gotoLeaderboard()">Leaderboard</button>
+		<button class="button" (click)="this.demoApiTest()">API Test</button>
+			<h3>Active Players:</h3>
+			<ul>
+				<li><span class="playerName playerMe" >Me ({{this.getReadyMessage()}})</span></li>
+				<li><span class="playerName ready">Another player (ready) </span></li>
+			</ul>
+	</div>
+</div>

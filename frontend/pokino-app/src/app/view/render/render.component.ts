@@ -1,9 +1,9 @@
 import { HostListener, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import * as THREE from 'three'
-import {PokinoScene} from "../../model/render/PokinoScene"
-import {player} from "../../model/render/player"
-import {enemy} from "../../model/render/enemy"
-import {mouseInfo} from "../../model/render/handleInput"
+import * as THREE from 'three';
+import {PokinoScene} from '../../model/render/PokinoScene';
+import {player} from '../../model/render/player';
+import {enemy} from '../../model/render/enemy';
+import {mouseInfo} from '../../model/render/handleInput';
 
 @Component({
   selector: 'app-render',
@@ -11,34 +11,7 @@ import {mouseInfo} from "../../model/render/handleInput"
   styleUrls: ['./render.component.scss']
 })
 export class RenderComponent implements OnInit {
-
-  @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
-
-
-  @HostListener('mousemove', ['$event'])
-  onMousemove(event: MouseEvent) {
-    this.m_mouseInfo.x = (event.x - this.width/2);
-    this.m_mouseInfo.y = (event.y - this.height/2)* -1;
-  }
-  @HostListener('mousedown', ['$event'])
-    onMousedown() {
-      this.m_mouseInfo.isPressed = true;
-    }
-    @HostListener('mouseup')
-    onMouseup() {
-      this.m_mouseInfo.isPressed = false;
-    }
-
-
-  renderer = new THREE.WebGLRenderer();
-
-  width: number = 600;
-  height: number = 300;
-  m_scene: PokinoScene;
-  m_player: player;
-  m_enemy: enemy;
-  m_mouseInfo: mouseInfo;
-  constructor() { 
+  constructor() {
     this.m_scene = new PokinoScene();
     this.m_scene.init(this.width, this.height);
     this.m_player = new player();
@@ -53,25 +26,53 @@ export class RenderComponent implements OnInit {
 
   }
 
+  @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
+
+
+  renderer = new THREE.WebGLRenderer();
+
+  width = 600;
+  height = 300;
+  m_scene: PokinoScene;
+  m_player: player;
+  m_enemy: enemy;
+  m_mouseInfo: mouseInfo;
+
+
+  @HostListener('mousemove', ['$event'])
+  onMousemove(event: MouseEvent) {
+    this.m_mouseInfo.x = (event.x - this.width / 2);
+    this.m_mouseInfo.y = (event.y - this.height / 2) * -1;
+  }
+  @HostListener('mousedown', ['$event'])
+    onMousedown() {
+      this.m_mouseInfo.isPressed = true;
+    }
+    @HostListener('mouseup')
+    onMouseup() {
+      this.m_mouseInfo.isPressed = false;
+    }
+
   ngAfterViewInit() {
 
-    //setup render context
+    // setup render context
     this.renderer.setSize(this.width, this.height);
-    if(this.rendererContainer != undefined)
+    if (this.rendererContainer != undefined) {
      this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+    }
     this.renderScene();
 }
 
   renderScene(){
-    //render loop
+    // render loop
     window.requestAnimationFrame(() => this.renderScene());
 
-    //update
+    // update
     this.m_player.update(this.m_mouseInfo);
     this.m_enemy.update();
     this.m_scene.update();
 
-    //render
+    // render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
   }
 

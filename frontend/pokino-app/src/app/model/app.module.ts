@@ -9,16 +9,16 @@ import { RenderComponent } from '../view/render/render.component';
 import { ApiService } from '../api/api.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    RenderComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-	HttpClientModule
-  ],
-  providers: [ApiService],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        RenderComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule
+    ],
+    providers: [ApiService],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
