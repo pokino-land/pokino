@@ -24,4 +24,10 @@ public class PokemonController {
     public Optional<Pokemon> getPokemon(@PathVariable Long id) {
         return this.pokemonService.getPokemon(id);
     }
+
+    @GetMapping("/random")
+    public Optional<Pokemon> getRandomPokemon() {
+        Long randomId = 1L;
+        return this.pokemonService.getPokemon(randomId);
+    }
 }
