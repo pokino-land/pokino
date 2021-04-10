@@ -1,13 +1,17 @@
-package ch.uzh.pokino.demo.pokemon;
+package ch.pokino.pokemon.core;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.List;
 
 @Entity
 public class Pokemon {
 
     @Id
-    private String id;
+    @GeneratedValue
+    private Long id;
+    private int pokeDexIdx;
     private String name;
     private String type1;
     private String type2;
@@ -21,6 +25,51 @@ public class Pokemon {
     private int generation;
     private boolean isLegendary;
 
+    public Pokemon () {}
+
+    public Pokemon(int pokeDexIdx, String name, String type1, String type2, int sumPoints, int healthPoints, int attackPoints,
+                   int defensePoints, int specialAttackPoints, int specialDefensePoints, int attackSpeed,
+                   int generation, boolean isLegendary) {
+        this.pokeDexIdx = pokeDexIdx;
+        this.name = name;
+        this.type1 = type1;
+        this.type2 = type2;
+        this.sumPoints = sumPoints;
+        this.healthPoints = healthPoints;
+        this.attackPoints = attackPoints;
+        this.defensePoints = defensePoints;
+        this.specialAttackPoints = specialAttackPoints;
+        this.specialDefensePoints = specialDefensePoints;
+        this.attackSpeed = attackSpeed;
+        this.generation = generation;
+        this.isLegendary = isLegendary;
+    }
+
+    public static Pokemon fromCsvLine(List<String> csvLine) {
+        return new Pokemon(
+                Integer.parseInt(csvLine.get(0)),
+                csvLine.get(1),
+                csvLine.get(2),
+                csvLine.get(3),
+                Integer.parseInt(csvLine.get(4)),
+                Integer.parseInt(csvLine.get(5)),
+                Integer.parseInt(csvLine.get(6)),
+                Integer.parseInt(csvLine.get(7)),
+                Integer.parseInt(csvLine.get(8)),
+                Integer.parseInt(csvLine.get(9)),
+                Integer.parseInt(csvLine.get(10)),
+                Integer.parseInt(csvLine.get(11)),
+                Boolean.parseBoolean(csvLine.get(12)));
+    }
+
+
+    public int getPokeDexIdx() {
+        return pokeDexIdx;
+    }
+
+    public void setPokeDexIdx(int pokeDexIdx) {
+        this.pokeDexIdx = pokeDexIdx;
+    }
 
     public String getName() {
         return name;

@@ -1,4 +1,4 @@
-package ch.uzh.pokino.demo.pokemon;
+package ch.pokino.pokemon.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,8 +10,11 @@ import java.util.Optional;
 @Service
 public class PokemonService {
 
-    @Autowired
-    private JpaBasedPokemonRepository pokemonRepository;
+    private final PokemonRepository pokemonRepository;
+
+    public PokemonService(PokemonRepository pokemonRepository) {
+        this.pokemonRepository = pokemonRepository;
+    }
 
     public List<Pokemon> getAllPokemon() {
         List<Pokemon> allPokemon = new ArrayList<>();
@@ -19,7 +22,7 @@ public class PokemonService {
         return allPokemon;
     }
 
-    public Optional<Pokemon> getPokemon(String id) {
+    public Optional<Pokemon> getPokemon(Long id) {
         return pokemonRepository.findById(id);
     }
 
