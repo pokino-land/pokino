@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static ch.uzh.pokino.demo.db_init.CsvReader.readLines;
 
 public class CsvReaderTest {
 
