@@ -29,6 +29,8 @@ export class PokinoScene extends THREE.Scene{
 
     addEnemy(enemy: enemy){
         this.add(enemy.m_mesh);
-    
+    }
+    removeEnemy(enemy: enemy){
+        this.remove(enemy.m_mesh);
     }
 }

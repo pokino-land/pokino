@@ -2,7 +2,7 @@ import { HostListener, Component, ElementRef, OnInit, ViewChild } from '@angular
 import * as THREE from 'three'
 import {PokinoScene} from "../../model/render/PokinoScene"
 import {player} from "../../model/render/player"
-import {enemy} from "../../model/render/enemy"
+import {enemy, Pokemons} from "../../model/render/enemy"
 import {mouseInfo} from "../../model/render/handleInput"
 import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
 
@@ -19,16 +19,33 @@ export class RenderComponent implements OnInit {
 
   @HostListener('mousemove', ['$event'])
   onMousemove(event: MouseEvent) {
-    this.m_mouseInfo.x = (event.x - this.width/2);
-    this.m_mouseInfo.y = (event.y - this.height/2)* -1;
+    this.m_mouseInfo.x = (event.x - this.width/2) - 7;
+    //magic number?? no good
+    this.m_mouseInfo.y = (event.y - this.height/2)* -1 + 520;
+    //console.log(this.m_mouseInfo.x);
+    //console.log(this.m_mouseInfo.y);
+
   }
+  interval = setInterval(()=>{},1000);
   @HostListener('mousedown', ['$event'])
     onMousedown() {
       this.m_mouseInfo.isPressed = true;
+
+      //start timer
+      this.interval = setInterval(() => {
+        if(this.m_mouseInfo.secondsClicked < 1.2)
+        this.m_mouseInfo.secondsClicked += 0.01;
+        else
+        this.m_mouseInfo.secondsClicked = 1.2
+      }, 10)
+
     }
     @HostListener('mouseup')
     onMouseup() {
       this.m_mouseInfo.isPressed = false;
+
+      clearInterval(this.interval);
+      //console.log(this.m_mouseInfo.secondsClicked);
     }
 
 
@@ -41,12 +58,17 @@ export class RenderComponent implements OnInit {
   m_enemy: enemy;
   m_physics: physics;
   m_mouseInfo: mouseInfo;
+  m_score: number = 0;
+
+  m_mouseCursor: THREE.Mesh = new THREE.Mesh();
+  updated: boolean = false;
+
   constructor() { 
     this.m_scene = new PokinoScene();
     this.m_scene.init(this.width, this.height);
     this.m_player = new player();
     
-    this.m_enemy = new enemy();
+    this.m_enemy = new enemy(Pokemons.Pikachu);
 
     this.m_scene.addPlayer(this.m_player);
     this.m_scene.addEnemy(this.m_enemy);
@@ -58,6 +80,34 @@ export class RenderComponent implements OnInit {
     this.m_physics.ball = this.m_player.m_ball.m_ballBody;
     this.m_physics.enemy = this.m_enemy.m_enemyBody;
 
+    this.setupMouseCursor();
+  }
+
+  setupMouseCursor(){
+
+        const geometry = new THREE.PlaneGeometry(30,30,32);
+        const loader = new THREE.TextureLoader();
+        const material = new THREE.MeshBasicMaterial({map: loader.load('../../assets/images/Arrow_white.png'), transparent: true, alphaTest: 0.5});
+        this.m_mouseCursor = new THREE.Mesh(geometry, material);
+        this.m_mouseCursor.position.x = this.m_player.m_mesh.position.x;
+        this.m_mouseCursor.position.y = this.m_player.m_mesh.position.y;
+        this.m_scene.add(this.m_mouseCursor);
+  }
+  updateMouseCursor(){
+
+  var direction = new THREE.Vector2(this.m_mouseInfo.x - this.m_player.m_mesh.position.x, this.m_mouseInfo.y - this.m_player.m_mesh.position.y);
+	direction.normalize();
+
+	//calculate angle
+
+	var angle = direction.angle();
+
+  this.m_mouseCursor.setRotationFromAxisAngle(new THREE.Vector3(0,0,1), angle - Math.PI/2);
+  var m: THREE.Matrix4 = this.m_mouseCursor.matrix.makeTranslation(0, 10, 0);
+   
+  this.m_mouseCursor.position.x = this.m_player.m_mesh.position.x + direction.x * 50;
+  this.m_mouseCursor.position.y = this.m_player.m_mesh.position.y + direction.y * 50;
+   
   }
 
   ngAfterViewInit() {
@@ -79,6 +129,24 @@ export class RenderComponent implements OnInit {
     this.m_player.update(this.m_mouseInfo);
     this.m_enemy.update();
     this.m_scene.update();
+    this.updateMouseCursor();
+
+    if(this.m_enemy.m_enemyBody.collided && !this.updated){
+      this.m_score++;
+      this.updated = true;
+    }
+    if(!this.m_enemy.m_enemyBody.collided && this.updated){
+      this.updated = false;
+    }
+   
+    if(!this.m_enemy.m_alive){
+      this.m_scene.removeEnemy(this.m_enemy);
+      //create new enemy
+      //this should be done by api
+      this.m_enemy = new enemy(Pokemons.Shiggy);
+      this.m_scene.addEnemy(this.m_enemy);
+      this.m_physics.enemy = this.m_enemy.m_enemyBody;
+    }
 
     //render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);

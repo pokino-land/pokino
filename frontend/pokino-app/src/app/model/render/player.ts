@@ -8,8 +8,9 @@ export class player{
     //the players mesh
     m_mesh: THREE.Mesh;
     m_ball: ball;
-    width = 600;
-    height = 300;
+    width: number = 600;
+    height: number = 300;
+    mouseWasDown: boolean = false;
     constructor(){
 
         var playerWidth = 100;
@@ -26,12 +27,32 @@ export class player{
         this.m_ball = new ball(20);
     }
 
-
+    help = 0;
+    forceapplied = false;
 
     update(mouseInfo:mouseInfo){
         if(mouseInfo.isPressed){
-            this.m_ball.setPosition(-250, -100);
-            this.m_ball.updateVelocity();
+            this.mouseWasDown = true;
+        }
+
+        if(!mouseInfo.isPressed && this.mouseWasDown){
+            var forceDir = new THREE.Vector2(mouseInfo.x - this.m_mesh.position.x, mouseInfo.y - this.m_mesh.position.y);
+            forceDir.normalize();
+
+            this.m_ball.updateForce(forceDir, mouseInfo.secondsClicked);
+            this.mouseWasDown = false;
+            mouseInfo.secondsClicked = 0.5;
+            this.forceapplied = true;
+        }
+        if(this.forceapplied){
+            //I should use a timer for this...
+            this.help++;
+            if(this.help > 2){
+                this.m_ball.updateForce(new THREE.Vector2(0,0), 0);
+                this.forceapplied = false;
+                this.help = 0;
+            }
+            
         }
          
         this.m_ball.update();

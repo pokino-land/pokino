@@ -6,10 +6,10 @@ export class ball{
     m_mesh: THREE.Mesh;
     
 
-    m_ballBody:ballPhysicsObject; 
+    m_ballBody: ballPhysicsObject; 
 
-    radius:number;
-    position:THREE.Vector2 = new THREE.Vector2(0,0);
+    radius: number;
+    position: THREE.Vector2 = new THREE.Vector2(0,0);
 
     constructor(r:number){
 
@@ -30,8 +30,16 @@ export class ball{
         this.m_mesh.position.set(x, y, 0);
     }
 
-    updateVelocity(){
-        this.m_ballBody.m_veloctiy = true;
+    updateForce(forceDir:THREE.Vector2, strength: number){
+        if(!this.m_ballBody.activate){
+            this.m_ballBody.setPosition(-250, -100);
+            var multiplicator = 500;
+            this.m_ballBody.force = new THREE.Vector2(forceDir.x * multiplicator * strength, forceDir.y * multiplicator * strength);
+            this.m_ballBody.activate = true;
+        }else{
+            this.m_ballBody.force = new THREE.Vector2(0,0);
+        }
+       
     }
 
     update(){

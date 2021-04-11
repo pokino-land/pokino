@@ -3,26 +3,40 @@ import * as THREE from 'three';
 
 export class ballPhysicsObject{
 
-    radius:number = 0;
+    radius: number = 0;
     position:THREE.Vector2 = new THREE.Vector2(0,0);
 
     m_veloctiy: boolean = false;
+
+    force: THREE.Vector2 = new THREE.Vector2(0,0);
+    velocity: THREE.Vector2 = new THREE.Vector2(0,0);
+
+    activate: boolean = false;
 
     constructor(r:number, pos:THREE.Vector2){
         this.radius = r;
         this.position = pos;
     }
 
+    setPosition(x: number, y: number){
+        this.position.x = x;
+        this.position.y = y;
+    }
+
 }
 
 export class enemyPhysicsObject{
-    x:number = 0;
-    y:number = 0;
-    width:number = 0;
-    height:number = 0;
-    constructor(w:number, h:number){
+    position: THREE.Vector2 = new THREE.Vector2(0,0);
+    velocity: THREE.Vector2 = new THREE.Vector2(0,0);
+    force: THREE.Vector2 = new THREE.Vector2(0,0);
+
+    width: number = 0;
+    height: number = 0;
+    collided: boolean = false;
+    constructor(w:number, h:number, position: THREE.Vector2){
         this.width = w;
         this.height = h;
+        this.position = position;
 
     }
 
@@ -30,35 +44,64 @@ export class enemyPhysicsObject{
 
 export class physics{
 
-    ball:ballPhysicsObject = new ballPhysicsObject(0, new THREE.Vector2(0,0));
-    enemy:enemyPhysicsObject = new enemyPhysicsObject(0,0);
+    ball: ballPhysicsObject = new ballPhysicsObject(0, new THREE.Vector2(0,0));
+    enemy: enemyPhysicsObject = new enemyPhysicsObject(0,0,new THREE.Vector2(0,0));
 
-    x: number = -250;
+    x: number = 0;
     updatePositionAccordingToVeloctiy(){
+        var h = 0.1;   //step size
+        //apply forces until ball is out of screen
 
-        if(this.ball.m_veloctiy){
-            var posY: number = -100;
+        if(this.ball.activate){ 
+         
+        //using explicit euler numerical integration scheme
+        //apply gravity
+        var f_sum = new THREE.Vector2(this.ball.force.x, this.ball.force.y - 9.81*2);
+        this.ball.position = new THREE.Vector2(this.ball.position.x + h * this.ball.velocity.x, this.ball.position.y + h * this.ball.velocity.y)
+        this.ball.velocity = new THREE.Vector2(this.ball.velocity.x + h * f_sum.x, this.ball.velocity.y + h * f_sum.y)
         
-            this.x += 1.0;
-    
-            posY = -0.003 * (this.x * this.x) + 100;
-    
-            this.ball.position.x = this.x;
-            this.ball.position.y = posY;
+        }else{
+            this.ball.velocity = new THREE.Vector2(0,0);
+            this.ball.position = new THREE.Vector2(0,300)
         }
 
-        //should also update enemy
+        if(this.ball.position.y < -150 || this.ball.position.y > 250 || this.ball.position.x  < -300 || this.ball.position.x > 300){
+            this.ball.activate = false;
+        }
+ 
+        //update enemy  
+        this.enemy.position = new THREE.Vector2(this.enemy.position.x + h * this.enemy.velocity.x, this.enemy.position.y + h * this.enemy.velocity.y)
+        this.enemy.velocity = new THREE.Vector2(this.enemy.velocity.x + h * this.enemy.force.x, this.enemy.velocity.y + h * this.enemy.force.y)
+
+        //quick fix for now
+        this.x = this.x +0.05;
+        var y = 50*Math.sin(this.x) + 150;
+        this.enemy.position.x = y;
+
+        if(this.checkForCollision()){
+            this.enemy.collided = true;
+        }else{
+            this.enemy.collided = false;
+        }
+
        
     }
 
     checkForCollision():boolean{
+   
+         // temporary variables to set edges for testing
 
-        /*
-        boolean circleRect(float cx, float cy, float radius, float rx, float ry, float rw, float rh) {
+            var cx = this.ball.position.x;
+            var cy = this.ball.position.y;
+            var radius = this.ball.radius;
 
-            // temporary variables to set edges for testing
-            float testX = cx;
-            float testY = cy;
+            var rx = this.enemy.position.x;
+            var ry = this.enemy.position.y;
+            var rw = this.enemy.width;
+            var rh = this.enemy.height;
+
+            var testX = cx;
+            var testY = cy;
           
             // which edge is closest?
             if (cx < rx)         testX = rx;      // test left edge
@@ -67,15 +110,14 @@ export class physics{
             else if (cy > ry+rh) testY = ry+rh;   // bottom edge
           
             // get distance from closest edges
-            float distX = cx-testX;
-            float distY = cy-testY;
-            float distance = sqrt( (distX*distX) + (distY*distY) );
+            var distX = cx-testX;
+            var distY = cy-testY;
+            var distance = Math.sqrt( (distX*distX) + (distY*distY) );
           
             // if the distance is less than the radius, collision!
             if (distance <= radius) {
-              return true;
+               return true;
             }
-            */
             return false;
             
         
