@@ -46,7 +46,6 @@ export class RenderComponent implements OnInit {
     this.m_mouseInfo.isPressed = false;
 
     clearInterval(this.interval);
-    //console.log(this.m_mouseInfo.secondsClicked);
   }
 
 

@@ -17,7 +17,6 @@ export class AppComponent {
   
   toggleReady() {
 	  this.ready = !this.ready;
-	  alert("ready");
   }
   
   public getReadyMessage() {

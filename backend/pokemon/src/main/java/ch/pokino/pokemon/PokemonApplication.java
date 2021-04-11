@@ -1,16 +1,16 @@
-package ch.uzh.pokino.demo;
+package ch.pokino.pokemon;
 
-import ch.uzh.pokino.demo.config.DemoConfig;
+import ch.pokino.pokemon.config.PokemonApplicationConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import({DemoConfig.class})
-public class DemoApplication {
+@Import({PokemonApplicationConfig.class})
+public class PokemonApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(PokemonApplication.class, args);
 	}
 
 }
