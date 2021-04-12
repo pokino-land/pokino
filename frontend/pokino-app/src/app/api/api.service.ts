@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { JsonPokemonObject } from './json-pokemon-object';
 
 
@@ -11,7 +10,7 @@ export class ApiService {
 
 	private pokemonUrl = 'http://localhost:8000/pokemon';
 
-	public getRandomPokemon(): any {
+	public getRandomPokemon(): Observable<JsonPokemonObject> {
 		const url: string = this.pokemonUrl + '/random';
 		return this.get(url);
 	}

@@ -36,11 +36,17 @@ export class MainMenuComponent {
   
   public getRandomPokemon(): void {
       this.apiService.getRandomPokemon()
-          .subscribe((data: any) => this.pokemon = {
+          .subscribe((data: JsonPokemonObject) => this.pokemon = {
               name: data.name,
-              health: data.health,
-              type: data.type,
-              defense: data.defense
+              healthPoints: data.healthPoints,
+              type1: data.type1,
+              defensePoints: data.defensePoints
+          }, (err) => {
+            console.error(err);
+          }, () => {
+            // executes when finished; kind of a weird syntax by observables
+            console.log('Pokemon retrieved!');
+            console.log(this.pokemon);
           });
   }
 }
