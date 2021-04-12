@@ -6,14 +6,25 @@
 	color: #fff;
 	padding: 14px 28px;
 	font-size: 16px;
-	margin: 1%;
+	margin-bottom: 1%;
 	text-align: center;
 	font-weight: bold;
 	cursor: pointer;
 }
 
-.playerName {
+.player-name {
+	font-size: 25px;
+	font-weight: bold;
+	font-family: "Courier New";
+}
+
+.player-not-me:hover {
 	cursor: pointer;
+	font-style: italic;
+	padding-left: 10px;
+}
+
+.not-ready {
 	color: red;
 }
 
@@ -28,13 +39,13 @@
 }
 
 
-.mainMenu {
+.main-menu {
 	width: 100%;
 	display: flex;
 }
 .container {
 	display: inline-block;
-	width: 49%;
+	width: 50%;
 	float: left;
 	margin: auto;
 }

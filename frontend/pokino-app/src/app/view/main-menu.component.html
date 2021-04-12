@@ -1,4 +1,4 @@
-<div class="mainMenu">
+<div class="main-menu">
 	<div class="container">
 		<img src="../../assets/images/squirtle_probably_copyrighted.png"/>
 	</div>
@@ -10,8 +10,8 @@
 
 		<h3>Active Players:</h3>
 		<ul>
-			<li><span class="playerName playerMe" >Me ({{this.getReadyMessage()}})</span></li>
-			<li><span class="playerName ready">Another player (ready) </span></li>
+			<li><span class="player-name not-ready" >Me ({{this.getReadyMessage()}})</span></li>
+			<li><span title="select player" class="player-name player-not-me ready">Another player (ready) </span></li>
 		</ul>
 
 		<span>current Pokemon: {{this.pokemon.name ? this.pokemon.name : 'none'}},

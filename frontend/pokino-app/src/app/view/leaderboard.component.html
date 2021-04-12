@@ -1,13 +1,15 @@
-<div class="mainMenu">
+<div class="main-menu">
 	<div class="container">
 		<img src="../../assets/images/squirtle_probably_copyrighted.png"/>
 	</div>
 	<div class="container">
-		<button class="button" (click)="gotoMainMenu()">Main Menu</button>
-			<h3>Leaderboard:</h3>
-			<ol>
-				<li><span class="playerName playerMe" >Me</span></li>
-				<li><span class="playerName ready">Another player</span></li>
+		<div class="leaderboard">
+			<img class="leaderboard-banner" src="../../assets/images/leaderboard.jpg"/>
+			<ol class="leaderboard-name">
+				<li><span>Me</span></li>
+				<li><span>Another player</span></li>
 			</ol>
+		</div>
+		<button class="button" (click)="gotoMainMenu()">Main Menu</button>
 	</div>
 </div>

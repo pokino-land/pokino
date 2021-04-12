@@ -34,19 +34,8 @@ export class MainMenuComponent {
     this.router.navigate(['/leaderboard']);
   }
   
-  public getRandomPokemon(): void {
-      this.apiService.getRandomPokemon()
-          .subscribe((data: JsonPokemonObject) => this.pokemon = {
-              name: data.name,
-              healthPoints: data.healthPoints,
-              type1: data.type1,
-              defensePoints: data.defensePoints
-          }, (err) => {
-            console.error(err);
-          }, () => {
-            // executes when finished; kind of a weird syntax by observables
-            console.log('Pokemon retrieved!');
-            console.log(this.pokemon);
-          });
+  public async getRandomPokemon(): Promise<JsonPokemonObject> {
+      this.pokemon = await this.apiService.getRandomPokemon();
+      return this.pokemon;
   }
 }

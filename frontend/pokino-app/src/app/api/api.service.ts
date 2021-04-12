@@ -2,17 +2,21 @@ import {Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { JsonPokemonObject } from './json-pokemon-object';
+import { ApiConfig } from "./api.config";
 
 
 @Injectable()
 export class ApiService {
 	constructor(private http: HttpClient) {}
 
-	private pokemonUrl = 'http://localhost:8000/pokemon';
+	public async getRandomPokemon(): Promise<JsonPokemonObject> {
+		const url: URL = ApiConfig.getPokemonRandomUrl();
 
-	public getRandomPokemon(): Observable<JsonPokemonObject> {
-		const url: string = this.pokemonUrl + '/random';
-		return this.get(url);
+		return await this.get(url.href)
+			.toPromise()
+			.then((data: JsonPokemonObject) => {
+				return data;
+			});
 	}
 
 	private get(url: string): any {
