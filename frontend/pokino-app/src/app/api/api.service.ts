@@ -1,27 +1,27 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { JsonObject } from './json-object';
+import { JsonPokemonObject } from './json-pokemon-object';
 
 
 @Injectable()
 export class ApiService {
 	constructor(private http: HttpClient) {}
 
-	private accountsUrl = 'http://localhost:8000/accounts';
-	public async getAccountsDemo() {
-		const g: any = (await this.http.get(this.accountsUrl));
-		console.log(g.toString());
-		return g;
+	private pokemonUrl = 'http://localhost:8000/pokemon';
+
+	public getRandomPokemon(): any {
+		const url: string = this.pokemonUrl + '/random';
+		return this.get(url);
 	}
 
-	public get(url: string): JsonObject {
-		return JsonObject.fromObject(this.http.get(url));
+	private get(url: string): any {
+		return this.http.get(url);
 	}
 
-	public post(url: string, payload: any): JsonObject {
-		return JsonObject.fromObject(this.http.post(url, payload));
+	private post(url: string, payload: any): any {
+		return this.http.post(url, payload);
 	}
 
 }

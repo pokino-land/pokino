@@ -4,13 +4,16 @@
 	</div>
 	<div class="container">
 		<button class="button" (click)="gotoGameScreen()">test Game</button>
-		<button class="button" (click)="this.toggleReady()">I Am Ready</button>
+		<button class="button" (click)="toggleReady()">I Am Ready</button>
 		<button class="button" (click)="gotoLeaderboard()">Leaderboard</button>
-		<button class="button" (click)="this.demoApiTest()">API Test</button>
+		<button class="button" (click)="getRandomPokemon()">API Test</button>
 			<h3>Active Players:</h3>
 			<ul>
 				<li><span class="playerName playerMe" >Me ({{this.getReadyMessage()}})</span></li>
 				<li><span class="playerName ready">Another player (ready) </span></li>
 			</ul>
+	</div>
+	<div>
+		<span>current Pokemon: {{this.pokemon.name}}</span>
 	</div>
 </div>

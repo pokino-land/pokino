@@ -14,22 +14,4 @@ export class AppComponent {
   
   constructor(private router: Router, private apiService: ApiService) {
   }
-  
-  toggleReady() {
-	  this.ready = !this.ready;
-  }
-  
-  public getReadyMessage() {
-	  return (this.ready ? "" : "not ") + "ready";
-  }
-  
-  public gotoGameScreen(){
-    this.router.navigate(['/gameScreen']);
-  }
-  
-  public demoApiTest() {
-	  let accounts: any = this.apiService.getAccountsDemo();
-	  let firstAccount: any = accounts[0]['name'];
-	  alert("first account belongs to: " + firstAccount);
-  }
 }
