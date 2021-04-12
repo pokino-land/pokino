@@ -37,7 +37,10 @@ export class MainMenuComponent {
   public getRandomPokemon(): void {
       this.apiService.getRandomPokemon()
           .subscribe((data: any) => this.pokemon = {
-              name: data.name
+              name: data.name,
+              health: data.health,
+              type: data.type,
+              defense: data.defense
           });
   }
 }
