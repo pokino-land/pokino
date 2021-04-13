@@ -5,6 +5,8 @@ import { player } from "../../model/render/player"
 import { enemy, Pokemons } from "../../model/render/enemy"
 import { mouseInfo } from "../../model/render/handleInput"
 import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
+import {JsonPokemonObject} from "../../api/json-pokemon-object";
+import {ApiService} from "../../api/api.service";
 
 
 @Component({
@@ -13,6 +15,8 @@ import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/rend
   styleUrls: ['./render.component.scss']
 })
 export class RenderComponent implements OnInit {
+
+  currentPokemon: JsonPokemonObject = new JsonPokemonObject();
 
   @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
@@ -64,7 +68,7 @@ export class RenderComponent implements OnInit {
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
-  constructor() {
+  constructor(private apiService: ApiService) {
     this.m_scene = new PokinoScene();
     this.m_scene.init(this.width, this.height);
     this.m_player = new player();
@@ -155,6 +159,11 @@ export class RenderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getRandomPokemon();
+  }
+
+  public async getRandomPokemon(): Promise<void> {
+    this.currentPokemon = await this.apiService.getRandomPokemon();
   }
 
 }

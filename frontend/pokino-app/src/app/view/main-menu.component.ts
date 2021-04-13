@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ApiService } from '../api/api.service';
 
 import { Router } from '@angular/router';
+import {JsonPokemonObject} from "../api/json-pokemon-object";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -11,6 +13,7 @@ import { Router } from '@angular/router';
 export class MainMenuComponent {
   title = 'pokino';
   ready = false;
+  pokemon: JsonPokemonObject = new JsonPokemonObject();
   
   constructor(private router: Router, private apiService: ApiService) {
   }
@@ -31,9 +34,8 @@ export class MainMenuComponent {
     this.router.navigate(['/leaderboard']);
   }
   
-  public demoApiTest(): void {
-	  const accounts: any = this.apiService.getAccountsDemo();
-	  const firstAccount: any = accounts[0][0];
-	  alert("first account belongs to: " + firstAccount);
+  public async getRandomPokemon(): Promise<JsonPokemonObject> {
+      this.pokemon = await this.apiService.getRandomPokemon();
+      return this.pokemon;
   }
 }

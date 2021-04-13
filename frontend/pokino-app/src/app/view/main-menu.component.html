@@ -1,16 +1,20 @@
-<div class="mainMenu">
+<div class="main-menu">
 	<div class="container">
 		<img src="../../assets/images/squirtle_probably_copyrighted.png"/>
 	</div>
 	<div class="container">
 		<button class="button" (click)="gotoGameScreen()">test Game</button>
-		<button class="button" (click)="this.toggleReady()">I Am Ready</button>
+		<button class="button" (click)="toggleReady()">I Am Ready</button>
 		<button class="button" (click)="gotoLeaderboard()">Leaderboard</button>
-		<button class="button" (click)="this.demoApiTest()">API Test</button>
-			<h3>Active Players:</h3>
-			<ul>
-				<li><span class="playerName playerMe" >Me ({{this.getReadyMessage()}})</span></li>
-				<li><span class="playerName ready">Another player (ready) </span></li>
-			</ul>
+		<button class="button" (click)="getRandomPokemon()">API Test</button>
+
+		<h3>Active Players:</h3>
+		<ul>
+			<li><span class="player-name not-ready" >Me ({{this.getReadyMessage()}})</span></li>
+			<li><span title="select player" class="player-name player-not-me ready">Another player (ready) </span></li>
+		</ul>
+
+		<span>current Pokemon: {{this.pokemon.name ? this.pokemon.name : 'none'}},
+			type: {{this.pokemon.type1 ? this.pokemon.type1 : 'none'}}</span>
 	</div>
 </div>
