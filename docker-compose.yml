@@ -1,5 +1,9 @@
 version: "3.3"
 services:
+  game-service:
+    build: ./backend/game
+    ports:
+      - "8001:8080"
   pokemon-service:
     build: ./backend/pokemon
     ports:
