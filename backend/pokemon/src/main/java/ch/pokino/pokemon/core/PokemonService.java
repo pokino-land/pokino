@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class PokemonService {
@@ -20,6 +22,13 @@ public class PokemonService {
         List<Pokemon> allPokemon = new ArrayList<>();
         pokemonRepository.findAll().forEach(allPokemon::add);
         return allPokemon;
+    }
+
+    public Pokemon getPokemonFilteredByName(List<String> names) {
+        List<Pokemon> allPokemon = getAllPokemon();
+        Random random = new Random();
+        List<Pokemon> filteredPokemon = allPokemon.stream().filter(p -> names.contains(p.getName())).collect(Collectors.toList());
+        return filteredPokemon.get(random.nextInt(filteredPokemon.size()));
     }
 
     public Optional<Pokemon> getPokemon(Long id) {
