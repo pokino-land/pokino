@@ -2,12 +2,11 @@ import { HostListener, Component, ElementRef, OnInit, ViewChild } from '@angular
 import * as THREE from 'three'
 import { PokinoScene } from "../../model/render/PokinoScene"
 import { player } from "../../model/render/player"
-import { enemy, Pokemons } from "../../model/render/enemy"
+import { enemy } from "../../model/render/enemy"
 import { mouseInfo } from "../../model/render/handleInput"
 import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
-import {JsonPokemonObject} from "../../api/json-pokemon-object";
-import {ApiService} from "../../api/api.service";
-
+import { ApiService } from '../../api/api.service';
+import { apiHandler } from 'src/app/model/render/apiHandler';
 
 @Component({
   selector: 'app-render',
@@ -16,16 +15,17 @@ import {ApiService} from "../../api/api.service";
 })
 export class RenderComponent implements OnInit {
 
-  currentPokemon: JsonPokemonObject = new JsonPokemonObject();
-
   @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
 
   @HostListener('mousemove', ['$event'])
   onMousemove(event: MouseEvent) {
-    this.m_mouseInfo.x = (event.x - this.width / 2) - 7;
+    this.m_mouseInfo.x = (event.x - this.width / 2);
     //magic number?? no good
-    this.m_mouseInfo.y = (event.y - this.height / 2) * -1 + 520;
+    this.m_mouseInfo.y = (event.y - this.height / 2) * -1;
+
+    console.log(this.m_mouseInfo.x);
+    console.log(this.m_mouseInfo.y);
 
   }
   interval = setInterval(() => { }, 1000);
@@ -55,8 +55,8 @@ export class RenderComponent implements OnInit {
 
   renderer = new THREE.WebGLRenderer();
 
-  width: number = 600;
-  height: number = 300;
+  width: number = 1024;
+  height: number = 540;
   m_scene: PokinoScene;
   m_player: player;
   m_enemy: enemy;
@@ -65,21 +65,27 @@ export class RenderComponent implements OnInit {
   m_score: number = 0;
   m_assetPath = '../../assets/';
 
+  //connection to database 
+  m_apiHandler: apiHandler;
+
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
   constructor(private apiService: ApiService) {
+
+    this.m_apiHandler = new apiHandler(apiService);
+
     this.m_scene = new PokinoScene();
     this.m_scene.init(this.width, this.height);
-    this.m_player = new player();
+    this.m_player = new player(this.width, this.height);
 
-    this.m_enemy = new enemy(Pokemons.Pikachu);
+    this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemon(), this.height);
 
     this.m_scene.addPlayer(this.m_player);
     this.m_scene.addEnemy(this.m_enemy);
 
     this.m_mouseInfo = new mouseInfo();
-    this.m_physics = new physics();
+    this.m_physics = new physics(this.width, this.height);
 
     //add ball and enemy to physics entities
     this.m_physics.ball = this.m_player.m_ball.m_ballBody;
@@ -148,8 +154,7 @@ export class RenderComponent implements OnInit {
     if (!this.m_enemy.m_alive) {
       this.m_scene.removeEnemy(this.m_enemy);
       //create new enemy
-      //this should be done by api
-      this.m_enemy = new enemy(Pokemons.Shiggy);
+      this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemon(), this.height);
       this.m_scene.addEnemy(this.m_enemy);
       this.m_physics.enemy = this.m_enemy.m_enemyBody;
     }
@@ -159,11 +164,6 @@ export class RenderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getRandomPokemon();
-  }
-
-  public async getRandomPokemon(): Promise<void> {
-    this.currentPokemon = await this.apiService.getRandomPokemon();
   }
 
 }

@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import { enemyPhysicsObject } from './physics';
 
-export enum Pokemons { Pikachu = 1, Shiggy = 2 };
-
 export class enemy {
 
     //the players mesh
@@ -15,26 +13,49 @@ export class enemy {
     help: number = 0;
     switchDirections: boolean = false;
     force: number = 10;
-    m_assetPath = '../../assets/';
+    m_pokemonPath = '../../assets/images/pokemons/';
 
-    constructor(Pokemon: Pokemons) {
+    constructor(name: string, height: number) {
 
         const enemySize = 50;
         const geometry = new THREE.PlaneGeometry(enemySize, enemySize, 32);
-        const loader = new THREE.TextureLoader();
-        var material;
-        if (Pokemon == Pokemons.Pikachu) {
-            material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/pikachu.png'), transparent: true, alphaTest: 0.5 });
-        }
-        if (Pokemon == Pokemons.Shiggy) {
-            material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/squirtle_probably_copyrighted.png'), transparent: true, alphaTest: 0.5 });
-        }
+        
+        var material = this.getMaterialFromName(name);
 
         this.m_mesh = new THREE.Mesh(geometry, material);
-        this.m_mesh.translateX(250);
-        this.m_mesh.translateY(- 300 / 2 + 50 / 2);
+        //this.m_mesh.translateX(250);
+        this.m_mesh.translateY(- height / 2 + enemySize / 2);
 
         this.m_enemyBody = new enemyPhysicsObject(enemySize, enemySize, new THREE.Vector2(this.m_mesh.position.x, this.m_mesh.position.y));
+    }
+
+    getMaterialFromName(name: string): THREE.MeshBasicMaterial{
+        const loader = new THREE.TextureLoader();
+        
+        if (name == "Pikachu") {
+             return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'pikachu.png'), transparent: true, alphaTest: 0.5 });
+        }
+        if (name == "Squirtle") {
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'squirtle.png'), transparent: true, alphaTest: 0.5 });
+        }
+        if (name == "Bulbasaur") {
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'bulbasaur.png'), transparent: true, alphaTest: 0.5 });
+        }
+        if (name == "Machop") {
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'machop.png'), transparent: true, alphaTest: 0.5 });
+        }
+        if (name == "Psyduck") {
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'psyduck.png'), transparent: true, alphaTest: 0.5 });
+        }
+        if (name == "Golbat") {
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'golbat.png'), transparent: true, alphaTest: 0.5 });
+        }
+        if (name == "Charmander") {
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'charmander.png'), transparent: true, alphaTest: 0.5 });
+        }
+
+        //if pokemon name is not found just return pikachu
+        return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'bulbasaur.png'), transparent: true, alphaTest: 0.5 });
     }
 
     setPosition(x: number, y: number) {

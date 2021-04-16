@@ -8,12 +8,15 @@ export class player {
     //the players mesh
     m_mesh: THREE.Mesh;
     m_ball: ball;
-    width: number = 600;
-    height: number = 300;
+    width: number;
+    height: number;
     mouseWasDown: boolean = false;
     m_assetPath = '../../assets/';
 
-    constructor() {
+    constructor(width: number, height: number) {
+
+        this.width = width;
+        this.height = height;
 
         var playerWidth = 100;
         var playerHeight = 100;
@@ -26,7 +29,7 @@ export class player {
         this.m_mesh.translateX(- this.width / 2 + playerWidth / 2);
         this.m_mesh.translateY(- this.height / 2 + playerHeight / 2);
         const ballRadius = 20;
-        this.m_ball = new ball(ballRadius);
+        this.m_ball = new ball(ballRadius, this.width, this.height);
     }
 
     help = 0;
