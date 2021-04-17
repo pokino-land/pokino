@@ -20,12 +20,13 @@ export class RenderComponent implements OnInit {
 
   @HostListener('mousemove', ['$event'])
   onMousemove(event: MouseEvent) {
-    this.m_mouseInfo.x = (event.x - this.width / 2);
-    //magic number?? no good
-    this.m_mouseInfo.y = (event.y - this.height / 2) * -1;
 
-    console.log(this.m_mouseInfo.x);
-    console.log(this.m_mouseInfo.y);
+    //get position of html element to account for offsets
+    const node = event.target as HTMLElement;
+    const { left, top } = node.getBoundingClientRect();
+    //transform mouse coordinates into threejs coordinate frame
+    this.m_mouseInfo.x = (event.x - this.width / 2) + left;
+    this.m_mouseInfo.y = (event.y - this.height / 2) * -1 + top;
 
   }
   interval = setInterval(() => { }, 1000);
