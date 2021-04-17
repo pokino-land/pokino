@@ -17,8 +17,8 @@ target/
 .mvn
 
 # IntelliJ files
-.iml
-.idea
+*.iml
+*.idea
 
 # vscode fies
-.vscode
+*.vscode
