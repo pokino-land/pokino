@@ -18,7 +18,7 @@ export class enemy {
     constructor(name: string, height: number) {
 
         const enemySize = 50;
-        const geometry = new THREE.PlaneGeometry(enemySize, enemySize, 32);
+        const geometry = new THREE.PlaneGeometry(enemySize, enemySize);
         
         var material = this.getMaterialFromName(name);
 
@@ -55,7 +55,7 @@ export class enemy {
         }
 
         //if pokemon name is not found just return pikachu
-        return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'bulbasaur.png'), transparent: true, alphaTest: 0.5 });
+        return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'pikachu.png'), transparent: true, alphaTest: 0.5 });
     }
 
     setPosition(x: number, y: number) {

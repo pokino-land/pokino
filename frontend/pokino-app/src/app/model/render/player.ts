@@ -8,28 +8,28 @@ export class player {
     //the players mesh
     m_mesh: THREE.Mesh;
     m_ball: ball;
-    width: number;
-    height: number;
+    m_sceneWidth: number;
+    m_sceneHeight: number;
     mouseWasDown: boolean = false;
     m_assetPath = '../../assets/';
 
     constructor(width: number, height: number) {
 
-        this.width = width;
-        this.height = height;
+        this.m_sceneWidth = width;
+        this.m_sceneHeight = height;
 
         var playerWidth = 100;
         var playerHeight = 100;
 
-        const geometry = new THREE.PlaneGeometry(playerWidth, playerHeight, 32);
+        const geometry = new THREE.PlaneGeometry(playerWidth, playerHeight);
         const loader = new THREE.TextureLoader();
         const material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/ash.png'), transparent: true, alphaTest: 0.5 });
         this.m_mesh = new THREE.Mesh(geometry, material);
 
-        this.m_mesh.translateX(- this.width / 2 + playerWidth / 2);
-        this.m_mesh.translateY(- this.height / 2 + playerHeight / 2);
+        this.m_mesh.translateX(- this.m_sceneWidth / 2 + playerWidth / 2);
+        this.m_mesh.translateY(- this.m_sceneHeight / 2 + playerHeight / 2);
         const ballRadius = 20;
-        this.m_ball = new ball(ballRadius, this.width, this.height);
+        this.m_ball = new ball(ballRadius, this.m_sceneWidth, this.m_sceneHeight);
     }
 
     help = 0;

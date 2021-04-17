@@ -4,8 +4,8 @@ import { ballPhysicsObject, physics } from './physics';
 export class ball {
 
     m_mesh: THREE.Mesh;
-    width: number;
-    height: number;
+    m_sceneWidth: number;
+    m_sceneHeight: number;
 
     m_ballBody: ballPhysicsObject;
 
@@ -16,21 +16,21 @@ export class ball {
 
     constructor(radius: number, width: number, height: number) {
 
-        this.width = width;
-        this.height = height;
+        this.m_sceneWidth = width;
+        this.m_sceneHeight = height;
 
         this.radius = radius;
-        const geometry = new THREE.CircleGeometry(radius, 32);
+        const geometry = new THREE.CircleGeometry(radius);
 
         const loader = new THREE.TextureLoader();
         const material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/pokeball.png'), transparent: true, alphaTest: 0.5 });
         this.m_mesh = new THREE.Mesh(geometry, material);
 
         //move ball out of screen when its not needed
-        const restPositionOfBall = 1000;
-        this.setPosition(restPositionOfBall, 0);
+        const restPositionOfBall = new THREE.Vector2(1000,0);
+        this.setPosition(restPositionOfBall.x, restPositionOfBall.y);
 
-        this.m_ballBody = new ballPhysicsObject(radius, new THREE.Vector2(restPositionOfBall, 0));
+        this.m_ballBody = new ballPhysicsObject(radius, new THREE.Vector2(restPositionOfBall.x, restPositionOfBall.y));
 
     }
 
@@ -44,8 +44,8 @@ export class ball {
             const playerWidth = 100;
             const playerHeight = 100;
 
-            const playerPosX = - this.width / 2 + playerWidth / 2;
-            const playerPosY = - this.height / 2 + playerHeight / 2;
+            const playerPosX = - this.m_sceneWidth / 2 + playerWidth / 2;
+            const playerPosY = - this.m_sceneHeight / 2 + playerHeight / 2;
             this.m_ballBody.setPosition(playerPosX, playerPosY);
             const multiplicator = 500;
             this.m_ballBody.force = new THREE.Vector2(forceDir.x * multiplicator * strength, forceDir.y * multiplicator * strength);

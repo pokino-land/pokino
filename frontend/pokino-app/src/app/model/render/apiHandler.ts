@@ -12,7 +12,7 @@ export class apiHandler{
         return this.pokemon;
     }
     
-    getRandomPokemon(): string{
+    getRandomPokemonName(): string{
         this.getRandomPokemonJson();
         return this.pokemon.name;
     }
