@@ -6,7 +6,7 @@ import { enemy } from "../../model/render/enemy"
 import { mouseInfo } from "../../model/render/handleInput"
 import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
 import { ApiService } from '../../api/api.service';
-import { apiHandler } from 'src/app/model/render/apiHandler';
+import { apiHandler } from '../../model/render/apiHandler';
 
 @Component({
   selector: 'app-render',
