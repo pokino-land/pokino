@@ -2,12 +2,11 @@ import { HostListener, Component, ElementRef, OnInit, ViewChild } from '@angular
 import * as THREE from 'three'
 import { PokinoScene } from "../../model/render/PokinoScene"
 import { player } from "../../model/render/player"
-import { enemy, Pokemons } from "../../model/render/enemy"
+import { enemy } from "../../model/render/enemy"
 import { mouseInfo } from "../../model/render/handleInput"
 import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
-import {JsonPokemonObject} from "../../api/json-pokemon-object";
-import {ApiService} from "../../api/api.service";
-
+import { ApiService } from '../../api/api.service';
+import { apiHandler } from 'src/app/model/render/apiHandler';
 
 @Component({
   selector: 'app-render',
@@ -16,16 +15,18 @@ import {ApiService} from "../../api/api.service";
 })
 export class RenderComponent implements OnInit {
 
-  currentPokemon: JsonPokemonObject = new JsonPokemonObject();
-
   @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
 
   @HostListener('mousemove', ['$event'])
   onMousemove(event: MouseEvent) {
-    this.m_mouseInfo.x = (event.x - this.width / 2) - 7;
-    //magic number?? no good
-    this.m_mouseInfo.y = (event.y - this.height / 2) * -1 + 520;
+
+    //get position of html element to account for offsets
+    const node = event.target as HTMLElement;
+    const { left, top } = node.getBoundingClientRect();
+    //transform mouse coordinates into threejs coordinate frame
+    this.m_mouseInfo.x = (event.x - this.m_sceneWidth / 2) + left;
+    this.m_mouseInfo.y = (event.y - this.m_sceneHeight / 2) * -1 + top;
 
   }
   interval = setInterval(() => { }, 1000);
@@ -55,8 +56,8 @@ export class RenderComponent implements OnInit {
 
   renderer = new THREE.WebGLRenderer();
 
-  width: number = 600;
-  height: number = 300;
+  m_sceneWidth: number = 1024;
+  m_sceneHeight: number = 540;
   m_scene: PokinoScene;
   m_player: player;
   m_enemy: enemy;
@@ -65,21 +66,27 @@ export class RenderComponent implements OnInit {
   m_score: number = 0;
   m_assetPath = '../../assets/';
 
+  //connection to database 
+  m_apiHandler: apiHandler;
+
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
   constructor(private apiService: ApiService) {
-    this.m_scene = new PokinoScene();
-    this.m_scene.init(this.width, this.height);
-    this.m_player = new player();
 
-    this.m_enemy = new enemy(Pokemons.Pikachu);
+    this.m_apiHandler = new apiHandler(apiService);
+
+    this.m_scene = new PokinoScene();
+    this.m_scene.init(this.m_sceneWidth, this.m_sceneHeight);
+    this.m_player = new player(this.m_sceneWidth, this.m_sceneHeight);
+
+    this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemonName(), this.m_sceneHeight);
 
     this.m_scene.addPlayer(this.m_player);
     this.m_scene.addEnemy(this.m_enemy);
 
     this.m_mouseInfo = new mouseInfo();
-    this.m_physics = new physics();
+    this.m_physics = new physics(this.m_sceneWidth, this.m_sceneHeight);
 
     //add ball and enemy to physics entities
     this.m_physics.ball = this.m_player.m_ball.m_ballBody;
@@ -90,7 +97,7 @@ export class RenderComponent implements OnInit {
 
   setupMouseCursor() {
     var mouseCursorSize = 30;
-    const geometry = new THREE.PlaneGeometry(mouseCursorSize, mouseCursorSize, 32);
+    const geometry = new THREE.PlaneGeometry(mouseCursorSize, mouseCursorSize);
     const loader = new THREE.TextureLoader();
     const material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/Arrow_white.png'), transparent: true, alphaTest: 0.5 });
     this.m_mouseCursor = new THREE.Mesh(geometry, material);
@@ -119,7 +126,7 @@ export class RenderComponent implements OnInit {
   ngAfterViewInit() {
 
     //setup render context
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
     if (this.rendererContainer != undefined)
       this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
     this.renderScene();
@@ -131,11 +138,12 @@ export class RenderComponent implements OnInit {
 
     //update
     this.m_physics.updatePositionAccordingToVeloctiy();
-
-    this.m_player.update(this.m_mouseInfo);
+   
     this.m_enemy.update();
     this.m_scene.update();
+    this.m_player.update(this.m_mouseInfo);
     this.updateMouseCursor();
+  
 
     if (this.m_enemy.m_enemyBody.collided && !this.updated) {
       this.m_score++;
@@ -148,22 +156,16 @@ export class RenderComponent implements OnInit {
     if (!this.m_enemy.m_alive) {
       this.m_scene.removeEnemy(this.m_enemy);
       //create new enemy
-      //this should be done by api
-      this.m_enemy = new enemy(Pokemons.Shiggy);
+      this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemonName(), this.m_sceneHeight);
       this.m_scene.addEnemy(this.m_enemy);
       this.m_physics.enemy = this.m_enemy.m_enemyBody;
     }
-
+  
     //render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
   }
 
   ngOnInit(): void {
-    this.getRandomPokemon();
-  }
-
-  public async getRandomPokemon(): Promise<void> {
-    this.currentPokemon = await this.apiService.getRandomPokemon();
   }
 
 }

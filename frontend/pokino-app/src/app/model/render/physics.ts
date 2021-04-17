@@ -48,6 +48,13 @@ export class physics {
     enemy: enemyPhysicsObject = new enemyPhysicsObject(0, 0, new THREE.Vector2(0, 0));
 
     x: number = 0;
+    m_sceneWidth: number;
+    m_sceneHeight: number;
+
+    constructor(width: number, height: number){
+        this.m_sceneWidth = width;
+        this.m_sceneHeight = height;
+    }
     updatePositionAccordingToVeloctiy() {
         var h = 0.1;   //step size
         //apply forces until ball is out of screen
@@ -63,12 +70,12 @@ export class physics {
 
         } else {
             this.ball.velocity = new THREE.Vector2(0, 0);
-            this.ball.position = new THREE.Vector2(0, 300)
+            this.ball.position = new THREE.Vector2(0, 1000)
         }
-        const leftLimit = -300;
-        const rightLimit = 300;
-        const upperLimit = 250;
-        const lowerLimit = -150;
+        const leftLimit = -this.m_sceneWidth/2;
+        const rightLimit = this.m_sceneWidth/2;
+        const upperLimit = this.m_sceneHeight / 2;
+        const lowerLimit = -this.m_sceneHeight / 2;
         if (this.ball.position.y < lowerLimit || this.ball.position.y > upperLimit || this.ball.position.x < leftLimit || this.ball.position.x > rightLimit) {
             this.ball.activate = false;
         }
