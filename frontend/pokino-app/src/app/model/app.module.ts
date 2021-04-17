@@ -7,11 +7,15 @@ import { AppComponent } from '../view/app.component';
 import { RenderComponent } from '../view/render/render.component';
 
 import { ApiService } from '../api/api.service';
+import {MainMenuComponent} from "../view/main-menu.component";
+import {LeaderboardComponent} from "../view/leaderboard.component";
 
 @NgModule({
     declarations: [
         AppComponent,
-        RenderComponent
+        RenderComponent,
+        MainMenuComponent,
+        LeaderboardComponent
     ],
     imports: [
         BrowserModule,
