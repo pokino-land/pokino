@@ -13,6 +13,9 @@
     }
   },
   "tags" : [ {
+    "name" : "login",
+    "description" : "Stuff to login new players to the game"
+  }, {
     "name" : "weather",
     "description" : "Exposes the internal weather API"
   }, {
@@ -20,6 +23,37 @@
     "description" : "Functionality to query Pokémon data"
   } ],
   "paths" : {
+    "/login/{name}" : {
+      "post" : {
+        "tags" : [ "login" ],
+        "summary" : "Login as a new player onto the platform.",
+        "description" : "Choose a name and login. You will be assigned a unique ID.",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "A new player has been logged in",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string",
+                  "example" : 42
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "The player name is already taken"
+          }
+        }
+      }
+    },
     "/pokemon/all" : {
       "get" : {
         "tags" : [ "pokemon" ],
