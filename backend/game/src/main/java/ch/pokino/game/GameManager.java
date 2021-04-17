@@ -1,8 +1,15 @@
 package ch.pokino.game;
 
+import ch.pokino.game.messaging.MessageSender;
+import com.fasterxml.jackson.core.JsonFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.util.stream.Collectors.toList;
@@ -10,16 +17,26 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class GameManager {
 
-    private final String INIT_MESSAGE_QUEUE_NAME = "init-message-queue";
     private final Queue<Player> waitingPlayers = new ConcurrentLinkedQueue<>();
     private final List<Game> games = new ArrayList<>();
+    private final MessageSender sender;
+    private final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
-    public String registerPlayer(String playerName) throws PlayerNameNotAvailableException {
+    public GameManager(MessageSender sender) {
+        this.sender = sender;
+    }
+
+    public String registerPlayer(String playerName) throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
         if (!isNameAvailable(playerName)) {
             throw new PlayerNameNotAvailableException("Player name " + playerName + " is already taken.");
         }
+        if (getTotalNumberOfPlayers() >= 2) {
+            throw new MaximumPlayersLimitReachedException("Maximum number of players reached. Currently: " + getTotalNumberOfPlayers());
+        }
         String newPlayerId = createNewPlayerId();
-        Player newPlayer = new Player(createNewPlayerId(), playerName);
+        Player newPlayer = new Player(newPlayerId, playerName);
+        logger.info("Registered new player: " + newPlayer);
+
         synchronized (waitingPlayers) {
             waitingPlayers.add(newPlayer);
             if (waitingPlayers.size() > 1) {
@@ -28,6 +45,7 @@ public class GameManager {
                 Game newGame = new Game(new Tuple<>(firstPlayer, secondPlayer));
                 games.add(newGame);
                 writeGameInitMessageOnQueue(newGame);
+                logger.info("Created new game: " + newGame);
             }
         }
         return newPlayerId;
@@ -39,7 +57,8 @@ public class GameManager {
      * @param game a new game for which we write a message
      */
     private void writeGameInitMessageOnQueue(Game game) {
-        // TODO: Write on message queue INIT_MESSAGE_QUEUE_NAME
+        String message = "new_game: " + game.getPlayers().first + ", " + game.getPlayers().second;
+        this.sender.send(Common.GAME_QUEUE_NAME, message);
     }
 
     public List<Game> getGames() {
@@ -68,7 +87,13 @@ public class GameManager {
         return !(nameExistsInWaitingPlayers || nameExistsInPlayingPlayers);
     }
 
+    private int getTotalNumberOfPlayers() {
+        List<Player> playingPlayersAsList = getPlayingPlayersAsList();
+        List<Player> waitingPlayersAsList = getWaitingPlayersAsList();
+        return waitingPlayersAsList.size() + playingPlayersAsList.size();
+    }
+
     private String createNewPlayerId() {
-        return IdCreator.createId();
+        return PlayerIdCreator.createId();
     }
 }
