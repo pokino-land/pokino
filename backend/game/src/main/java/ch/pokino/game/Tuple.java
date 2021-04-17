@@ -8,7 +8,7 @@ public class Tuple<X, Y> {
         this.first = first;
         this.second = second;
     }
-
+    
     public String toString() {
         return String.format("Tuple(%s, %s)", first.toString(), second.toString());
     }

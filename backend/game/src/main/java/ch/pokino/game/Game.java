@@ -20,4 +20,8 @@ public class Game {
         this.state = GameState.STARTED;
         LOGGER.info("Initialized new game with players " + players);
     }
+
+    public Tuple<Player, Player> getPlayers() {
+        return players;
+    }
 }
