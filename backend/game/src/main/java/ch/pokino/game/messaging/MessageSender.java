@@ -2,8 +2,9 @@ package ch.pokino.game.messaging;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class MessageSender {
@@ -15,7 +16,7 @@ public class MessageSender {
         this.template = template;
     }
 
-    public void send(String queueName, String message) {
-        this.template.convertAndSend(queueName, message);
+    public void send(GameMessage message) {
+        this.template.convertAndSend(RabbitMQConfiguration.QUEUE_NAME, message);
     }
 }

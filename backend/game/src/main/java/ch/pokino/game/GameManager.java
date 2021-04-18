@@ -1,5 +1,6 @@
 package ch.pokino.game;
 
+import ch.pokino.game.messaging.GameMessage;
 import ch.pokino.game.messaging.MessageSender;
 import com.fasterxml.jackson.core.JsonFactory;
 import org.slf4j.Logger;
@@ -45,7 +46,6 @@ public class GameManager {
                 Game newGame = new Game(new Tuple<>(firstPlayer, secondPlayer));
                 games.add(newGame);
                 writeGameInitMessageOnQueue(newGame);
-                logger.info("Created new game: " + newGame);
             }
         }
         return newPlayerId;
@@ -57,8 +57,8 @@ public class GameManager {
      * @param game a new game for which we write a message
      */
     private void writeGameInitMessageOnQueue(Game game) {
-        String message = "new_game: " + game.getPlayers().first + ", " + game.getPlayers().second;
-        this.sender.send(Common.GAME_QUEUE_NAME, message);
+        GameMessage message = new GameMessage(game.getPlayers().first.getId(), game.getPlayers().second.getId());
+        this.sender.send(message);
     }
 
     public List<Game> getGames() {
