@@ -1,15 +1,21 @@
 package ch.pokino.game;
 
+import ch.pokino.game.messaging.GameMessage;
+import ch.pokino.game.messaging.MessageSender;
+import ch.pokino.game.state_machine.PokeHitEvent;
+import ch.pokino.game.state_machine.StartupConfirmationEvent;
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -64,6 +70,16 @@ public class GameManager {
         }
     }
 
+    public void handlePokeHitRequest(String playerId) {
+        Game associatedGame = games.get(getGameIdForPlayerId(playerId));
+        associatedGame.handleGameEvent(new PokeHitEvent(playerId));
+    }
+
+    public void handleStartupConfirmationRequest(String playerId) {
+        Game associatedGame = games.get(getGameIdForPlayerId(playerId));
+        associatedGame.handleGameEvent(new StartupConfirmationEvent(playerId));
+    }
+
     /**
      * When a new game with two participating players has been initialized, this function writes an event on the
      * game init queue to inform two players in the frontend that they have been matched and can now enter the game.
@@ -74,8 +90,8 @@ public class GameManager {
         gameStartsPushMessenger.sendGameStartsMessage(new GameStartsMessage(playerTuple.first.getId(), playerTuple.second.getId(), game.getId()));
     }
 
-    public List<Game> getGames() {
-        return Collections.unmodifiableList(games);
+    public Collection<Game> getGames() {
+        return games.values();
     }
 
     public List<Player> getWaitingPlayersAsList() {
@@ -108,5 +124,19 @@ public class GameManager {
 
     private static String createNewPlayerId() {
         return PlayerIdCreator.createId();
+    }
+
+    private String getGameIdForPlayerId(String playerId) {
+        String associatedGameId = null;
+        for (Game game : getGames()) {
+            if (game.getPlayerIds().contains(playerId)) {
+               associatedGameId = game.getGameId();
+               break;
+            }
+        }
+        if (associatedGameId == null) {
+            throw new RuntimeException("The given player is not in any game!");
+        }
+        return associatedGameId;
     }
 }
