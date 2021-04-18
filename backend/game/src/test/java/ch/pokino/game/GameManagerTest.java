@@ -1,6 +1,7 @@
 package ch.pokino.game;
 
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ public class GameManagerTest {
     GameManager gameManager;
 
     @Test
+    @Disabled
     void registerPlayerConsecutivelyInitializesGames() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException{
         assertThat(gameManager.getGames(), is(Matchers.empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), is(Matchers.empty()));
