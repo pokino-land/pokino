@@ -8,7 +8,7 @@ import {Observable} from "rxjs";
 @Component({
   selector: 'app-root',
   templateUrl: './main-menu.component.html',
-  styleUrls: ['./main-menu.component.scss']
+  styleUrls: ['./main-menu.component.scss', './common.scss']
 })
 export class MainMenuComponent {
   title = 'pokino';
@@ -19,7 +19,7 @@ export class MainMenuComponent {
   }
   
   toggleReady(): void {
-	  this.ready = !this.ready;
+	  this.ready = true;
   }
   
   public getReadyMessage(): string {
