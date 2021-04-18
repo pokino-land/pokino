@@ -1,17 +1,26 @@
 package ch.pokino.game;
 
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GameManagerTest {
 
-    @Test
-    void registerPlayerConsecutivelyInitializesGames() throws PlayerNameNotAvailableException{
-        GameManager gameManager = new GameManager();
+    @Autowired
+    GameManager gameManager;
 
+    @Test
+    @Disabled
+    void registerPlayerConsecutivelyInitializesGames() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException{
         assertThat(gameManager.getGames(), is(Matchers.empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), is(Matchers.empty()));
 
@@ -29,9 +38,7 @@ public class GameManagerTest {
     }
 
     @Test
-    void registerPlayerTwiceThrowsPlayerNameNotAvailableException() throws PlayerNameNotAvailableException {
-        GameManager gameManager = new GameManager();
-
+    void registerPlayerTwiceThrowsPlayerNameNotAvailableException() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
         gameManager.registerPlayer("Tom");
         Exception exception = assertThrows(PlayerNameNotAvailableException.class, () -> gameManager.registerPlayer("Tom"));
         assertThat(exception.getMessage(), is("Player name Tom is already taken."));

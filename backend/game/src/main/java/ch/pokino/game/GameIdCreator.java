@@ -3,7 +3,7 @@ package ch.pokino.game;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class IdCreator {
+public class GameIdCreator {
 
     private static final AtomicLong atomicCounter = new AtomicLong();
 
