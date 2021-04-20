@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-@CrossOrigin
 @RestController
 public class WeatherController {
 
