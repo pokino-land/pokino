@@ -37,7 +37,7 @@ export class RenderComponent implements OnInit {
     //start timer
     const timerInterval: number = 10;
     const timerIncrement: number = 0.01;
-    const maxTime: number = 1.2;
+    const maxTime: number = 1.4;
     this.interval = setInterval(() => {
       if (this.m_mouseInfo.secondsClicked < maxTime)
         this.m_mouseInfo.secondsClicked += timerIncrement;
@@ -72,7 +72,7 @@ export class RenderComponent implements OnInit {
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
-  constructor(private apiService: ApiService) {
+ constructor(private apiService: ApiService) {
 
     this.m_apiHandler = new apiHandler(apiService);
 
@@ -80,7 +80,7 @@ export class RenderComponent implements OnInit {
     this.m_scene.init(this.m_sceneWidth, this.m_sceneHeight);
     this.m_player = new player(this.m_sceneWidth, this.m_sceneHeight);
 
-    this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemonName(), this.m_sceneHeight);
+    this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemon(), this.m_sceneHeight);
 
     this.m_scene.addPlayer(this.m_player);
     this.m_scene.addEnemy(this.m_enemy);
@@ -135,10 +135,9 @@ export class RenderComponent implements OnInit {
   renderScene() {
     //render loop
     window.requestAnimationFrame(() => this.renderScene());
-
     //update
-    this.m_physics.updatePositionAccordingToVeloctiy();
-   
+    
+    this.m_physics.update();
     this.m_enemy.update();
     this.m_scene.update();
     this.m_player.update(this.m_mouseInfo);
@@ -156,13 +155,14 @@ export class RenderComponent implements OnInit {
     if (!this.m_enemy.m_alive) {
       this.m_scene.removeEnemy(this.m_enemy);
       //create new enemy
-      this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemonName(), this.m_sceneHeight);
+      this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemon(), this.m_sceneHeight);
       this.m_scene.addEnemy(this.m_enemy);
       this.m_physics.enemy = this.m_enemy.m_enemyBody;
     }
   
     //render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
+    
   }
 
   ngOnInit(): void {

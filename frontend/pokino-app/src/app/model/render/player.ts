@@ -1,3 +1,4 @@
+import { sharedStylesheetJitUrl } from '@angular/compiler';
 import * as THREE from 'three';
 
 import { ball } from "./ball"
@@ -28,7 +29,7 @@ export class player {
 
         this.m_mesh.translateX(- this.m_sceneWidth / 2 + playerWidth / 2);
         this.m_mesh.translateY(- this.m_sceneHeight / 2 + playerHeight / 2);
-        const ballRadius = 20;
+        const ballRadius = 10;
         this.m_ball = new ball(ballRadius, this.m_sceneWidth, this.m_sceneHeight);
     }
 
@@ -51,8 +52,9 @@ export class player {
             mouseInfo.secondsClicked = startTimeForSecondsClicked;
             this.forceapplied = true;
         }
+
+        //clear force after short time!
         if (this.forceapplied) {
-            //I should use a timer for this...
             this.help++;
             if (this.help > 2) {
                 this.m_ball.updateForce(new THREE.Vector2(0, 0), 0);

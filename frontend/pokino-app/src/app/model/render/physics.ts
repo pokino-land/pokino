@@ -55,7 +55,7 @@ export class physics {
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
     }
-    updatePositionAccordingToVeloctiy() {
+    update() {
         var h = 0.1;   //step size
         //apply forces until ball is out of screen
 
@@ -85,9 +85,9 @@ export class physics {
         this.enemy.velocity = new THREE.Vector2(this.enemy.velocity.x + h * this.enemy.force.x, this.enemy.velocity.y + h * this.enemy.force.y)
 
         //quick fix for now
-        this.x = this.x + 0.05;
-        var y = 50 * Math.sin(this.x) + 150;
-        this.enemy.position.x = y;
+       // this.x = this.x + 0.05;
+        //var y = 50 * Math.sin(this.x) + 150;
+        //this.enemy.position.x = y;
 
         if (this.checkForCollision()) {
             this.enemy.collided = true;
@@ -106,8 +106,8 @@ export class physics {
         var cy = this.ball.position.y;
         var radius = this.ball.radius;
 
-        var rx = this.enemy.position.x;
-        var ry = this.enemy.position.y;
+        var rx = this.enemy.position.x - this.enemy.width / 2;
+        var ry = this.enemy.position.y - this.enemy.height / 2;
         var rw = this.enemy.width;
         var rh = this.enemy.height;
 

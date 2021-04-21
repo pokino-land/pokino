@@ -16,4 +16,9 @@ export class apiHandler{
         this.getRandomPokemonJson();
         return this.pokemon.name;
     }
+
+    getRandomPokemon(): JsonPokemonObject{
+        this.getRandomPokemonJson();
+        return this.pokemon;
+    }
 }

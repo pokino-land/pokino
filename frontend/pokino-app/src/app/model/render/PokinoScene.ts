@@ -13,7 +13,15 @@ export class PokinoScene extends THREE.Scene {
         this.m_camera.position.z = cameraDistanceFromScene;
 
         const loader = new THREE.TextureLoader();
-        const bgTexture = loader.load(this.m_assetPath + 'images/bg.jpg');
+
+        const hours = new Date().getHours() ;
+        const isDayTime = hours > 7 && hours < 20;
+        var bgTexture;
+        if(isDayTime)
+          bgTexture = loader.load(this.m_assetPath + 'images/bg_day.png');
+          else
+          bgTexture = loader.load(this.m_assetPath + 'images/bg_night.png');
+
         this.background = bgTexture;
 
 
