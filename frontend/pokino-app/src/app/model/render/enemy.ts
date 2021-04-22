@@ -86,7 +86,8 @@ export class enemy {
     changeDirectionHelper(){
         if(this.startChangeDirectionTimer){
             this.changeDirectionTimer++;
-            if(this.changeDirectionTimer > 20){
+            const timeToChangeDirection = 20;
+            if(this.changeDirectionTimer > timeToChangeDirection){
                 this.startChangeDirectionTimer = false;
                 this.allowedToChangeDirection = true;
                 this.changeDirectionTimer = 0;
@@ -100,6 +101,7 @@ export class enemy {
         if(!this.playDeathAnimation){
         //apply velocity
         if(Math.abs(this.m_startPosition.x - this.m_mesh.position.x) > this.m_movementRadius && this.allowedToChangeDirection){
+            // *= -1 to flip direction
             this.m_velocity.x *= -1;
 
             this.allowedToChangeDirection = false;
@@ -108,7 +110,6 @@ export class enemy {
             this.m_mesh.scale.x *= -1;
         }
         this.changeDirectionHelper();
-        var flyingVel = 0;
 
         if(this.m_pokemon.type2 == 'Flying'){
             this.m_enemyBody.position.y = 80;
