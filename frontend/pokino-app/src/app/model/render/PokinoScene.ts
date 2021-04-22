@@ -34,6 +34,7 @@ export class PokinoScene extends THREE.Scene {
     addPlayer(player: player) {
         this.add(player.m_mesh);
         this.add(player.m_ball.m_mesh);
+        this.add(player.m_throwForceProgressBar);
     }
 
     addEnemy(enemy: enemy) {
