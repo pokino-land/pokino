@@ -1,16 +1,16 @@
 import * as THREE from 'three';
 import { enemyPhysicsObject } from './physics';
-import {JsonPokemonObject} from "../../api/json-pokemon-object";
+import { JsonPokemonObject } from "../../api/json-pokemon-object";
 
 
-enum FaceDirection {RIGHT = 1, LEFT = 2};
+enum FaceDirection { RIGHT, LEFT };
 
 export class enemy {
 
     //the players mesh
     m_mesh: THREE.Mesh;
     amplitude: number = 10;
-    m_startPosition: THREE.Vector2 = new THREE.Vector2(0,0);
+    m_startPosition: THREE.Vector2 = new THREE.Vector2(0, 0);
 
 
     m_velocity: THREE.Vector2;
@@ -31,11 +31,12 @@ export class enemy {
 
         const enemySize = 50;
         const geometry = new THREE.PlaneGeometry(enemySize, enemySize);
-        
+
         var material = this.getMaterialFromName(pokemon.name);
         this.m_mesh = new THREE.Mesh(geometry, material);
         this.m_mesh.translateY(- height / 2 + enemySize / 2);
-        this.m_mesh.translateX(200);
+        const pokemonStartHeight = 200;
+        this.m_mesh.translateX(pokemonStartHeight);
 
         this.m_startPosition = new THREE.Vector2(this.m_mesh.position.x, this.m_mesh.position.y);
         this.m_enemyBody = new enemyPhysicsObject(enemySize, enemySize, new THREE.Vector2(this.m_mesh.position.x, this.m_mesh.position.y));
@@ -43,14 +44,14 @@ export class enemy {
         this.m_pokemon = pokemon;
         this.m_velocity = new THREE.Vector2(pokemon.healthPoints / 2, 0);
         this.m_movementRadius = pokemon.defensePoints * 1.6;
-        
+
     }
 
-    getMaterialFromName(name: string): THREE.MeshBasicMaterial{
+    getMaterialFromName(name: string): THREE.MeshBasicMaterial {
         const loader = new THREE.TextureLoader();
-        
+
         if (name == "Pikachu") {
-             return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'pikachu.png'), transparent: true, alphaTest: 0.5 });
+            return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'pikachu.png'), transparent: true, alphaTest: 0.5 });
         }
         if (name == "Squirtle") {
             return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'squirtle.png'), transparent: true, alphaTest: 0.5 });
@@ -83,11 +84,11 @@ export class enemy {
     changeDirectionTimer = 0;
     allowedToChangeDirection = true;
     startChangeDirectionTimer = false;
-    changeDirectionHelper(){
-        if(this.startChangeDirectionTimer){
+    changeDirectionHelper() {
+        if (this.startChangeDirectionTimer) {
             this.changeDirectionTimer++;
             const timeToChangeDirection = 20;
-            if(this.changeDirectionTimer > timeToChangeDirection){
+            if (this.changeDirectionTimer > timeToChangeDirection) {
                 this.startChangeDirectionTimer = false;
                 this.allowedToChangeDirection = true;
                 this.changeDirectionTimer = 0;
@@ -98,31 +99,32 @@ export class enemy {
     update() {
 
         //check if pokemon is hit
-        if(!this.playDeathAnimation){
-        //apply velocity
-        if(Math.abs(this.m_startPosition.x - this.m_mesh.position.x) > this.m_movementRadius && this.allowedToChangeDirection){
-            // *= -1 to flip direction
-            this.m_velocity.x *= -1;
+        if (!this.playDeathAnimation) {
+            //apply velocity
+            if (Math.abs(this.m_startPosition.x - this.m_mesh.position.x) > this.m_movementRadius && this.allowedToChangeDirection) {
+                // *= -1 to flip direction
+                this.m_velocity.x *= -1;
 
-            this.allowedToChangeDirection = false;
-            this.startChangeDirectionTimer = true;
+                this.allowedToChangeDirection = false;
+                this.startChangeDirectionTimer = true;
 
-            this.m_mesh.scale.x *= -1;
+                this.m_mesh.scale.x *= -1;
+            }
+            this.changeDirectionHelper();
+
+            if (this.m_pokemon.type2 == 'Flying') {
+                const pokemonFlyHeight = 80;
+                this.m_enemyBody.position.y = pokemonFlyHeight;
+            }
+
+
+            this.m_enemyBody.velocity = this.m_velocity;
+
+
+        } else {
+            this.m_enemyBody.velocity = new THREE.Vector2(0, 0);
         }
-        this.changeDirectionHelper();
 
-        if(this.m_pokemon.type2 == 'Flying'){
-            this.m_enemyBody.position.y = 80;
-        }
-           
-     
-        this.m_enemyBody.velocity =  this.m_velocity;
-      
-
-    }else{
-        this.m_enemyBody.velocity = new THREE.Vector2(0,0);
-    }
-        
 
 
         //handle collision

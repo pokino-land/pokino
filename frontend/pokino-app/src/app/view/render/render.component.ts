@@ -80,7 +80,7 @@ export class RenderComponent implements OnInit {
     this.m_scene.init(this.m_sceneWidth, this.m_sceneHeight);
     this.m_player = new player(this.m_sceneWidth, this.m_sceneHeight);
 
-    this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemon(), this.m_sceneHeight);
+    this.m_enemy = new enemy(this.m_apiHandler.updateRandomPokemon(), this.m_sceneHeight);
 
     this.m_scene.addPlayer(this.m_player);
     this.m_scene.addEnemy(this.m_enemy);
@@ -155,7 +155,7 @@ export class RenderComponent implements OnInit {
     if (!this.m_enemy.m_alive) {
       this.m_scene.removeEnemy(this.m_enemy);
       //create new enemy
-      this.m_enemy = new enemy(this.m_apiHandler.getRandomPokemon(), this.m_sceneHeight);
+      this.m_enemy = new enemy(this.m_apiHandler.updateRandomPokemon(), this.m_sceneHeight);
       this.m_scene.addEnemy(this.m_enemy);
       this.m_physics.enemy = this.m_enemy.m_enemyBody;
     }

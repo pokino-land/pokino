@@ -14,13 +14,18 @@ export class PokinoScene extends THREE.Scene {
 
         const loader = new THREE.TextureLoader();
 
-        const hours = new Date().getHours() ;
-        const isDayTime = hours > 7 && hours < 20;
+        const hours = new Date().getHours();
+        const START_DAYLIGHT_HOUR = 7;
+        const END_DAYLIGHT_HOUR  = 20;
+        const isDayTime = hours > START_DAYLIGHT_HOUR && hours < END_DAYLIGHT_HOUR;
         var bgTexture;
-        if(isDayTime)
-          bgTexture = loader.load(this.m_assetPath + 'images/bg_day.png');
-          else
-          bgTexture = loader.load(this.m_assetPath + 'images/bg_night.png');
+        if (isDayTime) {
+            bgTexture = loader.load(this.m_assetPath + 'images/bg_day.png');
+        }
+        else {
+            bgTexture = loader.load(this.m_assetPath + 'images/bg_night.png');
+        }
+
 
         this.background = bgTexture;
 
