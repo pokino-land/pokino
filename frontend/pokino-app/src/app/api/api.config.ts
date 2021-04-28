@@ -8,7 +8,7 @@ export class ApiConfig {
     private static readonly RANDOM_ENDPOINT: string = 'random';
     private static readonly WEATHER_ENDPOINT: string = 'weather';
     private static readonly GAME_ENDPOINT: string = 'game';
-    private static readonly PLAYER_ENDPOINT: string = 'player';
+    private static readonly LOGIN_ENDPOINT: string = 'login';
     private static readonly READY_ENDPOINT: string = 'clickReady';
 
     /**
@@ -32,16 +32,15 @@ export class ApiConfig {
     /**
      * example: http://localhost:8001/game/clickReady/{playerId}
      */
-    public static getPlayerReadyUrl(playerID: string): URL {
+    public static getPlayerReadyUrl(playerName: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
-        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT, playerID];
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT, playerName];
         return this.buildUrl(root, endpoints);
     }
 
-    // TODO Leo: assign when ready in backend; maybe leaderboard port?
-    public static getPlayerUrl(playerID: string): URL {
+    public static getLoginUrl(playerName: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
-        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.PLAYER_ENDPOINT, playerID];
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.LOGIN_ENDPOINT, playerName];
         return this.buildUrl(root, endpoints);
     }
 
