@@ -9,7 +9,7 @@
 		<button class="button" (click)="getRandomPokemon()">Pokemon-API Test</button>
 		<button class="button" (click)="getWeather()">Weather-API Test</button>
 		<button class="button" (click)="loginPlayer()">Login-API Test</button>
-		<button class="button" (click)="getWeather()">MQ Test</button>
+		<button class="button" (click)="sendTestMessageToStream()">Websocket Test</button>
 
 		<h3>Active Players:</h3>
 		<ul>
@@ -19,5 +19,9 @@
 
 		<span>current Pokemon: {{this.pokemon.name ? this.pokemon.name : 'none'}},
 			type: {{this.pokemon.type1 ? this.pokemon.type1 : 'none'}}</span>
+		<h5>Received messages</h5>
+		<ol>
+			<li class="message" *ngFor="let message of this.receivedMessages"></li>
+		</ol>
 	</div>
 </div>
