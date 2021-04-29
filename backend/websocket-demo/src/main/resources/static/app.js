@@ -13,7 +13,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/pokino-websocket');  // connect to this endpoint
+    var socket = new SockJS('/pokino-websocket2');  // connect to this endpoint
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);

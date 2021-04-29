@@ -24,6 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/pokino-websocket").withSockJS();
+        registry.addEndpoint("/pokino-websocket2").withSockJS();
     }
 
 }
