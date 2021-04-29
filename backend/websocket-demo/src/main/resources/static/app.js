@@ -13,12 +13,12 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/pokino-websocket2');  // connect to this endpoint
+    var socket = new SockJS('/pokino-websocket');  // CONNECT to this endpoint
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {  // subscribe to this topic to receive answers
+        stompClient.subscribe('/topic/greetings', function (greeting) {  // SUBSCRIBE to this topic to receive answers
             showGreeting(JSON.parse(greeting.body).content);
         });
     });
@@ -33,7 +33,7 @@ function disconnect() {
 }
 
 function sendName() {
-    stompClient.send("/pokino/hello", {}, JSON.stringify({'name': $("#name").val()}));
+    stompClient.send("/pokino/hello", {}, JSON.stringify({'name': $("#name").val()}));  // SEND to this controller
 }
 
 function showGreeting(message) {
