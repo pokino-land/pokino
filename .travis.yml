@@ -31,6 +31,7 @@ jobs:
       deploy:
         provider: pages
         skip_cleanup: true
+        repo: StevenSchuerstedt/StevenSchuerstedt.github.io
         github_token: $GITHUB_TOKEN 
         local_dir: frontend/pokino-app/dist/pokino
         on:
