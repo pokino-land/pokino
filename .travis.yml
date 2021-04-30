@@ -1,23 +1,23 @@
 ###STAGE1: Test everything
-#import:
+import:
+  - source: deploy.yml
 #  - source: frontend/pokino-app/travis.yml
 #  - source: backend/pokemon/travis.yml
 #  - source: backend/game/travis.yml
 
 ###STAGE2: Build everything
-language: generic
-dist: trusty 
-sudo: required
-services: 
-  - docker
+#language: generic
+#dist: trusty 
+#sudo: required
+#services: 
+#  - docker
 
-env:
-  - DOCKER_COMPOSE_VERSION=1.29.0
-  - NODE_VERSION="16.0.0"
+#env:
+#  - DOCKER_COMPOSE_VERSION=1.29.0
 
 
-jobs:
-  include:
+#jobs:
+#  include:
 #    - stage: build
 #      name: "Build complete App"
 #      before_install:
@@ -28,22 +28,20 @@ jobs:
 #        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 #        - docker-compose build
 ###STAGE3: Deploy to github pages, needs to build again locally
-    - stage: deploy
-      before_install:
-        - nvm install $NODE_VERSION
-      install:
-        - cd frontend/pokino-app
-        - npm install
-      script: 
-        - npm run-script build -- --prod
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        repo: StevenSchuerstedt/StevenSchuerstedt.github.io
-        target_branch: master
-        github_token: $GITHUB_TOKEN 
-        local_dir: frontend/pokino-app/dist/pokino
-        on:
-          branch: main
+#    - stage: deploy
+#      install:
+#        - cd frontend/pokino-app
+#        - npm install
+#      script: 
+#        - npm run-script build -- --prod
+#      deploy:
+#        provider: pages
+#        skip_cleanup: true
+#        repo: StevenSchuerstedt/StevenSchuerstedt.github.io
+#        target_branch: master
+#        github_token: $GITHUB_TOKEN 
+#        local_dir: frontend/pokino-app/dist/pokino
+#        on:
+#          branch: main
 
       
