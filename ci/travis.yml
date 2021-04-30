@@ -1,0 +1,23 @@
+language: generic
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test
+      name: "CI - Test"
+      before_install:
+         - sudo rm /usr/local/bin/docker-compose
+        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+        - chmod +x docker-compose
+        - sudo mv docker-compose /usr/local/bin
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker-compose build
+        #- docker run -d -it --name frontend_ci frontend_image
+     # script:
+      #  - |
+       #   docker exec -it frontend_ci /bin/sh -c "npm run test"
+        
