@@ -1,7 +1,7 @@
 ### Build ###
 FROM node:12.7-alpine AS build
 RUN apk add chromium
-WORKDIR /usr/src/app/frontend/pokino-app
+WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN npm install
