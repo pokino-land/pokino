@@ -29,6 +29,7 @@ jobs:
        ###Deploy to github pages
     - stage: deploy
       install:
+        - cd frontend/pokino-app
         - npm install
       script: 
         - npm run-script build
