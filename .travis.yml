@@ -26,12 +26,8 @@ jobs:
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker-compose build
-
-###Deploy to github pages
-jobs:
-   include:
+        ###Deploy to github pages
     - stage: deploy
-      name: "Deploy App to pages"
       deploy:
       provider: pages
       skip_cleanup: true
@@ -39,3 +35,5 @@ jobs:
       keep_history: true
       on:
         branch: main
+
+      

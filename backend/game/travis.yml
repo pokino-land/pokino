@@ -11,9 +11,9 @@ jobs:
       name: "Backend/Game - Test"
       before_install:
         - cd backend/game
-        - docker build -t game_image -f Dockerfile_CI .
-        #- docker run -d -it --name frontend_ci frontend_image
-     # script:
-      #  - |
-       #   docker exec -it frontend_ci /bin/sh -c "npm run test"
+        - docker build -t game_image -f Dockerfile .
+        - docker run -d -it --name game game_image
+      script:
+        - |
+          docker exec -it game /bin/sh -c "./mvnw test"
         
