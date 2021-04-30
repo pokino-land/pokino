@@ -21,5 +21,5 @@ jobs:
         github_token: $GITHUB_TOKEN 
         local_dir: frontend/pokino-app/dist/pokino
         on:
-          branch: main
+          branch: feature/CICD
           
