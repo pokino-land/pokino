@@ -28,6 +28,10 @@ jobs:
     #    - docker-compose build
        ###Deploy to github pages
     - stage: deploy
+      install:
+        - npm install
+      script: 
+        - npm run-script build
       deploy:
         provider: pages
         skip_cleanup: true
