@@ -5,8 +5,7 @@ import:
   - source: backend/game/travis.yml
 
 ###STAGE2: Build everything
-language: node_js
-node_js: node
+language: generic
 dist: trusty 
 sudo: required
 services: 
@@ -29,6 +28,8 @@ jobs:
         - docker-compose build
 ###STAGE3: Deploy to github pages, needs to build again locally
     - stage: deploy
+    - language: node_js
+    - node_js: node
       install:
         - cd frontend/pokino-app
         - npm install
@@ -42,6 +43,6 @@ jobs:
         github_token: $GITHUB_TOKEN 
         local_dir: frontend/pokino-app/dist/pokino
         on:
-          branch: feature/CICD
+          branch: main
 
       
