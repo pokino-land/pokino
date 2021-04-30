@@ -16,4 +16,4 @@ jobs:
       script:
         - |
           docker exec -it game /bin/sh -c "./mvnw test"
-        
+          

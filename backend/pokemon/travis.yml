@@ -16,4 +16,4 @@ jobs:
       script:
         - |
           docker exec -it pokemon /bin/sh -c "./mvnw test"
-        
+          

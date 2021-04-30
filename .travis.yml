@@ -31,6 +31,4 @@ jobs:
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker-compose build
-
-
-      
+        
