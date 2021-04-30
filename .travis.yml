@@ -5,7 +5,8 @@
 #  - source: backend/game/travis.yml
 
 ###STAGE2: Build everything
-language: generic
+language: node_js
+node_js: node
 dist: trusty 
 sudo: required
 services: 
