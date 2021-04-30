@@ -73,7 +73,7 @@ export class enemy {
         }
 
         //if pokemon name is not found just return pikachu
-        return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'charmander.png'), transparent: true, alphaTest: 0.5 });
+        return new THREE.MeshBasicMaterial({ map: loader.load(this.m_pokemonPath + 'pikachu.png'), transparent: true, alphaTest: 0.5 });
     }
 
     setPosition(x: number, y: number) {
