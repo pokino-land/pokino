@@ -11,8 +11,9 @@ sudo: required
 services: 
   - docker
 
-#env:
-#  - DOCKER_COMPOSE_VERSION=1.29.0
+env:
+  - DOCKER_COMPOSE_VERSION=1.29.0
+  - NODE_VERSION="16.0.0"
 
 
 jobs:
@@ -28,7 +29,8 @@ jobs:
 #        - docker-compose build
 ###STAGE3: Deploy to github pages, needs to build again locally
     - stage: deploy
-      node_js: node
+      before_install:
+        - nvm install $NODE_VERSION
       install:
         - cd frontend/pokino-app
         - npm install
