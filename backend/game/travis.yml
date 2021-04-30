@@ -8,10 +8,10 @@ services:
 jobs:
   include:
     - stage: test
-      name: "Backend/Pokemon - Test"
+      name: "Backend/Game - Test"
       before_install:
-        - cd backend/pokemon
-        - docker build -t pokemon_image -f Dockerfile_CI .
+        - cd backend/game
+        - docker build -t game_image -f Dockerfile_CI .
         #- docker run -d -it --name frontend_ci frontend_image
      # script:
       #  - |
