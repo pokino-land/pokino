@@ -11,6 +11,11 @@ sudo: required
 services: 
   - docker
 
+stages:
+  - test
+  - build
+  - deploy
+
 env:
   - DOCKER_COMPOSE_VERSION=1.29.0
 
