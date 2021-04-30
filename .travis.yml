@@ -1,8 +1,10 @@
+###STAGE1: Test everything
 import:
   - source: frontend/pokino-app/travis.yml
   - source: backend/pokemon/travis.yml
+  - source: backend/game/travis.yml
 
-##start build
+###STAGE2: Build everything
 language: generic
 dist: trusty 
 sudo: required
@@ -24,7 +26,16 @@ jobs:
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker-compose build
-#script:
-#   - docker-compose build
-#        #script:
-#        #- docker-compose up --detach
+
+###Deploy to github pages
+jobs:
+   include:
+    - stage: deploy
+      name: "Deploy App to pages"
+      deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+      keep_history: true
+      on:
+        branch: main
