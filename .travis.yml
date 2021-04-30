@@ -1,5 +1,5 @@
-import:
-  - source: frontend/pokino-app/travis.yml
+#import:
+#  - source: frontend/pokino-app/travis.yml
 
 language: generic
 dist: trusty 
