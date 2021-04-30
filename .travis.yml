@@ -28,6 +28,7 @@ jobs:
 #        - docker-compose build
 ###STAGE3: Deploy to github pages, needs to build again locally
     - stage: deploy
+      node_js: node
       install:
         - cd frontend/pokino-app
         - npm install
