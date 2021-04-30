@@ -10,7 +10,7 @@ jobs:
     - stage: test
       name: "CI - Build & Test"
       before_install:
-        - docker build -t frontend_image .
+        - docker build -t frontend_image -f frontend/pokino-app .
         - docker run -d -it --name frontend_ci frontend_image
       script:
         - |
