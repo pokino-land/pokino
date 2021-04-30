@@ -27,13 +27,13 @@ jobs:
     #    - sudo mv docker-compose /usr/local/bin
     #    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     #    - docker-compose build
-       ###Deploy to github pages
+###STAGE3: Deploy to github pages, needs to build again locally
     - stage: deploy
       install:
         - cd frontend/pokino-app
         - npm install
       script: 
-        - npm run-script build
+        - npm run-script build -- --prod
       deploy:
         provider: pages
         skip_cleanup: true
