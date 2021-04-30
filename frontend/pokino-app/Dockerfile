@@ -2,7 +2,7 @@
 FROM node:12.7-alpine AS build
 RUN apk add chromium
 WORKDIR /usr/src/app
-COPY package.json package-lock.json ./
+COPY /usr/src/app/package.json package-lock.json ./
 ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN npm install
 COPY . .
