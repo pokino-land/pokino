@@ -6,7 +6,7 @@ COPY frontend/pokino-app/package.json frontend/pokino-app/package-lock.json ./
 ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN npm install
 COPY . .
-RUN npm run build
+RUN cd /frontend/pokino-app && npm run build
 
 ### Run the app ###
 #FROM nginx:1.17.1-alpine
