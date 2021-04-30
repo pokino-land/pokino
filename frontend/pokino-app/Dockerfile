@@ -6,7 +6,8 @@ COPY package.json package-lock.json ./
 ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run test
+#RUN npm run build
 
 ### Run the app ###
 #FROM nginx:1.17.1-alpine
