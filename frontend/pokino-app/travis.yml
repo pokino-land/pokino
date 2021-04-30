@@ -1,0 +1,18 @@
+language: generic
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test
+      name: "CI - Build & Test"
+      before_install:
+        - docker build -t frontend_image .
+        - docker run -d -it --name frontend_ci frontend_image
+      script:
+        - |
+          docker exec -it frontend_ci /bin/sh -c "npm run test"
+        
