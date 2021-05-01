@@ -9,6 +9,7 @@ jobs:
     - stage: deploy
       name: "deploy to github pages"
       install:
+        - nvm install node
         - cd frontend/pokino-app
         - npm install
       script:
