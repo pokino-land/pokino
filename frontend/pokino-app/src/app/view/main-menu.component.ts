@@ -14,18 +14,18 @@ export class MainMenuComponent {
   title = 'pokino';
   ready = false;
   pokemon: JsonPokemonObject = new JsonPokemonObject();
-  
+
   constructor(private router: Router, private apiService: ApiService) {
   }
-  
+
   toggleReady(): void {
 	  this.ready = true;
   }
-  
+
   public getReadyMessage(): string {
 	  return (this.ready ? '' : 'not ') + 'ready';
   }
-  
+
   public gotoGameScreen(): void{
     this.router.navigate(['/gameScreen']);
   }
@@ -33,7 +33,7 @@ export class MainMenuComponent {
   public gotoLeaderboard(): void{
     this.router.navigate(['/leaderboard']);
   }
-  
+
   public async getRandomPokemon(): Promise<JsonPokemonObject> {
       this.pokemon = await this.apiService.getRandomPokemon();
       return this.pokemon;
