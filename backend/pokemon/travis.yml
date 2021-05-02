@@ -1,0 +1,19 @@
+language: generic
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test
+      name: "Backend/Pokemon - Test"
+      before_install:
+        - cd backend/pokemon
+        - docker build -t pokemon_image -f Dockerfile .
+        - docker run -d -it --name pokemon pokemon_image
+      script:
+        - |
+          docker exec -it pokemon /bin/sh -c "./mvnw test"
+          
