@@ -11,7 +11,7 @@ COPY . .
 
 RUN sed -i 's/\r$//' mvnw
 
-RUN ./mvnw clean install
+RUN ./mvnw install
 
 EXPOSE 8080
 

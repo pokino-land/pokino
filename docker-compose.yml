@@ -20,6 +20,10 @@ services:
     build: ./backend/pokemon
     ports:
       - "8000:8080"
+  websocket-demo:
+    build: ./backend/websocket-demo
+    ports:
+      - "8002:8080"
   frontend:
     build: ./frontend/pokino-app
     ports:
