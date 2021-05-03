@@ -1,12 +1,15 @@
 import * as THREE from 'three';
 import { player } from "../../model/render/player"
 import { enemy } from "../../model/render/enemy"
-import {WeatherWind} from "../../api/json-weather-object";
+import { WeatherWind } from "../../api/json-weather-object";
+import TextSprite from '@seregpie/three.text-sprite';
 export class PokinoScene extends THREE.Scene {
 
     m_assetPath = '../../assets/';
     m_camera!: THREE.OrthographicCamera;
     m_windArrow: THREE.Mesh = new THREE.Mesh();
+    m_windText: TextSprite = new TextSprite();
+
     m_sceneWidth: number = 0;
     m_sceneHeight: number = 0;
 
@@ -23,7 +26,7 @@ export class PokinoScene extends THREE.Scene {
 
         const hours = new Date().getHours();
         const START_DAYLIGHT_HOUR = 7;
-        const END_DAYLIGHT_HOUR  = 20;
+        const END_DAYLIGHT_HOUR = 20;
         const isDayTime = hours > START_DAYLIGHT_HOUR && hours < END_DAYLIGHT_HOUR;
         var bgTexture;
         if (isDayTime) {
@@ -35,12 +38,12 @@ export class PokinoScene extends THREE.Scene {
 
 
         this.background = bgTexture;
-        this.initWindArrow();
+        this.initWindDescription();
 
     }
 
 
-    initWindArrow(){
+    initWindDescription() {
         var windArrowSize = 30;
         const geometry = new THREE.PlaneGeometry(windArrowSize, windArrowSize);
         const loader = new THREE.TextureLoader();
@@ -49,13 +52,33 @@ export class PokinoScene extends THREE.Scene {
         var margin = 20;
         this.m_windArrow.translateX(- this.m_sceneWidth / 2 + windArrowSize / 2 + margin);
         this.m_windArrow.translateY(this.m_sceneHeight / 2 - windArrowSize / 2 - margin);
- 
+
         this.add(this.m_windArrow);
+
+        this.m_windText = new TextSprite({
+            alignment: 'left',
+            color: '#ff0000',
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: 20,
+            fontStyle: 'normal',
+            text: [
+              'Wind Speed:'  
+            ].join('\n'),
+          });
+          this.m_windText.translateX(- this.m_sceneWidth / 2 + windArrowSize / 2 + margin * 4);
+          this.m_windText.translateY(this.m_sceneHeight / 2 - windArrowSize / 2 - margin * 4);
+          this.add(this.m_windText);
+
     }
 
     update(wind: WeatherWind) {
-        var wind_radians = wind.deg * 180.0/Math.PI;
-        this.m_windArrow.rotation.z = wind_radians - Math.PI/2;
+        var wind_radians = wind.deg * 180.0 / Math.PI;
+        this.m_windArrow.rotation.z = wind_radians - Math.PI / 2;
+
+        this.m_windText.text = [
+            'Wind Speed:',
+            wind.speed.toLocaleString(),
+          ].join(' ');
 
 
     }
