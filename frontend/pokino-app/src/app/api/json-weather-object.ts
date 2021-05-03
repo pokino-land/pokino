@@ -17,7 +17,7 @@ export class JsonWeatherObject implements JsonObject {
 	}
 }
 
-class WeatherWind {
+export class WeatherWind {
 	public speed: number = 0;
 	public deg: number = 0;
 

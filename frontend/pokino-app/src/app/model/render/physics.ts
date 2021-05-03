@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import {WeatherWind} from "../../api/json-weather-object";
 
 export class ballPhysicsObject {
 
@@ -51,11 +51,28 @@ export class physics {
     m_sceneWidth: number;
     m_sceneHeight: number;
 
+    m_windForce: THREE.Vector2 = new THREE.Vector2(0,0);
+
     constructor(width: number, height: number) {
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
+        
     }
-    update() {
+
+
+    updateWindForce(wind: WeatherWind){
+        var windMultiplier = 4;
+        var wind_radians = wind.deg * 180.0/Math.PI;
+        this.m_windForce.x = Math.cos(wind_radians) * wind.speed * windMultiplier;
+        this.m_windForce.y = Math.sin(wind_radians) * wind.speed * windMultiplier;
+            
+    }
+
+
+    update( wind: WeatherWind) {
+
+       this.updateWindForce(wind);
+
         var stepSize = 0.1;
         //apply forces until ball is out of screen
 
@@ -64,7 +81,7 @@ export class physics {
             //using explicit euler numerical integration scheme
             //apply gravity
             const gravitationalConstant = 9.81;
-            var f_sum = new THREE.Vector2(this.ball.force.x, this.ball.force.y - gravitationalConstant * 2);
+            var f_sum = new THREE.Vector2(this.ball.force.x + this.m_windForce.x, this.ball.force.y - gravitationalConstant * 2 + this.m_windForce.y);
             this.ball.position = new THREE.Vector2(this.ball.position.x + stepSize * this.ball.velocity.x, this.ball.position.y + stepSize * this.ball.velocity.y)
             this.ball.velocity = new THREE.Vector2(this.ball.velocity.x + stepSize * f_sum.x, this.ball.velocity.y + stepSize * f_sum.y)
 
