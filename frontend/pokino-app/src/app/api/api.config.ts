@@ -1,8 +1,9 @@
 export class ApiConfig {
     private static readonly ROOT_URL: string = 'http://localhost';
+    private static readonly WEBSOCKET_ROOT_URL: string = 'ws://localhost';
     private static readonly POKE_PORT: string = '8000';
     private static readonly GAME_PORT: string = '8001';
-    private static readonly MQ_PORT: string = '8001';
+    private static readonly WEBSOCKET_PORT: string = '8002';
 
     private static readonly POKE_ENDPOINT: string = 'pokemon';
     private static readonly RANDOM_ENDPOINT: string = 'random';
@@ -10,6 +11,8 @@ export class ApiConfig {
     private static readonly GAME_ENDPOINT: string = 'game';
     private static readonly PLAYER_ENDPOINT: string = 'player';
     private static readonly READY_ENDPOINT: string = 'clickReady';
+    private static readonly WEBSOCKET_INIT_ENDPOINT: string = 'pokino-websocket';
+    private static readonly WEBSOCKET_GREETINGS_TOPIC: string = '/topic/greetings';
 
     /**
      * example: http://localhost:8000/pokemon/random
@@ -45,10 +48,16 @@ export class ApiConfig {
         return this.buildUrl(root, endpoints);
     }
 
+    // ws://localhost:8002/pokino-websocket
+    public static getWebsocketUrl(): URL {
+        const root: Array<string> = [this.WEBSOCKET_ROOT_URL, this.WEBSOCKET_PORT];
+        const endpoints: Array<string> = [this.WEBSOCKET_INIT_ENDPOINT];
+        return this.buildUrl(root, endpoints);
+    }
 
-    public static getMqUrl(): URL {
-        const root: Array<string> = [this.ROOT_URL, this.MQ_PORT];
-        return this.buildUrl(root, []);
+    // /topic/greetings
+    public static getWebsocketGreetingsTopic(): string {
+        return this.WEBSOCKET_GREETINGS_TOPIC;
     }
 
 
