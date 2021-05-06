@@ -31,10 +31,11 @@ jobs:
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker-compose build
+        - docker push steven1schuerstedt/game-service:latest
     - stage: deploy
       name: "deploy to GCP"
       script: 
-        - docker push steven1schuerstedt/game-service:latest
+        #- docker push steven1schuerstedt/game-service:latest
         - docker push steven1schuerstedt/pokemon-service:latest
         - docker push steven1schuerstedt/websocket-demo:latest
         - docker push steven1schuerstedt/frontend:latest
