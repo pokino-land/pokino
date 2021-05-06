@@ -1,8 +1,8 @@
-import:
+#import:
   #- source: frontend/pokino-app/travis.yml
   #- source: backend/pokemon/travis.yml
   #- source: backend/game/travis.yml
-  - source: deployGCP.yml
+  #- source: deployGCP.yml
 
 
 language: generic
@@ -31,4 +31,11 @@ jobs:
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker-compose build
+    - stage: deploy
+      name: "deploy to GCP"
+      script: 
+        - docker push steven1schuerstedt/game-service:latest
+        - docker push steven1schuerstedt/pokemon-service:latest
+        - docker push steven1schuerstedt/websocket-demo:latest
+        - docker push steven1schuerstedt/frontend:latest
         
