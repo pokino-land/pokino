@@ -1,8 +1,8 @@
 import:
-  - source: frontend/pokino-app/travis.yml
-  - source: backend/pokemon/travis.yml
-  - source: backend/game/travis.yml
-  - source: deploy.yml
+  #- source: frontend/pokino-app/travis.yml
+  #- source: backend/pokemon/travis.yml
+  #- source: backend/game/travis.yml
+  - source: deployGCP.yml
 
 
 language: generic

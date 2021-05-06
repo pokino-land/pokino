@@ -1,0 +1,18 @@
+language: generic
+os: linux
+dist: bionic
+
+services: 
+  - docker
+
+jobs:
+  include:
+    - stage: deploy
+      name: "deploy to GCP"
+      script:
+        - docker push steven1schuerstedt/game-service:latest
+        - docker push steven1schuerstedt/pokemon-service:latest
+        - docker push steven1schuerstedt/websocket-demo:latest
+        - docker push steven1schuerstedt/frontend:latest
+
+          

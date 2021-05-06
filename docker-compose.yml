@@ -9,6 +9,7 @@ services:
       - "5672:5672"
       - "15672:15672"
   game-service:
+    image: steven1schuerstedt/game-service
     build: ./backend/game
     ports:
       - "8001:8080"
@@ -17,14 +18,17 @@ services:
     environment:
       RABBITMQ_SERVER: rabbitmq
   pokemon-service:
+    image: steven1schuerstedt/pokemon-service
     build: ./backend/pokemon
     ports:
       - "8000:8080"
   websocket-demo:
+    image: steven1schuerstedt/websocket-demo
     build: ./backend/websocket-demo
     ports:
       - "8002:8080"
   frontend:
+    image: steven1schuerstedt/frontend
     build: ./frontend/pokino-app
     ports:
       - "4200:80"
