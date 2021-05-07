@@ -24,17 +24,33 @@ jobs:
   include:
     - stage: build
       name: "Build complete App"
+      cache:
+        directories:
+          - "$HOME/google-cloud-sdk/"
       before_install:
-        - sudo rm /usr/local/bin/docker-compose
-        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-        - chmod +x docker-compose
-        - sudo mv docker-compose /usr/local/bin
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker-compose build
-        - docker push steven1schuerstedt/game-service:latest
-        - docker push steven1schuerstedt/pokemon-service:latest
-        - docker push steven1schuerstedt/websocket-demo:latest
-        - docker push steven1schuerstedt/frontend:latest
+        - gcloud version || true
+        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+        # Add gcloud to $PATH
+        - source /home/travis/google-cloud-sdk/path.bash.inc
+        - gcloud version
+        #login to docker
+        #- sudo rm /usr/local/bin/docker-compose
+        #- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+        #- chmod +x docker-compose
+        #- sudo mv docker-compose /usr/local/bin
+        #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        #build everything
+        #- docker-compose build
+        #push images to docker hub
+        #- docker push steven1schuerstedt/game-service:latest
+        #- docker push steven1schuerstedt/pokemon-service:latest
+        #- docker push steven1schuerstedt/websocket-demo:latest
+        #- docker push steven1schuerstedt/frontend:latest
+        #connect to compute engine
+        - gcloud auth activate-service-account --key-file=pokino-312318-3781a956fd8d.json
+        - gcloud config configurations activate cd
+        #run deploy script
+        - gcloud compute ssh steven@pokino-backend --command='./runPokino'
    # - stage: deploy
     #  name: "deploy to GCP"
      # script: 
