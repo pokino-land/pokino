@@ -28,7 +28,7 @@ jobs:
         directories:
           - "$HOME/google-cloud-sdk/"
       before_install:
-        - openssl aes-256-cbc -K $encrypted_94156f5926cd_key -iv $encrypted_94156f5926cd_iv -in super_secret2.txt -out pokino-312318-eda5cca61214.json -d
+        - openssl aes-256-cbc -K $encrypted_0f5231d34a8b_key -iv $encrypted_0f5231d34a8b_iv -in pokino-312318-d0c162062d59.json.enc -out pokino-312318-d0c162062d59.json -d
         - gcloud version || true
         - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
         # Add gcloud to $PATH
@@ -48,7 +48,7 @@ jobs:
         #- docker push steven1schuerstedt/websocket-demo:latest
         #- docker push steven1schuerstedt/frontend:latest
         #connect to compute engine
-        - gcloud auth activate-service-account --key-file=pokino-312318-eda5cca61214.json
+        - gcloud auth activate-service-account --key-file=pokino-312318-d0c162062d59.json
         #- gcloud config configurations activate cd
         #run deploy script
         - gcloud compute ssh steven@pokino-backend --command='./runPokino'
