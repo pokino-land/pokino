@@ -1,6 +1,5 @@
 package ch.pokino.websocketdemo.application;
 
-import ch.pokino.websocketdemo.config.WebSocketConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,15 +19,15 @@ public class MessagingStompWebsocketApplication implements WebMvcConfigurer {
 		SpringApplication.run(MessagingStompWebsocketApplication.class, args);
 	}
 
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/pokino-websocket").allowedOrigins("*");
-				registry.addMapping("/").allowedOrigins("*");
-				registry.addMapping("/topic").allowedOrigins("*");
-				registry.addMapping("/gs-guide-websocket").allowedOrigins("*");
-			}
-		};
-	}
+//	public WebMvcConfigurer corsConfigurer() {
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addCorsMappings(CorsRegistry registry) {
+//				registry.addMapping("/pokino-websocket").allowedOrigins("*");
+//				registry.addMapping("/").allowedOrigins("*");
+//				registry.addMapping("/topic").allowedOrigins("*");
+//				registry.addMapping("/gs-guide-websocket").allowedOrigins("*");
+//			}
+//		};
+//	}
 }
