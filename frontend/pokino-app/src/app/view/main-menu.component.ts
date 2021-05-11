@@ -15,8 +15,11 @@ export class MainMenuComponent {
   title = 'pokino';
   ready = false;
   pokemon: JsonPokemonObject = new JsonPokemonObject();
+
+
   weather: JsonWeatherObject = new JsonWeatherObject();
   player: JsonPlayerObject = new JsonPlayerObject();
+
 
   constructor(private router: Router, private apiService: ApiService) {
     this.getRandomPokemon();
@@ -27,11 +30,11 @@ export class MainMenuComponent {
 	  this.ready = true;
 	  this.apiService.toggleReadyPlayer(this.player.name);
   }
-  
+
   public getReadyMessage(): string {
 	  return (this.ready ? '' : 'not ') + 'ready';
   }
-  
+
   public gotoGameScreen(): void{
     this.router.navigate(['/gameScreen']);
   }
