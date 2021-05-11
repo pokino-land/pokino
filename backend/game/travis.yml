@@ -1,0 +1,19 @@
+language: generic
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test
+      name: "Backend/Game - Test"
+      before_install:
+        - cd backend/game
+        - docker build -t game_image -f Dockerfile .
+        - docker run -d -it --name game game_image
+      script:
+        - |
+          docker exec -it game /bin/sh -c "./mvnw test"
+          

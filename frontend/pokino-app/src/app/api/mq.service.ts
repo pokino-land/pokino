@@ -40,7 +40,7 @@ export class MqService {
                     throw error1;
                 }
 
-                const queue = 'gameStateQueue';
+                const queue = 'pokino-queue';
 
                 channel.assertQueue(queue, {
                     durable: false

@@ -1,0 +1,26 @@
+language: node_js
+node_js: node
+os: linux
+dist: bionic
+
+
+jobs:
+  include:
+    - stage: deploy
+      name: "deploy to github pages"
+      install:
+        - nvm install node
+        - cd frontend/pokino-app
+        - npm install
+      script:
+        - npm run-script build -- --prod
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        repo: StevenSchuerstedt/StevenSchuerstedt.github.io
+        target_branch: master
+        github_token: $GITHUB_TOKEN 
+        local_dir: frontend/pokino-app/dist/pokino
+        on:
+          branch: main
+          

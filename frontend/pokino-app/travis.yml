@@ -1,0 +1,15 @@
+language: generic
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test
+      name: "Frontend - Tests"
+      before_install:
+        - cd frontend/pokino-app
+        - docker build -t frontend_image -f Dockerfile_CI .
+        
