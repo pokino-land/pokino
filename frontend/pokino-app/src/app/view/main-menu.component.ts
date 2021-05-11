@@ -43,6 +43,10 @@ export class MainMenuComponent {
     this.router.navigate(['/leaderboard']);
   }
 
+  public gotoWebsocketTest(): void{
+    this.router.navigate(['/websocket-test']);
+  }
+
   public async getRandomPokemon(): Promise<JsonPokemonObject> {
       this.pokemon = await this.apiService.getRandomPokemon();
       return this.pokemon;
