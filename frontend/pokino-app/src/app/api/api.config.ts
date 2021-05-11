@@ -1,6 +1,8 @@
+import {environment} from "../../environments/environment";
+
 export class ApiConfig {
-    private static readonly ROOT_URL: string = 'http://localhost';
-    private static readonly WEBSOCKET_ROOT_URL: string = 'ws://localhost';
+    private static readonly ROOT_URL: string = 'http://' + environment.rootAddress;
+    private static readonly WEBSOCKET_ROOT_URL: string = 'ws://' + environment.rootAddress;
     private static readonly POKE_PORT: string = '8000';
     private static readonly GAME_PORT: string = '8001';
     private static readonly WEBSOCKET_PORT: string = '8002';
