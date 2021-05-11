@@ -8,7 +8,7 @@
     "build": "ng build",
     "build-prod": "ng build --prod",
     "test": "ng test",
-    "test-prod": "ng test --prod",
+    "test-prod": "ng test --prod --karma-config ./karma-headless.conf.js",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
