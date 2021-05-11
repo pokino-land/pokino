@@ -3,15 +3,15 @@ services:
   pokemon-service:
     build: ./backend/pokemon
     ports:
-      - "8000:8080"
+      - "8000:8000"
   game-service:
     build: ./backend/game
     ports:
-      - "8001:8080"
+      - "8001:8001"
   websocket-demo:
     build: ./backend/websocket-demo
     ports:
-      - "8002:8080"
+      - "8002:8002"
   frontend:
     build: ./frontend/pokino-app
     ports:
