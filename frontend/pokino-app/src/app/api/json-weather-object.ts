@@ -4,13 +4,15 @@ export class JsonWeatherObject implements JsonObject {
 
 	public wind: WeatherWind = new WeatherWind();
 	public clouds: number = 0;
+	public location: string = '';
 
 	constructor() {}
 
 	public static fromJSON(data: any): JsonWeatherObject {
 		const weather: JsonWeatherObject = new JsonWeatherObject();
-		weather.wind = WeatherWind.fromJSON(data.wind);
 		weather.clouds = data.clouds.all;
+		weather.wind = data.wind;
+		weather.location = data.name;
 		return weather;
 	}
 }

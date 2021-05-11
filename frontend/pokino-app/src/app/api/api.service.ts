@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { JsonPokemonObject } from './json-pokemon-object';
 import { ApiConfig } from "./api.config";
 import {JsonWeatherObject} from "./json-weather-object";
+import {JsonPlayerObject} from "./json-player-object";
 
 
 @Injectable()
@@ -26,7 +27,31 @@ export class ApiService {
 		return await this.get(url.href)
 			.toPromise()
 			.then((data: JsonWeatherObject) => {
-				return data;
+				return JsonWeatherObject.fromJSON(data);
+			});
+	}
+
+	public async loginPlayer(playerName: string): Promise<JsonPlayerObject> {
+		const url: URL = ApiConfig.getLoginUrl(playerName);
+		const player: JsonPlayerObject = this.createPlayer(playerName);
+
+		return await this.post(url.href, player)
+			.toPromise()
+			.then((id: any) => {
+				player.id = id;
+				return player;
+			});
+	}
+
+	public async toggleReadyPlayer(playerName: string): Promise<JsonPlayerObject> {
+		const url: URL = ApiConfig.getPlayerReadyUrl(playerName);
+		const player: JsonPlayerObject = this.createPlayer(playerName);
+
+		return await this.post(url.href, player)
+			.toPromise()
+			.then((data: any) => {
+				console.log(data);
+				return player;
 			});
 	}
 
@@ -36,6 +61,12 @@ export class ApiService {
 
 	private post(url: string, payload: any): any {
 		return this.http.post(url, payload);
+	}
+
+	private createPlayer(playerName: string): JsonPlayerObject {
+		const player: JsonPlayerObject = new JsonPlayerObject();
+		player.name = playerName;
+		return player;
 	}
 
 }

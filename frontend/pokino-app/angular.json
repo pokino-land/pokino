@@ -50,6 +50,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
+			  "baseHref": "https://stevenschuerstedt.github.io/",
               "budgets": [
                 {
                   "type": "initial",
@@ -133,6 +134,10 @@
               "devServerTarget": "pokino:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {}
         }
       }
     }

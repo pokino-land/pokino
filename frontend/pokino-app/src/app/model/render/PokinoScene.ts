@@ -13,7 +13,20 @@ export class PokinoScene extends THREE.Scene {
         this.m_camera.position.z = cameraDistanceFromScene;
 
         const loader = new THREE.TextureLoader();
-        const bgTexture = loader.load(this.m_assetPath + 'images/bg.jpg');
+
+        const hours = new Date().getHours();
+        const START_DAYLIGHT_HOUR = 7;
+        const END_DAYLIGHT_HOUR  = 20;
+        const isDayTime = hours > START_DAYLIGHT_HOUR && hours < END_DAYLIGHT_HOUR;
+        var bgTexture;
+        if (isDayTime) {
+            bgTexture = loader.load(this.m_assetPath + 'images/bg_day.png');
+        }
+        else {
+            bgTexture = loader.load(this.m_assetPath + 'images/bg_night.png');
+        }
+
+
         this.background = bgTexture;
 
 
@@ -26,6 +39,7 @@ export class PokinoScene extends THREE.Scene {
     addPlayer(player: player) {
         this.add(player.m_mesh);
         this.add(player.m_ball.m_mesh);
+        this.add(player.m_throwForceProgressBar);
     }
 
     addEnemy(enemy: enemy) {

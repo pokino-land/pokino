@@ -51,12 +51,12 @@ export class physics {
     m_sceneWidth: number;
     m_sceneHeight: number;
 
-    constructor(width: number, height: number){
+    constructor(width: number, height: number) {
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
     }
-    updatePositionAccordingToVeloctiy() {
-        var h = 0.1;   //step size
+    update() {
+        var stepSize = 0.1;
         //apply forces until ball is out of screen
 
         if (this.ball.activate) {
@@ -65,15 +65,15 @@ export class physics {
             //apply gravity
             const gravitationalConstant = 9.81;
             var f_sum = new THREE.Vector2(this.ball.force.x, this.ball.force.y - gravitationalConstant * 2);
-            this.ball.position = new THREE.Vector2(this.ball.position.x + h * this.ball.velocity.x, this.ball.position.y + h * this.ball.velocity.y)
-            this.ball.velocity = new THREE.Vector2(this.ball.velocity.x + h * f_sum.x, this.ball.velocity.y + h * f_sum.y)
+            this.ball.position = new THREE.Vector2(this.ball.position.x + stepSize * this.ball.velocity.x, this.ball.position.y + stepSize * this.ball.velocity.y)
+            this.ball.velocity = new THREE.Vector2(this.ball.velocity.x + stepSize * f_sum.x, this.ball.velocity.y + stepSize * f_sum.y)
 
         } else {
             this.ball.velocity = new THREE.Vector2(0, 0);
             this.ball.position = new THREE.Vector2(0, 1000)
         }
-        const leftLimit = -this.m_sceneWidth/2;
-        const rightLimit = this.m_sceneWidth/2;
+        const leftLimit = -this.m_sceneWidth / 2;
+        const rightLimit = this.m_sceneWidth / 2;
         const upperLimit = this.m_sceneHeight / 2;
         const lowerLimit = -this.m_sceneHeight / 2;
         if (this.ball.position.y < lowerLimit || this.ball.position.y > upperLimit || this.ball.position.x < leftLimit || this.ball.position.x > rightLimit) {
@@ -81,13 +81,8 @@ export class physics {
         }
 
         //update enemy  
-        this.enemy.position = new THREE.Vector2(this.enemy.position.x + h * this.enemy.velocity.x, this.enemy.position.y + h * this.enemy.velocity.y)
-        this.enemy.velocity = new THREE.Vector2(this.enemy.velocity.x + h * this.enemy.force.x, this.enemy.velocity.y + h * this.enemy.force.y)
-
-        //quick fix for now
-        this.x = this.x + 0.05;
-        var y = 50 * Math.sin(this.x) + 150;
-        this.enemy.position.x = y;
+        this.enemy.position = new THREE.Vector2(this.enemy.position.x + stepSize * this.enemy.velocity.x, this.enemy.position.y + stepSize * this.enemy.velocity.y)
+        this.enemy.velocity = new THREE.Vector2(this.enemy.velocity.x + stepSize * this.enemy.force.x, this.enemy.velocity.y + stepSize * this.enemy.force.y)
 
         if (this.checkForCollision()) {
             this.enemy.collided = true;
@@ -106,8 +101,8 @@ export class physics {
         var cy = this.ball.position.y;
         var radius = this.ball.radius;
 
-        var rx = this.enemy.position.x;
-        var ry = this.enemy.position.y;
+        var rx = this.enemy.position.x - this.enemy.width / 2;
+        var ry = this.enemy.position.y - this.enemy.height / 2;
         var rw = this.enemy.width;
         var rh = this.enemy.height;
 
