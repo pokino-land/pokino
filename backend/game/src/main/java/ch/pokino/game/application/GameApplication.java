@@ -1,6 +1,6 @@
 package ch.pokino.game.application;
 
-import ch.pokino.game.GameApplicationConfig;
+import ch.pokino.game.config.GameApplicationConfig;
 import ch.pokino.game.config.WebSocketConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
