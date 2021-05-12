@@ -8,10 +8,6 @@ services:
     build: ./backend/game
     ports:
       - "8001:8001"
-  websocket-demo:
-    build: ./backend/websocket-demo
-    ports:
-      - "8002:8002"
   frontend:
     build: ./frontend/pokino-app
     ports:
