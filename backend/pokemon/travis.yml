@@ -16,4 +16,6 @@ jobs:
       script:
         - |
           docker exec -it pokemon /bin/sh -c "./mvnw test"
-          
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
