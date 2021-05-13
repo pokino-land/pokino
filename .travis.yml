@@ -51,7 +51,7 @@ jobs:
         - gcloud auth activate-service-account --key-file=pokino-312318-d0c162062d59.json
         #- gcloud config configurations activate cd
         #run deploy script
-        - gcloud compute ssh steven@pokino-backend --command='./runPokino'
+        - gcloud compute ssh 1042285617495-compute@pokino-backend --project=pokino-312318 --command='sudo home/steven/runPokino'
    # - stage: deploy
     #  name: "deploy to GCP"
      # script: 
