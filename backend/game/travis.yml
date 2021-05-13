@@ -12,7 +12,8 @@ jobs:
       before_install:
         - cd backend/game
         - docker build -t game_image -f Dockerfile .
-        - docker run -d -it --name game game_image
+        - ci_env=`bash <(curl -s https://codecov.io/env)`
+        - docker run $ci_env -d -it --name game game_image
       script:
         - token=d369fe97-699b-443e-a814-641d90a2bf43
         - upload_to_codecov="bash <(curl -s https://codecov.io/bash) -t $token"
