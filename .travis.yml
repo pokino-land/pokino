@@ -16,6 +16,9 @@ stages:
   - build
   - deploy
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
 env:
   - DOCKER_COMPOSE_VERSION=1.29.0
 
