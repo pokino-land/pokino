@@ -1,8 +1,6 @@
 package ch.pokino.game;
 
 import ch.pokino.game.messaging.GameMessage;
-import ch.pokino.game.messaging.MessageSender;
-import com.fasterxml.jackson.core.JsonFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,12 +18,7 @@ public class GameManager {
 
     private final Queue<Player> waitingPlayers = new ConcurrentLinkedQueue<>();
     private final List<Game> games = new ArrayList<>();
-    private final MessageSender sender;
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);
-
-    public GameManager(MessageSender sender) {
-        this.sender = sender;
-    }
 
     public String registerPlayer(String playerName) throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
         if (!isNameAvailable(playerName)) {
@@ -45,7 +38,7 @@ public class GameManager {
                 Player secondPlayer = waitingPlayers.poll();
                 Game newGame = new Game(new Tuple<>(firstPlayer, secondPlayer));
                 games.add(newGame);
-                writeGameInitMessageOnQueue(newGame);
+                writeGameInitMessageOnWebsocket(newGame);
             }
         }
         return newPlayerId;
@@ -56,9 +49,8 @@ public class GameManager {
      * game init queue to inform two players in the frontend that they have been matched and can now enter the game.
      * @param game a new game for which we write a message
      */
-    private void writeGameInitMessageOnQueue(Game game) {
+    private void writeGameInitMessageOnWebsocket(Game game) {
         GameMessage message = new GameMessage(game.getPlayers().first.getId(), game.getPlayers().second.getId());
-        this.sender.send(message);
     }
 
     public List<Game> getGames() {

@@ -5,7 +5,7 @@ export class ApiConfig {
     private static readonly WEBSOCKET_ROOT_URL: string = 'ws://' + environment.rootAddress;
     private static readonly POKE_PORT: string = '8000';
     private static readonly GAME_PORT: string = '8001';
-    private static readonly WEBSOCKET_PORT: string = '8002';
+    private static readonly WEBSOCKET_PORT: string = '8001';
 
     private static readonly POKE_ENDPOINT: string = 'pokemon';
     private static readonly RANDOM_ENDPOINT: string = 'random';

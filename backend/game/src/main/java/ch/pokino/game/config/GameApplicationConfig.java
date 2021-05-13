@@ -1,4 +1,4 @@
-package ch.pokino.game;
+package ch.pokino.game.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

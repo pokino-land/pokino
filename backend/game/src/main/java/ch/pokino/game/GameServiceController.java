@@ -1,9 +1,7 @@
 package ch.pokino.game;
 
 
-import ch.pokino.game.messaging.MessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -11,9 +9,6 @@ import org.springframework.web.bind.annotation.*;
 public class GameServiceController {
 
     private final GameManager gameManager;
-
-    @Autowired
-    MessageSender sender;
 
     public GameServiceController(GameManager gameManager) {
         this.gameManager = gameManager;
