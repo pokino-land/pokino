@@ -14,8 +14,6 @@ jobs:
         - docker build -t pokemon_image -f Dockerfile .
         - docker run -d -it --name pokemon pokemon_image
       script:
-        - |
-          docker exec -it pokemon /bin/sh -c "./mvnw test"
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+        - token=d369fe97-699b-443e-a814-641d90a2bf43
+        - upload_to_codecov="bash <(curl -s https://codecov.io/bash) -t $token"
+        - docker exec -it pokemon /bin/sh -c "./mvnw test && $upload_to_codecov"
