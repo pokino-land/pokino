@@ -17,4 +17,4 @@ jobs:
       script:
         - token=d369fe97-699b-443e-a814-641d90a2bf43
         - upload_to_codecov="bash <(curl -s https://codecov.io/bash) -t $token"
-        - docker exec -it game /bin/sh -c "./mvnw test && $upload_to_codecov"
+        - docker exec -it game bash -c "./mvnw test && $upload_to_codecov"
