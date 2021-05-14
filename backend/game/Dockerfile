@@ -1,8 +1,8 @@
 FROM amazoncorretto:11-alpine-jdk
 
-# Does fail in ./mvnw clean install because it needs to create a folder
-# RUN addgroup -S spring && adduser -S spring -G spring
-# USER spring:spring
+RUN apk update && apk upgrade
+RUN apk add --no-cache bash
+RUN apk add curl git
 
 WORKDIR /app
 RUN mkdir target

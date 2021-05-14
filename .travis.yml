@@ -16,6 +16,9 @@ stages:
   - build
   - deploy
 
+notifications:
+  email: false
+
 env:
   - DOCKER_COMPOSE_VERSION=1.29.0
 
