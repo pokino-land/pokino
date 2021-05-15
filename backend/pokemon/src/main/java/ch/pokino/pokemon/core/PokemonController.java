@@ -12,8 +12,6 @@ import java.util.Optional;
 public class PokemonController {
 
     private final PokemonService pokemonService;
-    private static final List<String> RANDOM_POKEMON_NAMES = Arrays.asList("Bulbasaur", "Pikachu", "Squirtle",
-            "Machop", "Psyduck", "Golbat", "Charmander");
 
     public PokemonController(PokemonService pokemonService) {
         this.pokemonService = pokemonService;
@@ -31,6 +29,6 @@ public class PokemonController {
 
     @GetMapping("/random")
     public Pokemon getRandomPokemon() {
-        return this.pokemonService.getPokemonFilteredByName(RANDOM_POKEMON_NAMES);
+        return this.pokemonService.getRandomPokemon();
     }
 }

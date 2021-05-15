@@ -11,6 +11,7 @@ public class Pokemon {
     @Id
     @GeneratedValue
     private Long id;
+
     private int pokeDexIdx;
     private String name;
     private String type1;
