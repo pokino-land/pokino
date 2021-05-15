@@ -2,6 +2,7 @@ import:
   - source: frontend/pokino-app/travis.yml
   - source: backend/pokemon/travis.yml
   - source: backend/game/travis.yml
+  - source: backend/weather/travis.yml
   - source: deploy.yml
 
 
@@ -14,7 +15,7 @@ services:
 stages:
   - test
   - build
-  - deploy
+#  - deploy
 
 notifications:
   email: false
