@@ -14,7 +14,7 @@ node_modules
 
 # Build temporary files
 target/
-#.mvn
+.mvn
 
 # IntelliJ files
 *.iml
