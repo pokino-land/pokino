@@ -5,7 +5,6 @@ import:
   - source: backend/weather/travis.yml
   - source: deploy.yml
 
-
 language: generic
 dist: trusty 
 sudo: required
