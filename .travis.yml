@@ -1,9 +1,8 @@
-#import:
-  #- source: frontend/pokino-app/travis.yml
-  #- source: backend/pokemon/travis.yml
-  #- source: backend/game/travis.yml
-  #- source: deployGCP.yml
-
+import:
+  - source: frontend/pokino-app/travis.yml
+  - source: backend/pokemon/travis.yml
+  - source: backend/game/travis.yml
+ 
 
 language: generic
 dist: trusty 
@@ -35,22 +34,23 @@ jobs:
         - source /home/travis/google-cloud-sdk/path.bash.inc
         - gcloud version
         #login to docker
-        #- sudo rm /usr/local/bin/docker-compose
-        #- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-        #- chmod +x docker-compose
-        #- sudo mv docker-compose /usr/local/bin
-        #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - sudo rm /usr/local/bin/docker-compose
+        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+        - chmod +x docker-compose
+        - sudo mv docker-compose /usr/local/bin
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         #build everything
-        #- docker-compose build
+        - docker-compose build
         #push images to docker hub
-        #- docker push steven1schuerstedt/game-service:latest
-        #- docker push steven1schuerstedt/pokemon-service:latest
-        #- docker push steven1schuerstedt/websocket-demo:latest
-        #- docker push steven1schuerstedt/frontend:latest
+        - docker push steven1schuerstedt/game-service:latest
+        - docker push steven1schuerstedt/pokemon-service:latest
+        - docker push steven1schuerstedt/websocket-demo:latest
+        - docker push steven1schuerstedt/frontend:latest
         #connect to compute engine
         - gcloud auth activate-service-account --key-file=pokino-312318-d0c162062d59.json
         #- gcloud config configurations activate cd
         #run deploy script
+        #- gcloud compute scp docker_deploy.sh pokino-backend:~/
         - gcloud compute ssh 1042285617495-compute@pokino-backend --project=pokino-312318 --zone=europe-west6-a --command='sudo /home/steven/runPokino'
    # - stage: deploy
     #  name: "deploy to GCP"
