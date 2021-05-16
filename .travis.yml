@@ -3,7 +3,7 @@ import:
   - source: backend/pokemon/travis.yml
   - source: backend/game/travis.yml
   - source: backend/weather/travis.yml
-  - source: deploy.yml
+#  - source: deploy.yml
 
 language: generic
 dist: trusty 
