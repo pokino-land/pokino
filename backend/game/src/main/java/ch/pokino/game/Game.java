@@ -8,13 +8,13 @@ public class Game {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Game.class);
     private final Tuple<Player, Player> players;
+
     private final String id;
 
     enum GameState {
-        STARTED
+        STARTED;
 
     }
-
     private GameState state;
 
     public Game(Tuple<Player, Player> players) {
@@ -22,6 +22,10 @@ public class Game {
         this.id = GameIdCreator.createId();
         this.state = GameState.STARTED;
         LOGGER.info("Initialized new game " + id + " with players " + players);
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Tuple<Player, Player> getPlayers() {

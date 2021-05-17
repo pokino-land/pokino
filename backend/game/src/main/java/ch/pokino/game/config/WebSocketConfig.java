@@ -15,16 +15,17 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String STOMP_ENDPOINT_NAME = "/pokino-websocket";
-    private static final String DESTINATION_PREFIX = "/topic";
+    private static final String DESTINATION_PREFIX_INIT_TOPIC = "/topic";
+    private static final String DESTINATION_PREFIX_GAME_QUEUE = "/queue";
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker(DESTINATION_PREFIX);
+        config.enableSimpleBroker(DESTINATION_PREFIX_INIT_TOPIC, DESTINATION_PREFIX_GAME_QUEUE);
         config.setApplicationDestinationPrefixes("/pokino");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(STOMP_ENDPOINT_NAME).setAllowedOrigins("http://localhost:4200");
+        registry.addEndpoint(STOMP_ENDPOINT_NAME).setAllowedOrigins("*");
     }
 }

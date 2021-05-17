@@ -12,6 +12,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addMapping("/**").allowCredentials(false)
                 .allowedHeaders("*")
                 .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE", "PATCH")
-                .allowedOrigins("http://localhost:4200");
+                .allowedOrigins("*");
     }
 }
