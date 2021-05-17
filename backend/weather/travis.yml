@@ -1,0 +1,20 @@
+language: generic
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test
+      name: "Backend/Weather - Test"
+      before_install:
+        - cd backend/weather
+        - docker build -t weather_image -f Dockerfile .
+        - ci_env=`bash <(curl -s https://codecov.io/env)`
+        - docker run $ci_env -d -it --name weather weather_image
+      script:
+        - token=d369fe97-699b-443e-a814-641d90a2bf43
+        - upload_to_codecov="bash <(curl -s https://codecov.io/bash) -t $token"
+        - docker exec -it weather bash -c "./mvnw test && $upload_to_codecov"
