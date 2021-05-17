@@ -2,8 +2,8 @@ import:
   - source: frontend/pokino-app/travis.yml
   - source: backend/pokemon/travis.yml
   - source: backend/game/travis.yml
-  - source: deploy.yml
-
+  - source: backend/weather/travis.yml
+#  - source: deploy.yml
 
 language: generic
 dist: trusty 
@@ -14,7 +14,7 @@ services:
 stages:
   - test
   - build
-  - deploy
+#  - deploy
 
 notifications:
   email: false
@@ -34,4 +34,3 @@ jobs:
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker-compose build
-        

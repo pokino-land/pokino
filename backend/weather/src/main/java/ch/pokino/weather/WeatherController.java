@@ -1,12 +1,12 @@
-package ch.pokino.pokemon.core;
+package ch.pokino.weather;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -15,7 +15,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import static ch.pokino.weather.PokinoWeather.randomWeatherResponse;
+
 @RestController
+@RequestMapping("/weather")
 public class WeatherController {
 
     private static final String DEFAULT_CITY = "zurich";
@@ -30,9 +33,14 @@ public class WeatherController {
         updateCachedWeather();
     }
 
-    @GetMapping("/weather")
+    @GetMapping("/current")
     public ResponseEntity<String> getCurrentWeatherEndpoint() {
         return getCurrentWeather();
+    }
+
+    @GetMapping("/random")
+    private PokinoWeather getRandomWeather() {
+        return randomWeatherResponse();
     }
 
     private ResponseEntity<String> makeOpenWeatherApiCall() {
