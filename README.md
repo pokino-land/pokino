@@ -19,9 +19,9 @@
 </p>
 
 <!-- BATCHES SECTION -->
-[![travis](https://img.shields.io/travis/matthaeusheer/pokino?style=flat-square)](https://travis-ci.com/github/matthaeusheer/pokino)
-[![codecov](https://img.shields.io/badge/codecov-1M%25-orange?style=flat-square)](https://codecov.io/gh/PyTorchLightning/pytorch-lightning)
-[![dockerhub](https://img.shields.io/badge/docker%20hub-registry-blue?style=flat-square)](https://hub.docker.com/repository/docker/matthaeusheer/pokino-game)
+[![Build Status](https://travis-ci.com/pokino-project/pokino.svg?branch=main)](https://travis-ci.com/pokino-project/pokino)
+[![codecov](https://img.shields.io/codecov/c/github/matthaeusheer/pokino?label=test%20coverage&token=444585811d48493abd0d6c7efe228d2a)](https://app.codecov.io/gh/matthaeusheer/pokino/)
+[![dockerhub](https://img.shields.io/badge/docker%20hub-registry-blue)](https://hub.docker.com/repository/docker/matthaeusheer/pokino-game)
 
 </div> <!-- centering -->
 

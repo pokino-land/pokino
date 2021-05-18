@@ -1,5 +1,6 @@
 package ch.pokino.game;
 
+import ch.pokino.game.application.GameApplication;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+@SpringBootTest(classes = GameApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GameManagerTest {
 
@@ -24,23 +25,23 @@ public class GameManagerTest {
         assertThat(gameManager.getGames(), is(Matchers.empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), is(Matchers.empty()));
 
-        gameManager.registerPlayer("Tom");
+        gameManager.addPlayerToReady("Tom", "1");
         assertThat(gameManager.getGames(), is(empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), iterableWithSize(1));
 
-        gameManager.registerPlayer("Jerry");
+        gameManager.addPlayerToReady("Jerry", "2");
         assertThat(gameManager.getGames(), iterableWithSize(1));
         assertThat(gameManager.getWaitingPlayersAsList(), is(empty()));
 
-        gameManager.registerPlayer("LonelyWolf");
+        gameManager.addPlayerToReady("LonelyWolf", "3");
         assertThat(gameManager.getGames(), iterableWithSize(1));
         assertThat(gameManager.getWaitingPlayersAsList(), iterableWithSize(1));
     }
 
     @Test
     void registerPlayerTwiceThrowsPlayerNameNotAvailableException() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
-        gameManager.registerPlayer("Tom");
-        Exception exception = assertThrows(PlayerNameNotAvailableException.class, () -> gameManager.registerPlayer("Tom"));
+        gameManager.addPlayerToWaiting(new Player("1", "Tom"));
+        Exception exception = assertThrows(PlayerNameNotAvailableException.class, () -> gameManager.addPlayerToWaiting(new Player("1", "Tom")));
         assertThat(exception.getMessage(), is("Player name Tom is already taken."));
     }
 }

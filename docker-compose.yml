@@ -1,32 +1,18 @@
 version: "3.3"
 services:
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    environment:
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
+  pokemon-service:
+    build: ./backend/pokemon
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "8000:8000"
   game-service:
     image: steven1schuerstedt/game-service
     build: ./backend/game
     ports:
-      - "8001:8080"
-    depends_on:
-      - "rabbitmq"
-    environment:
-      RABBITMQ_SERVER: rabbitmq
-  pokemon-service:
-    image: steven1schuerstedt/pokemon-service
-    build: ./backend/pokemon
+      - "8001:8001"
+  weather-service:
+    build: ./backend/weather
     ports:
-      - "8000:8080"
-  websocket-demo:
-    image: steven1schuerstedt/websocket-demo
-    build: ./backend/websocket-demo
-    ports:
-      - "8002:8080"
+    - "8003:8003"
   frontend:
     image: steven1schuerstedt/frontend
     build: ./frontend/pokino-app

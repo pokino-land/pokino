@@ -1,0 +1,9 @@
+input {
+    width: 79%;
+    margin-bottom: 1%;
+    font-size: 20px;
+}
+
+.message-container {
+    padding-left: 5%;
+}
