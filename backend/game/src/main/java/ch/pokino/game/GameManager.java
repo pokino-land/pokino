@@ -53,6 +53,7 @@ public class GameManager {
             }
             waitingPlayers.remove(playerId);
             readyPlayers.add(player);
+            logger.info("Added new ready player: " + player);
             if (readyPlayers.size() > 1) {
                 Player firstPlayer = readyPlayers.poll();
                 Player secondPlayer = readyPlayers.poll();

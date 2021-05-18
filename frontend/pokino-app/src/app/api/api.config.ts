@@ -14,7 +14,7 @@ export class ApiConfig {
     private static readonly LOGIN_ENDPOINT: string = 'login';
     private static readonly READY_ENDPOINT: string = 'clickReady';
     private static readonly WEBSOCKET_INIT_ENDPOINT: string = 'pokino-websocket';
-    private static readonly WEBSOCKET_GREETINGS_TOPIC: string = '/topic/greetings';
+    private static readonly WEBSOCKET_GREETINGS_TOPIC: string = '/topic/init';
 
     /**
      * example: http://localhost:8000/pokemon/random
@@ -35,18 +35,25 @@ export class ApiConfig {
     }
 
     /**
-     * example: http://localhost:8001/game/clickReady/{playerId}
+     * example: http://localhost:8001/game/clickReady?playerName={playerName}&playerId={id}
      */
-    public static getPlayerReadyUrl(playerName: string): URL {
+    public static getPlayerReadyUrl(playerName: string, playerId: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
-        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT, playerName];
-        return this.buildUrl(root, endpoints);
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?playerName=' + playerName + '&playerId=' + playerId);
+        return new URL(url);
     }
 
+    /**
+     * example: http://localhost:8001/game/login?playerName={playerName}
+     */
     public static getLoginUrl(playerName: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
-        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.LOGIN_ENDPOINT, playerName];
-        return this.buildUrl(root, endpoints);
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.LOGIN_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?name=' + playerName);
+        return new URL(url);
     }
 
     // ws://localhost:8002/pokino-websocket

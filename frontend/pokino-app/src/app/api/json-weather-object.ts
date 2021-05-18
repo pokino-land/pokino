@@ -8,12 +8,18 @@ export class JsonWeatherObject implements JsonObject {
 
 	constructor() {}
 
-	public static fromJSON(data: any): JsonWeatherObject {
-		const weather: JsonWeatherObject = new JsonWeatherObject();
-		weather.clouds = data.clouds.all;
-		weather.wind = data.wind;
-		weather.location = data.name;
-		return weather;
+	public static fromJSON(data: any): JsonWeatherObject | null {
+		try {
+			const weather: JsonWeatherObject = new JsonWeatherObject();
+			weather.clouds = data.clouds.all;
+			weather.wind = data.wind;
+			weather.location = data.name;
+			return weather;
+		} catch (err) {
+			console.error('Weather object initialisation failed, probably faulty JSON:');
+			console.error(err);
+			return null;
+		}
 	}
 }
 

@@ -15,7 +15,7 @@ export class WebsocketService {
     return new WebSocket(this.webSocketUrl);
   }
 
-  getGreetingsTopic(): string {
+  getGameInitTopic(): string {
     return ApiConfig.getWebsocketGreetingsTopic();
   }
 
