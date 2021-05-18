@@ -53,7 +53,7 @@ jobs:
         #connect to compute engine
         - gcloud auth activate-service-account --key-file=pokino-312318-d0c162062d59.json
         #run deploy script
-        - gcloud compute ssh 1042285617495-compute@pokino-backend --project=pokino-312318 --zone=europe-west6-a --command='sudo /home/steven/runPokino'
+        - gcloud compute ssh 1042285617495-compute@pokino-backend --project=pokino-312318 --zone=europe-west6-a --command='cd /home/steven && sudo ./runPokino'
    # - stage: build
    #   name: "build the app"
    #   script: 
