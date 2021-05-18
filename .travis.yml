@@ -48,7 +48,7 @@ jobs:
         #push images to docker hub
         - docker push steven1schuerstedt/game-service:latest
         - docker push steven1schuerstedt/pokemon-service:latest
-        - docker push steven1schuerstedt/websocket-demo:latest
+        - docker push steven1schuerstedt/weather-service:latest
         - docker push steven1schuerstedt/frontend:latest
         #connect to compute engine
         - gcloud auth activate-service-account --key-file=pokino-312318-d0c162062d59.json
