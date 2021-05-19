@@ -3,7 +3,6 @@ import:
   - source: backend/pokemon/travis.yml
   - source: backend/game/travis.yml
   - source: backend/weather/travis.yml
-#  - source: deploy.yml
 
 language: generic
 dist: trusty 
@@ -14,7 +13,7 @@ services:
 stages:
   - test
   - build
-#  - deploy
+  - deploy
 
 notifications:
   email: false
@@ -25,12 +24,44 @@ env:
 
 jobs:
   include:
-    - stage: build
-      name: "Build complete App"
+    - stage: deploy
+      name: "deploy to GCP"
+      cache:
+        directories:
+          - "$HOME/google-cloud-sdk/"
       before_install:
+        #decrypt compute engine key file
+        - openssl aes-256-cbc -K $encrypted_0f5231d34a8b_key -iv $encrypted_0f5231d34a8b_iv -in pokino-312318-d0c162062d59.json.enc -out pokino-312318-d0c162062d59.json -d
+        - gcloud version || true
+        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+        # Add gcloud to $PATH
+        - source /home/travis/google-cloud-sdk/path.bash.inc
+        - gcloud version
+        #login to docker
         - sudo rm /usr/local/bin/docker-compose
         - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
         - chmod +x docker-compose
         - sudo mv docker-compose /usr/local/bin
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        #build everything
         - docker-compose build
+        #push images to docker hub
+        - docker push steven1schuerstedt/game-service:latest
+        - docker push steven1schuerstedt/pokemon-service:latest
+        - docker push steven1schuerstedt/weather-service:latest
+        - docker push steven1schuerstedt/frontend:latest
+        #connect to compute engine
+        - gcloud auth activate-service-account --key-file=pokino-312318-d0c162062d59.json
+        #run deploy script
+        - gcloud compute ssh 1042285617495-compute@pokino-backend --project=pokino-312318 --zone=europe-west6-a --command='cd /home/steven && sudo ./runPokino'
+   # - stage: build
+   #   name: "build the app"
+   #   script: 
+   #     #login to docker
+   #     - sudo rm /usr/local/bin/docker-compose
+   #     - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+   #     - chmod +x docker-compose
+   #     - sudo mv docker-compose /usr/local/bin
+   #     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+   #     #build everything
+   #     - docker-compose build
