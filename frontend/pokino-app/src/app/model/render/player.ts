@@ -24,7 +24,7 @@ export class player {
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
         this.config = require('../../model/render/config.json');
-        
+
 
         const geometry = new THREE.PlaneGeometry(this.m_playerWidth, this.m_playerHeight);
         const loader = new THREE.TextureLoader();
@@ -39,24 +39,24 @@ export class player {
         this.createThrowForceProgressBar();
     }
 
-    createThrowForceProgressBar(){
+    createThrowForceProgressBar() {
 
         const geometry = new THREE.PlaneGeometry(20, 20);
         const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         this.m_throwForceProgressBar = new THREE.Mesh(geometry, material);
 
         this.m_throwForceProgressBar.translateX(- this.m_sceneWidth / 2 + this.m_playerWidth / 2 - this.m_playerWidth / 2 + 10);
-        this.m_throwForceProgressBar.translateY(- this.m_sceneHeight / 2 );
+        this.m_throwForceProgressBar.translateY(- this.m_sceneHeight / 2);
     }
 
     help = 0;
     forceapplied = false;
-    updateThrowForceProgressBar(secondsClicked: number, startTimeForSecondsClicked: number){
+    updateThrowForceProgressBar(secondsClicked: number, startTimeForSecondsClicked: number) {
 
         const ProgressBarLengthMultiplier = 5;
         this.m_throwForceProgressBar.scale.y = (secondsClicked - startTimeForSecondsClicked) * ProgressBarLengthMultiplier;
-        const currentPositionY = - this.m_sceneHeight / 2 ;
-        this.m_throwForceProgressBar.position.y = currentPositionY + (secondsClicked ) * ProgressBarLengthMultiplier * 10; //10 to convert from scale to pixel
+        const currentPositionY = - this.m_sceneHeight / 2;
+        this.m_throwForceProgressBar.position.y = currentPositionY + (secondsClicked) * ProgressBarLengthMultiplier * 10; //10 to convert from scale to pixel
     }
 
     update(mouseInfo: mouseInfo) {
@@ -65,11 +65,11 @@ export class player {
         const startTimeForSecondsClicked = this.config.ballStartForce;
 
         //only update progress bar when ball is not currently thrown
-        if(!this.m_ball.m_ballBody.activate)
+        if (!this.m_ball.m_ballBody.activate)
             this.updateThrowForceProgressBar(mouseInfo.secondsClicked, startTimeForSecondsClicked);
-       
 
-        if (mouseInfo.isPressed) { 
+
+        if (mouseInfo.isPressed) {
             this.mouseWasDown = true;
         }
         if (!mouseInfo.isPressed && this.mouseWasDown) {
@@ -78,7 +78,7 @@ export class player {
 
             this.m_ball.updateForce(forceDir, mouseInfo.secondsClicked);
             this.mouseWasDown = false;
-            
+
             mouseInfo.secondsClicked = startTimeForSecondsClicked;
             this.forceapplied = true;
         }

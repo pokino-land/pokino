@@ -11,5 +11,4 @@
     "physicsSimulationStepSize": 0.1,
     "ballSize": 10,
     "ballStartForce": 0.5
-
 }

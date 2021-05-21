@@ -1,4 +1,4 @@
-export interface Config{
+export interface Config {
 
     maxTimeLoadUpBall: number;
     ballLoadUpSpeed: number;
@@ -12,7 +12,4 @@ export interface Config{
     physicsSimulationStepSize: number;
     ballSize: number;
     ballStartForce: number;
-    
-
-
 }
