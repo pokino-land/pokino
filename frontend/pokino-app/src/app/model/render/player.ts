@@ -3,6 +3,7 @@ import * as THREE from 'three';
 
 import { ball } from "./ball"
 import { mouseInfo } from "./handleInput"
+import { Config } from '../../model/render/config'
 
 export class player {
 
@@ -16,12 +17,13 @@ export class player {
     m_throwForceProgressBar: THREE.Mesh = new THREE.Mesh();
     m_playerWidth = 100;
     m_playerHeight = 100;
+    config: Config;
 
     constructor(width: number, height: number) {
 
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
-
+        this.config = require('../../model/render/config.json');
         
 
         const geometry = new THREE.PlaneGeometry(this.m_playerWidth, this.m_playerHeight);
@@ -31,7 +33,7 @@ export class player {
 
         this.m_mesh.translateX(- this.m_sceneWidth / 2 + this.m_playerWidth / 2);
         this.m_mesh.translateY(- this.m_sceneHeight / 2 + this.m_playerHeight / 2);
-        const ballRadius = 10;
+        const ballRadius = this.config.ballSize;
         this.m_ball = new ball(ballRadius, this.m_sceneWidth, this.m_sceneHeight);
 
         this.createThrowForceProgressBar();
@@ -60,7 +62,7 @@ export class player {
     update(mouseInfo: mouseInfo) {
 
         //we dont start at 0 so the ball has some more force even when the click is really short
-        const startTimeForSecondsClicked = 0.5;
+        const startTimeForSecondsClicked = this.config.ballStartForce;
 
         //only update progress bar when ball is not currently thrown
         if(!this.m_ball.m_ballBody.activate)

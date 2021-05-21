@@ -1,0 +1,15 @@
+{
+    "maxTimeLoadUpBall": 1.4,
+    "ballLoadUpSpeed": 0.01,
+    "ballForceMultiplicator": 500,
+    "enemySize": 50,
+    "enemyStartPositionX": 200,
+    "enemyMovementRadiusMul": 1.6,
+    "enemySpeedMul": 0.5,
+    "enemyFlyingHeight": 80,
+    "gravitationStrength": 2,
+    "physicsSimulationStepSize": 0.1,
+    "ballSize": 10,
+    "ballStartForce": 0.5
+
+}

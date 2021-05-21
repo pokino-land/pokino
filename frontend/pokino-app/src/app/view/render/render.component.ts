@@ -7,6 +7,7 @@ import { mouseInfo } from "../../model/render/handleInput"
 import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
 import { ApiService } from '../../api/api.service';
 import { apiHandler } from '../../model/render/apiHandler';
+import { Config } from '../../model/render/config'
 
 @Component({
   selector: 'app-render',
@@ -36,8 +37,8 @@ export class RenderComponent implements OnInit {
 
     //start timer
     const timerInterval: number = 10;
-    const timerIncrement: number = 0.01;
-    const maxTime: number = 1.4;
+    const timerIncrement: number = this.config.ballLoadUpSpeed;
+    const maxTime: number = this.config.maxTimeLoadUpBall;
     this.interval = setInterval(() => {
       if (this.m_mouseInfo.secondsClicked < maxTime)
         this.m_mouseInfo.secondsClicked += timerIncrement;
@@ -65,6 +66,7 @@ export class RenderComponent implements OnInit {
   m_mouseInfo: mouseInfo;
   m_score: number = 0;
   m_assetPath = '../../assets/';
+  config: Config;
 
   //connection to database 
   m_apiHandler: apiHandler;
@@ -72,7 +74,8 @@ export class RenderComponent implements OnInit {
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
- constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService) {
+    this.config = require('../../model/render/config.json');
 
     this.m_apiHandler = new apiHandler(apiService);
 
@@ -93,6 +96,7 @@ export class RenderComponent implements OnInit {
     this.m_physics.enemy = this.m_enemy.m_enemyBody;
 
     this.setupMouseCursor();
+
   }
 
   setupMouseCursor() {
@@ -136,13 +140,12 @@ export class RenderComponent implements OnInit {
     //render loop
     window.requestAnimationFrame(() => this.renderScene());
     //update
-    
+
     this.m_physics.update();
     this.m_enemy.update();
     this.m_scene.update();
     this.m_player.update(this.m_mouseInfo);
     this.updateMouseCursor();
-  
 
     if (this.m_enemy.m_enemyBody.collided && !this.updated) {
       this.m_score++;
@@ -159,10 +162,10 @@ export class RenderComponent implements OnInit {
       this.m_scene.addEnemy(this.m_enemy);
       this.m_physics.enemy = this.m_enemy.m_enemyBody;
     }
-  
+
     //render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
-    
+
   }
 
   ngOnInit(): void {

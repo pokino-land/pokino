@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import { Config } from '../../model/render/config'
 
 export class ballPhysicsObject {
 
@@ -50,13 +50,14 @@ export class physics {
     x: number = 0;
     m_sceneWidth: number;
     m_sceneHeight: number;
-
+    config: Config;
     constructor(width: number, height: number) {
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
+        this.config = require('../../model/render/config.json');
     }
     update() {
-        var stepSize = 0.1;
+        var stepSize = this.config.physicsSimulationStepSize;
         //apply forces until ball is out of screen
 
         if (this.ball.activate) {
@@ -64,7 +65,7 @@ export class physics {
             //using explicit euler numerical integration scheme
             //apply gravity
             const gravitationalConstant = 9.81;
-            var f_sum = new THREE.Vector2(this.ball.force.x, this.ball.force.y - gravitationalConstant * 2);
+            var f_sum = new THREE.Vector2(this.ball.force.x, this.ball.force.y - gravitationalConstant * this.config.gravitationStrength);
             this.ball.position = new THREE.Vector2(this.ball.position.x + stepSize * this.ball.velocity.x, this.ball.position.y + stepSize * this.ball.velocity.y)
             this.ball.velocity = new THREE.Vector2(this.ball.velocity.x + stepSize * f_sum.x, this.ball.velocity.y + stepSize * f_sum.y)
 
