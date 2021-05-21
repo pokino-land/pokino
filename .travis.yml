@@ -5,7 +5,9 @@ import:
   - source: backend/weather/travis.yml
 
 language: generic
-dist: trusty 
+dist: xenial
+python:
+  - "3.6"
 sudo: required
 services: 
   - docker
