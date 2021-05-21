@@ -5,7 +5,7 @@ import:
   - source: backend/weather/travis.yml
 
 language: generic
-dist: trusty 
+dist: xenial
 sudo: required
 services: 
   - docker
@@ -31,7 +31,6 @@ jobs:
           - "$HOME/google-cloud-sdk/"
       before_install:
         # setting the correct python version for google cloud sdk
-        - sudo add-apt-repository ppa:jonathonf/python-3.6
         - sudo apt update
         - sudo apt install -y python3.6
         #decrypt compute engine key file
