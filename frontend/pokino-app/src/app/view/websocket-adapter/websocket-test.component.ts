@@ -32,7 +32,7 @@ export class WebsocketTestComponent implements OnInit, OnDestroy {
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
-      this.client.subscribe(this.httpService.getGreetingsTopic(), (item) => {
+      this.client.subscribe(this.httpService.getGameInitTopic(), (item) => {
         this.addMessage(JSON.parse(item.body).content);
       });
     });

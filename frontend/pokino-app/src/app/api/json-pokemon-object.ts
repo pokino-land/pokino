@@ -10,13 +10,19 @@ export class JsonPokemonObject implements JsonObject {
 
 	constructor() {}
 
-	public static fromJSON(data: any): JsonPokemonObject {
-		const pokemon: JsonPokemonObject = new JsonPokemonObject();
-		pokemon.name = data.name;
-		pokemon.type1 = data.type1;
-		pokemon.type2 = data.type2;
-		pokemon.healthPoints = data.healthPoints;
-		pokemon.defensePoints = data.defensePoints;
-		return pokemon;
+	public static fromJSON(data: any): JsonPokemonObject | null {
+		try {
+			const pokemon: JsonPokemonObject = new JsonPokemonObject();
+			pokemon.name = data.name;
+			pokemon.type1 = data.type1;
+			pokemon.type2 = data.type2;
+			pokemon.healthPoints = data.healthPoints;
+			pokemon.defensePoints = data.defensePoints;
+			return pokemon;
+		} catch (err) {
+			console.error('Initialising Pokemon object failed, probably faulty JSON:');
+			console.error(err);
+			return null;
+		}
 	}
 }
