@@ -6,6 +6,7 @@ export class ApiConfig {
     private static readonly POKE_PORT: string = '8000';
     private static readonly GAME_PORT: string = '8001';
     private static readonly WEBSOCKET_PORT: string = '8001';
+    private static readonly WEATHER_PORT: string = '8003';
 
     private static readonly POKE_ENDPOINT: string = 'pokemon';
     private static readonly RANDOM_ENDPOINT: string = 'random';
@@ -26,11 +27,11 @@ export class ApiConfig {
     }
 
     /**
-     * example: http://localhost:8000/weather
+     * example: http://localhost:8003/weather/random
      */
     public static getWeatherUrl(): URL {
-        const root: Array<string> = [this.ROOT_URL, this.POKE_PORT];
-        const endpoints: Array<string> = [this.WEATHER_ENDPOINT];
+        const root: Array<string> = [this.ROOT_URL, this.WEATHER_PORT];
+        const endpoints: Array<string> = [this.WEATHER_ENDPOINT, this.RANDOM_ENDPOINT];
         return this.buildUrl(root, endpoints);
     }
 
