@@ -39,10 +39,10 @@ public class GameManagerTest {
         gameManager.addPlayerToWaiting(jerry);
         assertThat(gameManager.getWaitingPlayersAsList(), iterableWithSize(2));
 
-        gameManager.addPlayerToReady("Tom", "0");
-        gameManager.addPlayerToReady("Jerry", "1");
+        gameManager.addPlayerToReady(tom.getName(), tom.getId());
+        gameManager.addPlayerToReady(jerry.getName(), jerry.getId());
         assertThat(gameManager.getGames(), iterableWithSize(1));
-        assertThat(gameManager.getGames().stream().map(Game::getPlayerIds).collect(toList()).get(0), containsInAnyOrder("0", "1"));
+        assertThat(gameManager.getGames().stream().map(Game::getPlayerIds).collect(toList()).get(0), containsInAnyOrder(tom.getId(), jerry.getId()));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class GameManagerTest {
         gameManager.handleGameStateChanged(new GameShutdownState(new HashMap<>(), new PokeHitEvent("0", "0")));
 
         assertThat(gameManager.getGames().size(), equalTo(0));
-        assertThat(gameManager.getWaitingPlayersAsList().stream().map(player -> player.getName()).collect(toList()),
+        assertThat(gameManager.getWaitingPlayersAsList().stream().map(Player::getName).collect(toList()),
                 containsInAnyOrder("Tom", "Jerry"));
     }
 }
