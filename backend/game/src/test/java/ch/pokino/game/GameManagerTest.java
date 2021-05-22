@@ -20,22 +20,24 @@ public class GameManagerTest {
     GameManager gameManager;
 
     @Test
-    @Disabled
     void registerPlayerConsecutivelyInitializesGames() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException{
         assertThat(gameManager.getGames(), is(Matchers.empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), is(Matchers.empty()));
 
-        gameManager.addPlayerToReady("Tom", "1");
+        Player tom = new Player("Tom");
+        gameManager.addPlayerToWaiting(tom);
         assertThat(gameManager.getGames(), is(empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), iterableWithSize(1));
+        assertThat(gameManager.getWaitingPlayersAsList().stream().findFirst().orElse(null), equalTo(tom));
 
-        gameManager.addPlayerToReady("Jerry", "2");
-        assertThat(gameManager.getGames(), iterableWithSize(1));
-        assertThat(gameManager.getWaitingPlayersAsList(), is(empty()));
+        Player jerry = new Player("Jerry");
+        gameManager.addPlayerToWaiting(jerry);
+        assertThat(gameManager.getWaitingPlayersAsList(), iterableWithSize(2));
 
-        gameManager.addPlayerToReady("LonelyWolf", "3");
+        gameManager.addPlayerToReady("Tom", "0");
+        gameManager.addPlayerToReady("Jerry", "1");
         assertThat(gameManager.getGames(), iterableWithSize(1));
-        assertThat(gameManager.getWaitingPlayersAsList(), iterableWithSize(1));
+        assertThat(gameManager.getGames().stream().findFirst().orElse(null).getPlayerIds(), containsInAnyOrder("0", "1"));
     }
 
     @Test

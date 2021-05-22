@@ -2,6 +2,8 @@ package ch.pokino.game;
 
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
+import ch.pokino.game.state_machine.PokeHitEvent;
+import ch.pokino.game.state_machine.StartupConfirmationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,6 @@ public class GameManager {
     private final GameStartsPushMessenger gameStartsPushMessenger;
     private final Map<String, Player> waitingPlayers = new ConcurrentHashMap<>();
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
-    private final List<Game> games = new ArrayList<>();
     public static final int MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED = 1000;
     private final Map<String, Game> games = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);

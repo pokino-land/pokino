@@ -3,6 +3,8 @@ package ch.pokino.game;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static ch.pokino.game.PlayerIdCreator.createId;
 
 @RestController
