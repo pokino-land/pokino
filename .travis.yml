@@ -25,6 +25,7 @@ notifications:
 env:
   - DOCKER_COMPOSE_VERSION=1.29.0
 
+
 jobs:
   include:
     - stage: deploy
