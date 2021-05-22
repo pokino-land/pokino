@@ -17,7 +17,7 @@ public class GameServiceController {
 
     @GetMapping(value = "/game/login")
     public String playerLogin(@RequestParam String name) throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
-        return gameManager.addPlayerToWaiting(new Player(createId(), name));
+        return gameManager.addPlayerToWaiting(new Player(name));
     }
 
     @GetMapping("/game/clickReady")
@@ -25,11 +25,4 @@ public class GameServiceController {
         gameManager.addPlayerToReady(playerName, playerId);
     }
 
-    @GetMapping("/game/dummy")
-    public String dummy() {
-        return "Hello";
-    }
-
 }
-
-

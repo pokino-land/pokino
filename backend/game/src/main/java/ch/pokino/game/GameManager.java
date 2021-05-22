@@ -108,7 +108,4 @@ public class GameManager {
         return waitingPlayersAsList.size() + playingPlayersAsList.size();
     }
 
-    private static String createNewPlayerId() {
-        return PlayerIdCreator.createId();
-    }
 }
