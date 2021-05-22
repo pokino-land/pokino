@@ -14,8 +14,10 @@ services:
 
 stages:
   - test
-  - build
+#  - build
   - deploy
+
+skip_branch_with_pr: true
 
 notifications:
   email: false
