@@ -3,13 +3,23 @@
 		<img class="pokemon-background" src="../../assets/images/pokemons/squirtle.png"/>
 	</div>
 	<div class="container">
+		<span class="userNameText">Your Name: </span>
+
+		<div id="user-name-display">
+			<span class="player-name" *ngIf="this.player !== undefined">{{this.player.name}}</span>
+
+			<div style="display: block" *ngIf="this.player === undefined || this.player.name === ''">
+				<input  id="user-name-input" #nameInput>
+				<button class="button user-name-input-button" (click)="this.setUsername(nameInput.value)">Take This Name!</button>
+			</div>
+		</div>
+
+
+
 		<button class="button" (click)="gotoGameScreen()">test Game</button>
 		<button class="button" (click)="toggleReady()">I Am Ready</button>
 		<button class="button" (click)="gotoLeaderboard()">Leaderboard</button>
-		<button class="button" (click)="getRandomPokemon()">Pokemon-API Test</button>
-		<button class="button" (click)="getWeather()">Weather-API Test</button>
-		<button class="button" (click)="loginPlayer()">Login-API Test</button>
-		<button class="button" (click)="getWeather()">MQ Test</button>
+		<button class="button" (click)="getRandomPokemon()">API Test</button>
 
 		<h3>Active Players:</h3>
 		<ul>
@@ -20,4 +30,6 @@
 		<span>current Pokemon: {{this.pokemon.name ? this.pokemon.name : 'none'}},
 			type: {{this.pokemon.type1 ? this.pokemon.type1 : 'none'}}</span>
 	</div>
+
+
 </div>

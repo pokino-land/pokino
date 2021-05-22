@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
 export class AppComponent {
   title = 'pokino';
   ready = false;
-  
-  constructor(private router: Router, private apiService: ApiService) {
-  }
+
+  constructor() {}
 }

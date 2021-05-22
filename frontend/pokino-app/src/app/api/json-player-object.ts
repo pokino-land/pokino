@@ -2,10 +2,13 @@ import {JsonObject} from "./json-object";
 
 export class JsonPlayerObject implements JsonObject {
 
-	public id: number = -1;
+	public id: string = '';
 	public points: string = '';
 	public name: string = '';
 	public ready: boolean = false;
 
-	constructor() {}
+	constructor(id: string, name: string) {
+		this.id = id;
+		this.name = name;
+	}
 }

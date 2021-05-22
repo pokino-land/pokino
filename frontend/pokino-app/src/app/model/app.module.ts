@@ -9,20 +9,25 @@ import { RenderComponent } from '../view/render/render.component';
 import { ApiService } from '../api/api.service';
 import {MainMenuComponent} from "../view/main-menu.component";
 import {LeaderboardComponent} from "../view/leaderboard.component";
+import {FormsModule} from "@angular/forms";
+import {WebsocketService} from "../view/websocket-adapter/websocket.service";
+import {WebsocketTestComponent} from "../view/websocket-adapter/websocket-test.component";
 
 @NgModule({
     declarations: [
         AppComponent,
         RenderComponent,
         MainMenuComponent,
-        LeaderboardComponent
+        LeaderboardComponent,
+        WebsocketTestComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
-        HttpClientModule
+        HttpClientModule,
+        FormsModule
     ],
-    providers: [ApiService],
+    providers: [ApiService, WebsocketService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

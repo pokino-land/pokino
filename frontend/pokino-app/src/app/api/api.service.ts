@@ -27,31 +27,28 @@ export class ApiService {
 		return await this.get(url.href)
 			.toPromise()
 			.then((data: JsonWeatherObject) => {
-				return JsonWeatherObject.fromJSON(data);
+				return data;
 			});
 	}
 
-	public async loginPlayer(playerName: string): Promise<JsonPlayerObject> {
+	public async loginPlayer(playerName: string): Promise<string> {
 		const url: URL = ApiConfig.getLoginUrl(playerName);
-		const player: JsonPlayerObject = this.createPlayer(playerName);
+		// const player: JsonPlayerObject = this.createPlayer(playerName);
 
-		return await this.post(url.href, player)
+		return await this.get(url.href)
 			.toPromise()
 			.then((id: any) => {
-				player.id = id;
-				return player;
+				return id;
 			});
 	}
 
-	public async toggleReadyPlayer(playerName: string): Promise<JsonPlayerObject> {
-		const url: URL = ApiConfig.getPlayerReadyUrl(playerName);
-		const player: JsonPlayerObject = this.createPlayer(playerName);
+	public async toggleReadyPlayer(player: JsonPlayerObject): Promise<JsonPlayerObject> {
+		const url: URL = ApiConfig.getPlayerReadyUrl(player.name, player.id);
 
-		return await this.post(url.href, player)
+		return await this.get(url.href)
 			.toPromise()
 			.then((data: any) => {
-				console.log(data);
-				return player;
+				console.log("login was a success");
 			});
 	}
 
@@ -61,12 +58,6 @@ export class ApiService {
 
 	private post(url: string, payload: any): any {
 		return this.http.post(url, payload);
-	}
-
-	private createPlayer(playerName: string): JsonPlayerObject {
-		const player: JsonPlayerObject = new JsonPlayerObject();
-		player.name = playerName;
-		return player;
 	}
 
 }
