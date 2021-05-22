@@ -5,6 +5,9 @@ import java.util.Map;
 
 public abstract class GameState {
 
+    /**
+     * Score standings of a game map from player id to score.
+     */
     Map<String, Integer> standings;
 
     /**
@@ -19,10 +22,16 @@ public abstract class GameState {
      */
     public abstract GameState handleEvent(GameEvent event);
 
+    /**
+     * Returns a view (copy) of the standings map.
+     */
     public Map<String, Integer> getStandings() {
         return Map.copyOf(this.standings);
     }
 
+    /**
+     * Returns the class name (without fully qualified package path).
+     */
     public String name() {
         return getClass().getSimpleName();
     }
