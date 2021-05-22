@@ -27,7 +27,7 @@ env:
 jobs:
   include:
     - stage: deploy
-      if: branch == main AND (NOT (type IN (push, pull_request)))
+      if: branch == main
       name: "deploy to GCP"
       cache:
         directories:
