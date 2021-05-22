@@ -14,7 +14,7 @@ services:
 
 stages:
   - test
-  - build
+#  - build
   - deploy
 
 notifications:
@@ -23,10 +23,14 @@ notifications:
 env:
   - DOCKER_COMPOSE_VERSION=1.29.0
 
+branches:
+  only:
+    - main
 
 jobs:
   include:
     - stage: deploy
+      # if: branch == main AND NOT type IN (pull_request)
       name: "deploy to GCP"
       cache:
         directories:
