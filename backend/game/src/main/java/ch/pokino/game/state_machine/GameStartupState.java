@@ -1,7 +1,5 @@
 package ch.pokino.game.state_machine;
 
-import com.rabbitmq.client.AMQP;
-
 import java.util.HashMap;
 import java.util.Map;
 

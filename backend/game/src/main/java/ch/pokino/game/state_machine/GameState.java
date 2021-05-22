@@ -19,4 +19,11 @@ public abstract class GameState {
      */
     public abstract GameState handleEvent(GameEvent event);
 
+    public Map<String, Integer> getStandings() {
+        return Map.copyOf(this.standings);
+    }
+
+    public String name() {
+        return getClass().getSimpleName();
+    }
 }

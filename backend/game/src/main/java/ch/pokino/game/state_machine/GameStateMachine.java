@@ -25,4 +25,12 @@ public class GameStateMachine {
         state = state.handleEvent(event);
     }
 
+    public Map<String, Integer> getStandings() {
+        return this.state.getStandings();
+    }
+
+    public String getStatusAsString() {
+        return this.state.name();
+    }
+
 }

@@ -1,30 +1,26 @@
 package ch.pokino.game;
 
-import ch.pokino.game.messaging.GameMessage;
-import ch.pokino.game.messaging.MessageSender;
 import ch.pokino.game.state_machine.PokeHitEvent;
 import ch.pokino.game.state_machine.StartupConfirmationEvent;
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
-import com.sun.org.slf4j.internal.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.logging.Logger;
+
 import static java.util.stream.Collectors.toList;
 
 @Component
 public class GameManager {
 
-    private GameStartsPushMessenger gameStartsPushMessenger;
+    private final GameStartsPushMessenger gameStartsPushMessenger;
     private final Map<String, Player> waitingPlayers = new ConcurrentHashMap<>();
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
-    private final List<Game> games = new ArrayList<>();
+    private final Map<String, Game> games = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
     public GameManager(GameStartsPushMessenger gameStartsPushMessenger) {
@@ -35,7 +31,7 @@ public class GameManager {
         if (!isNameAvailable(player.getName())) {
             throw new PlayerNameNotAvailableException("Player name " + player.getName() + " is already taken.");
         }
-        if (getTotalNumberOfPlayers() >= 2) {
+        if (getTotalNumberOfPlayers() >= 1000) {
             throw new MaximumPlayersLimitReachedException("Maximum number of players reached. Currently: " + getTotalNumberOfPlayers());
         }
         synchronized (waitingPlayers) {
@@ -45,7 +41,7 @@ public class GameManager {
         return player.getId();
     }
 
-    public void addPlayerToReady(String playerName, String playerId)  {
+    public void addPlayerToReady(String playerName, String playerId) {
         synchronized (readyPlayers) {
             if (!waitingPlayers.values().stream().map(Player::getName).collect(toList()).contains(playerName)) {
                 throw new RuntimeException("Provided player name is not in waiting list.");
@@ -64,7 +60,7 @@ public class GameManager {
                 Player firstPlayer = readyPlayers.poll();
                 Player secondPlayer = readyPlayers.poll();
                 Game newGame = new Game(new Tuple<>(firstPlayer, secondPlayer));
-                games.add(newGame);
+                games.put(newGame.getGameId(), newGame);
                 writeGameStartsMessageOnWebsocket(newGame);
             }
         }
@@ -83,6 +79,7 @@ public class GameManager {
     /**
      * When a new game with two participating players has been initialized, this function writes an event on the
      * game init queue to inform two players in the frontend that they have been matched and can now enter the game.
+     *
      * @param game a new game for which we write a message
      */
     private void writeGameStartsMessageOnWebsocket(Game game) {
@@ -99,7 +96,7 @@ public class GameManager {
     }
 
     public List<Player> getPlayingPlayersAsList() {
-        List<Tuple<Player, Player>> gamesPlayerTuples = games.stream().map(Game::getPlayers).collect(toList());
+        List<Tuple<Player, Player>> gamesPlayerTuples = games.values().stream().map(Game::getPlayers).collect(toList());
         List<Player> playingPlayers = new ArrayList<>();
         for (Tuple<Player, Player> playerTuple : gamesPlayerTuples) {
             playingPlayers.add(playerTuple.first);
@@ -122,21 +119,31 @@ public class GameManager {
         return waitingPlayersAsList.size() + playingPlayersAsList.size();
     }
 
-    private static String createNewPlayerId() {
-        return PlayerIdCreator.createId();
-    }
-
     private String getGameIdForPlayerId(String playerId) {
         String associatedGameId = null;
         for (Game game : getGames()) {
             if (game.getPlayerIds().contains(playerId)) {
-               associatedGameId = game.getGameId();
-               break;
+                associatedGameId = game.getGameId();
+                break;
             }
         }
         if (associatedGameId == null) {
             throw new RuntimeException("The given player is not in any game!");
         }
         return associatedGameId;
+    }
+
+    public List<GameStatus> getGameStatuses() {
+        Collection<Game> games = getGames();
+        List<GameStatus> gameStatuses = new ArrayList<>();
+        for (Game game : games) {
+            gameStatuses.add(new GameStatus(
+                    game.getGameId(),
+                    game.getPlayers().toString(),
+                    game.getStandings(),
+                    game.getGameStateAsString()
+                    ));
+        }
+    return gameStatuses;
     }
 }

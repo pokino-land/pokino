@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -16,11 +18,6 @@ public class Game {
 
     private final String id;
 
-    enum GameState {
-        STARTED;
-
-    }
-    private GameState state;
     private final GameStateMachine gameStateMachine;
 
     public Game(Tuple<Player, Player> players) {
@@ -57,5 +54,14 @@ public class Game {
     public String getGameId() {
         return id;
     }
+
+    public Map<String, Integer> getStandings() {
+        return this.gameStateMachine.getStandings();
+    }
+
+    public String getGameStateAsString() {
+        return this.gameStateMachine.getStatusAsString();
+    }
+
 
 }
