@@ -8,6 +8,7 @@ import {ApiConfig} from "../../api/api.config";
 export class WebsocketService {
 
   private webSocketUrl = ApiConfig.getWebsocketUrl().href;
+  declare currentGameId: string;
 
   constructor() { }
 
