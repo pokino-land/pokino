@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,7 +38,7 @@ public class GameManagerTest {
         gameManager.addPlayerToReady("Tom", "0");
         gameManager.addPlayerToReady("Jerry", "1");
         assertThat(gameManager.getGames(), iterableWithSize(1));
-        assertThat(gameManager.getGames().stream().findFirst().orElse(null).getPlayerIds(), containsInAnyOrder("0", "1"));
+        assertThat(gameManager.getGames().stream().map(Game::getPlayerIds).collect(toList()).get(0), containsInAnyOrder("0", "1"));
     }
 
     @Test
