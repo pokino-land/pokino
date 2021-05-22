@@ -23,14 +23,13 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   receivedMessages: Array<string> = [];
   input = '';
 
-  weather: JsonWeatherObject = new JsonWeatherObject();
+  loggedIn: boolean = false;
   declare player: JsonPlayerObject;
-  declare currentGameId: string;
+  declare weather: JsonWeatherObject;
 
 
-  constructor(private router: Router, private apiService: ApiService, private httpService: WebsocketService) {
+  constructor(private router: Router, private apiService: ApiService, private websocketService: WebsocketService) {
     this.getRandomPokemon();
-    this.loginPlayer('test2');
   }
 
 
@@ -59,12 +58,12 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   public async getWeather(): Promise<void> {
     this.weather = await this.apiService.getWeather();
     console.log(this.weather);
-    alert('location: ' + this.weather.location + ' , clouds: ' + this.weather.clouds);
   }
 
   public async loginPlayer(playerName: string): Promise<void> {
     const playerId: string = await this.apiService.loginPlayer(playerName);
     this.player = new JsonPlayerObject(playerId, playerName);
+    this.loggedIn = true;
   }
 
   public checkIfRelevantGameStarts(response: JsonGameInitObject): void {
@@ -73,7 +72,7 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
     const relevantGameStarts: boolean = ((response.playerId1.toString() === this.player.id.toString())
         || (response.playerId2.toString()) === this.player.id.toString());
     if (relevantGameStarts) {
-      this.currentGameId = response.gameId;
+      this.websocketService.currentGameId = response.gameId;
       this.gotoGameScreen();
     }
   }
@@ -86,34 +85,31 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
     this.closeWebSocketConnection();
   }
 
+
   public openWebSocketConnection(): void {
-    this.webSocket = this.httpService.getWebSocket();
+    this.webSocket = this.websocketService.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
-      this.client.subscribe(this.httpService.getGameInitTopic(), (item) => {
+      this.client.subscribe(this.websocketService.getGameInitTopic(), (item) => {
         const response: JsonGameInitObject = JSON.parse(item.body);
         this.checkIfRelevantGameStarts(response);
       });
     });
   }
 
-  addMessage(item: any): void {
-    this.receivedMessages.push(item);
-  }
-
-  sendMessage(): void {
-    if (this.input) {
-      this.client.send('/pokino/hello' , {}, JSON.stringify(this.input));
-      this.input = '';
-    }
-
-  }
-
   closeWebSocketConnection(): void {
     if (this.client) {
       this.webSocket.close();
       this.client.unsubscribe("/message");
+    }
+  }
+
+  public setUsername(name: string): void {
+    if (!this.loggedIn) {
+      this.loginPlayer(name);
+    } else {
+      alert("You have already chosen a name!");
     }
   }
 }

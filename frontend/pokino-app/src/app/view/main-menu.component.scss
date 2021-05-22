@@ -26,3 +26,16 @@ input {
 .message-container {
 	padding-left: 5%;
 }
+
+#user-name-input {
+	width: 50%;
+	float: left;
+	height: 43px;
+	margin-right: 5px;
+	font-size: 16px;
+}
+
+.user-name-input-button {
+	width: 29% !important;
+	float: left;
+}

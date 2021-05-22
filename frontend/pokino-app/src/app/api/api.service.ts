@@ -27,7 +27,7 @@ export class ApiService {
 		return await this.get(url.href)
 			.toPromise()
 			.then((data: JsonWeatherObject) => {
-				return JsonWeatherObject.fromJSON(data);
+				return data;
 			});
 	}
 
@@ -44,12 +44,11 @@ export class ApiService {
 
 	public async toggleReadyPlayer(player: JsonPlayerObject): Promise<JsonPlayerObject> {
 		const url: URL = ApiConfig.getPlayerReadyUrl(player.name, player.id);
-		// const player: JsonPlayerObject = this.createPlayer(playerName);
 
 		return await this.get(url.href)
 			.toPromise()
 			.then((data: any) => {
-				console.log(data);
+				console.log("login was a success");
 			});
 	}
 
