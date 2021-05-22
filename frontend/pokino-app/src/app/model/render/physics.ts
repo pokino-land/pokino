@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {WeatherWind} from "../../api/json-weather-object";
+import {JsonWeatherObject} from "../../api/json-weather-object";
 
 export class ballPhysicsObject {
 
@@ -60,16 +60,17 @@ export class physics {
     }
 
 
-    updateWindForce(wind: WeatherWind){
+    updateWindForce(wind: JsonWeatherObject){
         var windMultiplier = 4;
-        var wind_radians = wind.deg * 180.0/Math.PI;
-        this.m_windForce.x = Math.cos(wind_radians) * wind.speed * windMultiplier;
-        this.m_windForce.y = Math.sin(wind_radians) * wind.speed * windMultiplier;
+        var winddeg = 180;
+        var wind_radians = winddeg * 180.0/Math.PI;
+        this.m_windForce.x = Math.cos(wind_radians) * wind.windSpeedKmh * windMultiplier;
+        this.m_windForce.y = Math.sin(wind_radians) * wind.windSpeedKmh * windMultiplier;
             
     }
 
 
-    update( wind: WeatherWind) {
+    update( wind: JsonWeatherObject) {
 
        this.updateWindForce(wind);
 

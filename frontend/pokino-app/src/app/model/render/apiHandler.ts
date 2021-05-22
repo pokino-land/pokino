@@ -1,5 +1,5 @@
 import {JsonPokemonObject} from "../../api/json-pokemon-object";
-import {JsonWeatherObject, WeatherWind} from "../../api/json-weather-object";
+import {JsonWeatherObject} from "../../api/json-weather-object";
 import { ApiService } from '../../api/api.service';
 
 export class apiHandler{
@@ -32,8 +32,8 @@ export class apiHandler{
     public async getWeather(): Promise<void> {
         this.weather = await this.apiService.getWeather();
       }
-    getWind(): WeatherWind{
+    getWind(): JsonWeatherObject{
         this.getWeather();
-        return this.weather.wind;
+        return this.weather;
       }
 }
