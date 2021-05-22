@@ -1,7 +1,5 @@
 package ch.pokino.game;
 
-import ch.pokino.game.state_machine.PokeHitEvent;
-import ch.pokino.game.state_machine.StartupConfirmationEvent;
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
 import org.slf4j.Logger;
@@ -20,6 +18,8 @@ public class GameManager {
     private final GameStartsPushMessenger gameStartsPushMessenger;
     private final Map<String, Player> waitingPlayers = new ConcurrentHashMap<>();
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
+    private final List<Game> games = new ArrayList<>();
+    public static final int MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED = 1000;
     private final Map<String, Game> games = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
@@ -31,8 +31,9 @@ public class GameManager {
         if (!isNameAvailable(player.getName())) {
             throw new PlayerNameNotAvailableException("Player name " + player.getName() + " is already taken.");
         }
-        if (getTotalNumberOfPlayers() >= 1000) {
-            throw new MaximumPlayersLimitReachedException("Maximum number of players reached. Currently: " + getTotalNumberOfPlayers());
+        if (getTotalNumberOfPlayers() >= MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED) {
+            throw new MaximumPlayersLimitReachedException("Maximum number of players "
+                    + MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED + " reached. Currently: " + getTotalNumberOfPlayers());
         }
         synchronized (waitingPlayers) {
             waitingPlayers.put(player.getId(), player);

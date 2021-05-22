@@ -2,9 +2,6 @@ package ch.pokino.game;
 
 
 import org.springframework.web.bind.annotation.*;
-import ch.pokino.game.GameStatus;
-
-import java.util.List;
 
 import static ch.pokino.game.PlayerIdCreator.createId;
 
@@ -26,11 +23,6 @@ public class GameServiceController {
     @GetMapping("/game/clickReady")
     public void playerClickReady(@RequestParam String playerName, @RequestParam String playerId) {
         this.gameManager.addPlayerToReady(playerName, playerId);
-    }
-
-    @GetMapping("/game/dummy")
-    public String dummy() {
-        return "Hello";
     }
 
     @GetMapping("/game/status")

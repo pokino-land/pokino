@@ -30,7 +30,7 @@ branches:
 jobs:
   include:
     - stage: deploy
-      if: branch == main AND (NOT (type IN (push, pull_request)))
+      if: branch == main AND (NOT (type IN (pull_request)))
       name: "deploy to GCP"
       cache:
         directories:
