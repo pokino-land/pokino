@@ -1,9 +1,13 @@
 package ch.pokino.game;
 
+import ch.pokino.game.messaging.GameEndsMessage;
+import ch.pokino.game.messaging.GameEndsPushMessenger;
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
-import ch.pokino.game.state_machine.PokeHitEvent;
-import ch.pokino.game.state_machine.StartupConfirmationEvent;
+import ch.pokino.game.state_machine.events.PokeHitEvent;
+import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
+import ch.pokino.game.state_machine.states.GameShutdownState;
+import ch.pokino.game.state_machine.states.GameState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,17 +19,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class GameManager {
+public class GameManager implements GameStateChangeListener{
 
     private final GameStartsPushMessenger gameStartsPushMessenger;
+    private final GameEndsPushMessenger gameEndsPushMessenger;
     private final Map<String, Player> waitingPlayers = new ConcurrentHashMap<>();
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
     public static final int MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED = 1000;
     private final Map<String, Game> games = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
-    public GameManager(GameStartsPushMessenger gameStartsPushMessenger) {
+    public GameManager(GameStartsPushMessenger gameStartsPushMessenger, GameEndsPushMessenger gameEndsPushMessenger) {
         this.gameStartsPushMessenger = gameStartsPushMessenger;
+        this.gameEndsPushMessenger = gameEndsPushMessenger;
     }
 
     public String addPlayerToWaiting(Player player) throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
@@ -62,6 +68,7 @@ public class GameManager {
                 Player firstPlayer = readyPlayers.poll();
                 Player secondPlayer = readyPlayers.poll();
                 Game newGame = new Game(new Tuple<>(firstPlayer, secondPlayer));
+                newGame.registerGameStateChangeListener(this);
                 games.put(newGame.getGameId(), newGame);
                 writeGameStartsMessageOnWebsocket(newGame);
             }
@@ -70,12 +77,12 @@ public class GameManager {
 
     public void handlePokeHitRequest(String playerId) {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
-        associatedGame.handleGameEvent(new PokeHitEvent(playerId));
+        associatedGame.handleGameEvent(new PokeHitEvent(playerId, associatedGame.getGameId()));
     }
 
     public void handleStartupConfirmationRequest(String playerId) {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
-        associatedGame.handleGameEvent(new StartupConfirmationEvent(playerId));
+        associatedGame.handleGameEvent(new StartupConfirmationEvent(playerId, associatedGame.getGameId()));
     }
 
     /**
@@ -147,5 +154,27 @@ public class GameManager {
                     ));
         }
     return gameStatuses;
+    }
+
+    @Override
+    public void handleGameStateChanged(GameState newGameState) {
+        if (newGameState instanceof GameShutdownState) {
+            final String gameId = newGameState.getEntryEvent().getGameId();
+            Game game = this.games.get(gameId);
+            final Tuple<Player, Player> players = game.getPlayers();
+            GameEndsMessage gameEndsMessage = new GameEndsMessage(
+                    players.first.getId(),
+                    players.second.getId(),
+                    game.getGameId(),
+                    game.getStandings());
+            this.gameEndsPushMessenger.sendGameEndsMessage(gameEndsMessage);
+            this.games.remove(gameId);
+            try {
+                addPlayerToWaiting(players.first);
+                addPlayerToWaiting(players.second);
+            } catch (PlayerNameNotAvailableException | MaximumPlayersLimitReachedException exception) {
+                this.logger.error("Could not add players back to waiting list after game ended.");
+            }
+        }
     }
 }

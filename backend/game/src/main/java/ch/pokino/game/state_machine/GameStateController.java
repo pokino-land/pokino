@@ -1,10 +1,7 @@
 package ch.pokino.game.state_machine;
 
 import ch.pokino.game.GameManager;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
@@ -16,13 +13,13 @@ public class GameStateController {
         this.gameManager = gameManager;
     }
 
-    @PostMapping("/game/hit/{id}")
-    public void pokeHit(@PathVariable String playerId) {
+    @PostMapping("/game/hit")
+    public void pokeHit(@RequestParam String playerId) {
         this.gameManager.handlePokeHitRequest(playerId);
     }
 
-    @PostMapping("/game/ready/{id}")
-    public void confirmStartup(@PathVariable String playerId) {
+    @PostMapping("/game/ready")
+    public void confirmStartup(@RequestParam String playerId) {
         this.gameManager.handleStartupConfirmationRequest(playerId);
     }
 }

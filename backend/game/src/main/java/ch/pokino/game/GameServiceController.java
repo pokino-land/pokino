@@ -1,6 +1,7 @@
 package ch.pokino.game;
 
 
+import ch.pokino.game.state_machine.states.GameRunningState;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,11 @@ public class GameServiceController {
     @GetMapping("/game/status")
     public List<GameStatus> getGamesState() {
         return this.gameManager.getGameStatuses();
+    }
+
+    @GetMapping("/game/pointsNeededToWin")
+    public Integer getPointsNeededToWin() {
+        return GameRunningState.POINTS_NEEDED_TO_WIN;
     }
 
 }

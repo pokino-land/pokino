@@ -1,5 +1,7 @@
-package ch.pokino.game.state_machine;
+package ch.pokino.game.state_machine.states;
 
+
+import ch.pokino.game.state_machine.events.GameEvent;
 
 import java.util.Map;
 
@@ -11,10 +13,16 @@ public abstract class GameState {
     Map<String, Integer> standings;
 
     /**
+     * The event which triggered a change into this game state.
+     */
+    GameEvent entryEvent;
+
+    /**
      * Initializes a new game state. The standings of the game are passed along the states upon creation.
      */
-    public GameState(Map<String, Integer> standings) {
+    public GameState(Map<String, Integer> standings, GameEvent entryEvent) {
         this.standings = standings;
+        this.entryEvent = entryEvent;
     }
 
     /**
@@ -34,5 +42,12 @@ public abstract class GameState {
      */
     public String name() {
         return getClass().getSimpleName();
+    }
+
+    /**
+     * Return the event which actually triggered the state machine to transition into this state.
+     */
+    public GameEvent getEntryEvent() {
+        return entryEvent;
     }
 }

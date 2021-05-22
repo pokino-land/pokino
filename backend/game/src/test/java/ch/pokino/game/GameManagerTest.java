@@ -1,13 +1,17 @@
 package ch.pokino.game;
 
 import ch.pokino.game.application.GameApplication;
+import ch.pokino.game.state_machine.events.PokeHitEvent;
+import ch.pokino.game.state_machine.states.GameShutdownState;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.HashMap;
+
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -46,5 +50,18 @@ public class GameManagerTest {
         gameManager.addPlayerToWaiting(new Player("1", "Tom"));
         Exception exception = assertThrows(PlayerNameNotAvailableException.class, () -> gameManager.addPlayerToWaiting(new Player("1", "Tom")));
         assertThat(exception.getMessage(), is("Player name Tom is already taken."));
+    }
+
+    @Test
+    void gameIsBeingTakenDownWhenGameStateChangesToShutdownAndPlayersAreAddedToWaitingList() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
+        gameManager.addPlayerToWaiting(new Player("Tom"));
+        gameManager.addPlayerToWaiting(new Player("Jerry"));
+        gameManager.addPlayerToReady("Tom", "0");
+        gameManager.addPlayerToReady("Jerry", "1");
+        gameManager.handleGameStateChanged(new GameShutdownState(new HashMap<>(), new PokeHitEvent("0", "0")));
+
+        assertThat(gameManager.getGames().size(), equalTo(0));
+        assertThat(gameManager.getWaitingPlayersAsList().stream().map(player -> player.getName()).collect(toList()),
+                containsInAnyOrder("Tom", "Jerry"));
     }
 }

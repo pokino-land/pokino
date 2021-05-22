@@ -1,4 +1,7 @@
-package ch.pokino.game.state_machine;
+package ch.pokino.game.state_machine.states;
+
+import ch.pokino.game.state_machine.events.GameEvent;
+import ch.pokino.game.state_machine.events.PokeHitEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,10 +9,10 @@ import java.util.NoSuchElementException;
 
 public class GameRunningState extends GameState {
 
-    private static final Integer MAX_SCORE_TO_WIN = 5;  // whoever gets this first, wins
+    public static final Integer POINTS_NEEDED_TO_WIN = 5;  // whoever gets this first, wins
 
-    public GameRunningState(Map<String, Integer> standings) {
-        super(standings);
+    public GameRunningState(Map<String, Integer> standings, GameEvent entryEvent) {
+        super(standings, entryEvent);
     }
 
     @Override
@@ -18,10 +21,10 @@ public class GameRunningState extends GameState {
             Map<String, Integer> newStandings = new HashMap<>(standings);
             newStandings.put(event.getCallerId(), standings.get(event.getCallerId()) + 1);
 
-            if (getMaxScore(newStandings).equals(MAX_SCORE_TO_WIN)) {
-                return new GameShutdownState(newStandings);
+            if (getMaxScore(newStandings).equals(POINTS_NEEDED_TO_WIN)) {
+                return new GameShutdownState(newStandings, event);
             } else {
-                return new GameRunningState(newStandings);
+                return new GameRunningState(newStandings, event);
             }
         }
         return this;
