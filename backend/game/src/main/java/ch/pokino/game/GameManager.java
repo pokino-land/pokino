@@ -1,5 +1,6 @@
 package ch.pokino.game;
 
+import ch.pokino.game.leaderboard.PastGameStore;
 import ch.pokino.game.messaging.GameEndsMessage;
 import ch.pokino.game.messaging.GameEndsPushMessenger;
 import ch.pokino.game.messaging.GameStartsMessage;
@@ -27,11 +28,15 @@ public class GameManager implements GameStateChangeListener{
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
     public static final int MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED = 1000;
     private final Map<String, Game> games = new HashMap<>();
+    private final PastGameStore pastGameStore;
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
-    public GameManager(GameStartsPushMessenger gameStartsPushMessenger, GameEndsPushMessenger gameEndsPushMessenger) {
+    public GameManager(GameStartsPushMessenger gameStartsPushMessenger,
+                       GameEndsPushMessenger gameEndsPushMessenger,
+                       PastGameStore pastGameStore) {
         this.gameStartsPushMessenger = gameStartsPushMessenger;
         this.gameEndsPushMessenger = gameEndsPushMessenger;
+        this.pastGameStore = pastGameStore;
     }
 
     public String addPlayerToWaiting(Player player) throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
@@ -164,10 +169,13 @@ public class GameManager implements GameStateChangeListener{
             final Tuple<Player, Player> players = game.getPlayers();
             GameEndsMessage gameEndsMessage = new GameEndsMessage(
                     players.first.getId(),
+                    players.first.getName(),
                     players.second.getId(),
+                    players.second.getName(),
                     game.getGameId(),
                     game.getStandings());
             this.gameEndsPushMessenger.sendGameEndsMessage(gameEndsMessage);
+            this.pastGameStore.addGameEndsMessage(gameEndsMessage);
             this.games.remove(gameId);
             try {
                 addPlayerToWaiting(players.first);
