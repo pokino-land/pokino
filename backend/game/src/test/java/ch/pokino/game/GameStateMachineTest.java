@@ -5,6 +5,8 @@ import ch.pokino.game.state_machine.states.GameRunningState;
 import ch.pokino.game.state_machine.GameStateMachine;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
 import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
+import ch.pokino.game.state_machine.states.GameShutdownState;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +14,7 @@ import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 
 public class GameStateMachineTest {
 
@@ -56,6 +59,7 @@ public class GameStateMachineTest {
         }
         assertThat(this.gameStateMachine.getStandings().get("0"), equalTo(GameRunningState.POINTS_NEEDED_TO_WIN));
         assertThat(this.gameStateMachine.getStandings().get("1"), equalTo(0));
+        assertThat(this.gameStateMachine.getGameState(), instanceOf(GameShutdownState.class));
         assertThat(this.gameStateMachine.getStatusAsString(), equalTo("GameShutdownState"));
     }
 }

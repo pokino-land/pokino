@@ -42,6 +42,10 @@ public class GameStateMachine {
         return this.state.name();
     }
 
+    public GameState getGameState() {
+        return this.state;
+    }
+
     public void registerGameStateChangedListeners(GameStateChangeListener listener) {
         this.listeners.add(listener);
     }
