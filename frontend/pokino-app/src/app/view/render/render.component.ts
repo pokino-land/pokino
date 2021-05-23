@@ -10,7 +10,8 @@ import { apiHandler } from '../../model/render/apiHandler';
 import {JsonGameStateObject} from "../../api/json-game-state.object";
 import * as Stomp from "stompjs";
 import {JsonGameInitObject} from "../../api/json-game-init-object";
-import {WebsocketService} from "../websocket-adapter/websocket.service";
+import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-render',
@@ -81,7 +82,7 @@ export class RenderComponent implements OnInit, OnDestroy {
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
- constructor(private apiService: ApiService, private websocketService: WebsocketService) {
+ constructor(private apiService: ApiService, private gameStreamingService: GameStreamingService, private router: Router) {
 
     this.m_apiHandler = new apiHandler(apiService);
 
@@ -142,16 +143,16 @@ export class RenderComponent implements OnInit, OnDestroy {
   }
 
   renderScene() {
-    //render loop
+    // render loop
     window.requestAnimationFrame(() => this.renderScene());
-    //update
-    
+    // update
+
     this.m_physics.update();
     this.m_enemy.update();
     this.m_scene.update();
     this.m_player.update(this.m_mouseInfo);
     this.updateMouseCursor();
-  
+
 
     if (this.m_enemy.m_enemyBody.collided && !this.updated) {
       this.m_score++;
@@ -163,16 +164,25 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     if (!this.m_enemy.m_alive) {
       this.m_scene.removeEnemy(this.m_enemy);
-      //create new enemy
+      // create new enemy
       this.m_enemy = new enemy(this.m_apiHandler.updateRandomPokemon(), this.m_sceneHeight);
       this.m_scene.addEnemy(this.m_enemy);
       this.m_physics.enemy = this.m_enemy.m_enemyBody;
     }
-  
-    //render
+
+    // render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
-    
+
   }
+
+
+  endGame(): void {
+     // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
+      // falls ja wäre hier der Ort dafür, die Methode wird ausgeführt nachdem das Backend die Message
+      // schickt mit der das Game beendet wird
+      this.router.navigate(['/mainMenu']);
+  }
+
 
   ngOnInit(): void {
     this.openWebSocketConnection();
@@ -183,27 +193,34 @@ export class RenderComponent implements OnInit, OnDestroy {
   }
 
   private openWebSocketConnection(): void {
-    this.webSocket = this.websocketService.getWebSocket();
+    this.webSocket = this.gameStreamingService.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
-        this.client.subscribe(this.websocketService.getGameInitTopic(), (item) => {
+        this.client.subscribe(this.gameStreamingService.getGameInitTopic(), (item) => {
             const response: JsonGameStateObject = JSON.parse(item.body);
             this.gameState = response;
         });
+        this.client.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
+            const response: JsonGameStateObject = JSON.parse(item.body);
+            this.gameState = response;
+            this.endGame();
+        });
     });
-    }
+  }
 
-    // TODO refactor into service, would probably make more sense to have it there
+    // TODO Leo refactor into service, would probably make more sense to have it there
     private sendGameState(): void {
-     this.client.send('/pokino/gameState' , {}, JSON.stringify(this.gameState));
+     const gameId = this.gameStreamingService.currentGameId;
+     this.client.send(`/pokino/game/${gameId}` , {}, JSON.stringify(this.gameState));
     }
 
-    // TODO refactor into service, would probably make more sense to have it there
+    // TODO Leo refactor into service, would probably make more sense to have it there
     private closeWebSocketConnection(): void {
+        const gameTopic = this.gameStreamingService.getGameTopic();
         if (this.client) {
             this.webSocket.close();
-            this.client.unsubscribe("/gameState");
+            this.client.unsubscribe(gameTopic);
         }
     }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import * as Stomp from 'stompjs';
-import {WebsocketService} from "./websocket.service";
+import {GameStreamingService} from "./game-streaming.service";
 
 
 @Component({
@@ -16,7 +16,7 @@ export class WebsocketTestComponent implements OnInit, OnDestroy {
   receivedMessages: Array<string> = [];
   input = '';
 
-  constructor(private httpService: WebsocketService) { }
+  constructor(private httpService: GameStreamingService) { }
 
   public ngOnInit(): void {
     this.openWebSocketConnection();
