@@ -20,7 +20,7 @@
 
 <!-- BATCHES SECTION -->
 [![Build Status](https://travis-ci.com/pokino-project/pokino.svg?branch=main)](https://travis-ci.com/pokino-project/pokino)
-[![codecov](https://img.shields.io/codecov/c/github/matthaeusheer/pokino?label=test%20coverage&token=444585811d48493abd0d6c7efe228d2a)](https://app.codecov.io/gh/matthaeusheer/pokino/)
+[![codecov](https://img.shields.io/codecov/c/github/pokino-project/pokino?label=test%20coverage&token=444585811d48493abd0d6c7efe228d2a)](https://app.codecov.io/gh/pokino-project/pokino/)
 [![dockerhub](https://img.shields.io/badge/docker%20hub-registry-blue)](https://hub.docker.com/repository/docker/matthaeusheer/pokino-game)
 
 </div> <!-- centering -->
