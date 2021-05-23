@@ -6,7 +6,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-
 @Component
 public class UpstreamDownstreamMessenger {
 
@@ -22,7 +21,6 @@ public class UpstreamDownstreamMessenger {
      */
     @CrossOrigin(origins = "*", allowedHeaders="Access-Control-Allow-Origin")
     @MessageMapping("/queue/{gameId}/upstream")
-    @SendTo("/queue/{gameId}/downstream")
     public void listen(String message) {
         // TODO: Maybe we need a little more logic here to validate who's turn it is etc. or is that all in frontend?
         this.simpMessagingTemplate.convertAndSend("/queue/{gameId}/downstream", message);
