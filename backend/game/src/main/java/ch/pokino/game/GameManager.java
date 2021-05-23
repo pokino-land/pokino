@@ -85,9 +85,16 @@ public class GameManager implements GameStateChangeListener{
         associatedGame.handleGameEvent(new PokeHitEvent(playerId, associatedGame.getGameId()));
     }
 
-    public void handleStartupConfirmationRequest(String playerId) {
+    public String handleStartupConfirmationRequest(String playerId) {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
         associatedGame.handleGameEvent(new StartupConfirmationEvent(playerId, associatedGame.getGameId()));
+        Tuple<Player, Player> players = associatedGame.getPlayers();
+        Random random = new Random();
+        if (random.nextInt(2) == 0) {
+            return players.first.getId();
+        } else {
+            return players.second.getId();
+        }
     }
 
     /**

@@ -19,7 +19,7 @@ public class GameStateController {
     }
 
     @PostMapping("/game/ready")
-    public void confirmStartup(@RequestParam String playerId) {
-        this.gameManager.handleStartupConfirmationRequest(playerId);
+    public String confirmStartup(@RequestParam String playerId) {
+        return this.gameManager.handleStartupConfirmationRequest(playerId);
     }
 }
