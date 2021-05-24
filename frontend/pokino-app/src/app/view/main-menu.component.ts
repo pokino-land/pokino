@@ -63,6 +63,8 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   public async loginPlayer(playerName: string): Promise<void> {
     const playerId: string = await this.apiService.loginPlayer(playerName);
     this.player = new JsonPlayerObject(playerId, playerName);
+    // TODO make this more pretty
+    this.gameStreamingService.player = this.player;
     this.loggedIn = true;
   }
 

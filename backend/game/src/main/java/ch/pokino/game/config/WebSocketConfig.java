@@ -16,11 +16,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String STOMP_ENDPOINT_NAME = "/pokino-websocket";
     private static final String DESTINATION_PREFIX_INIT_TOPIC = "/topic";
-    private static final String DESTINATION_PREFIX_GAME_QUEUE = "/queue";
+    private static final String DESTINATION_PREFIX_QUEUE_TOPIC = "/queue";
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker(DESTINATION_PREFIX_INIT_TOPIC, DESTINATION_PREFIX_GAME_QUEUE);
+        config.enableSimpleBroker(DESTINATION_PREFIX_INIT_TOPIC, DESTINATION_PREFIX_QUEUE_TOPIC);
         config.setApplicationDestinationPrefixes("/pokino");
     }
 
