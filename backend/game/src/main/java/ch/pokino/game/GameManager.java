@@ -5,7 +5,9 @@ import ch.pokino.game.messaging.GameEndsMessage;
 import ch.pokino.game.messaging.GameEndsPushMessenger;
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
+import ch.pokino.game.state_machine.events.GameEvent;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
+import ch.pokino.game.state_machine.events.PokeMissEvent;
 import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
 import ch.pokino.game.state_machine.states.GameShutdownState;
 import ch.pokino.game.state_machine.states.GameState;
@@ -80,9 +82,10 @@ public class GameManager implements GameStateChangeListener{
         }
     }
 
-    public void handlePokeHitRequest(String playerId) {
+    public void handlePokeHitOrMissRequest(String playerId, boolean didHit) {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
-        associatedGame.handleGameEvent(new PokeHitEvent(playerId, associatedGame.getGameId()));
+        GameEvent hitOrMissEvent = didHit ? new PokeHitEvent(playerId, associatedGame.getGameId()) : new PokeMissEvent(playerId, associatedGame.getGameId());
+        associatedGame.handleGameEvent(hitOrMissEvent);
     }
 
     public String handleStartupConfirmationRequest(String playerId) {

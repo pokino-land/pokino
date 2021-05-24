@@ -75,10 +75,11 @@ export class ApiConfig {
         return new URL(url);
     }
 
-    static getBallThrownUrl(didHit: boolean): URL {
+    static getBallThrownUrl(playerId: string, didHit: boolean): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
         const endpoints: Array<string> = [this.GAME_ENDPOINT, this.BALL_THROWN_ENDPOINT];
         let url = this.buildUrl(root, endpoints).href;
+        url += ('?playerId=' + playerId);
         url += ('?didHit=' + didHit);
         return new URL(url);
     }
