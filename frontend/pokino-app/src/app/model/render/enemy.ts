@@ -35,7 +35,7 @@ export class enemy {
         var material = this.getMaterialFromName(pokemon.name);
         this.m_mesh = new THREE.Mesh(geometry, material);
         this.m_mesh.translateY(- height / 2 + enemySize / 2);
-        const pokemonStartHeight = 200;
+        const pokemonStartHeight = 0;
         this.m_mesh.translateX(pokemonStartHeight);
 
         this.m_startPosition = new THREE.Vector2(this.m_mesh.position.x, this.m_mesh.position.y);
@@ -45,6 +45,10 @@ export class enemy {
         this.m_velocity = new THREE.Vector2(pokemon.healthPoints / 2, 0);
         this.m_movementRadius = pokemon.defensePoints * 1.6;
 
+    }
+
+    setMaterial(name: string) {
+        this.m_mesh.material = this.getMaterialFromName(name);
     }
 
     getMaterialFromName(name: string): THREE.MeshBasicMaterial {
