@@ -16,10 +16,15 @@ public class GameStateController {
         this.gameManager = gameManager;
     }
 
-    @GetMapping("/game/hit")
-    public void pokeHit(@RequestParam String playerId) {
-        this.gameManager.handlePokeHitRequest(playerId);
+    @GetMapping("/game/ballThrown")
+    public void pokeHit(@RequestParam String playerId, @RequestParam boolean didHit) {
+        this.gameManager.handlePokeHitOrMissRequest(playerId, didHit);
     }
+
+//    @GetMapping("game/{gameId}/standings")
+//    public GameStandings getStandings(@PathVariable String gameId) {
+//        // TODO(matt): Return the game status such that frontend can request it before every turn.
+//    }
 
     @GetMapping("/game/ready")
     public String confirmStartup(@RequestParam String playerId) {

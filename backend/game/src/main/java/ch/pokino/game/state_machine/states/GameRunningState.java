@@ -2,6 +2,7 @@ package ch.pokino.game.state_machine.states;
 
 import ch.pokino.game.state_machine.events.GameEvent;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
+import ch.pokino.game.state_machine.events.PokeMissEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,9 @@ public class GameRunningState extends GameState {
             } else {
                 return new GameRunningState(newStandings, event);
             }
+        } else if (event instanceof PokeMissEvent) {
+           // TODO (matt): Implement logic to track how many hits and misses have been made per player.
+            return new GameRunningState(this.standings, event);
         }
         return this;
     }
