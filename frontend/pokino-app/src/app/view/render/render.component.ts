@@ -88,7 +88,6 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     this.config = require('../../model/render/config.json');
     this.m_apiHandler = new apiHandler(apiService);
-
     this.m_scene = new PokinoScene();
     this.m_scene.init(this.m_sceneWidth, this.m_sceneHeight);
     this.m_player = new player(this.m_sceneWidth, this.m_sceneHeight);
@@ -151,9 +150,10 @@ export class RenderComponent implements OnInit, OnDestroy {
     window.requestAnimationFrame(() => this.renderScene());
     //update
 
-    this.m_physics.update();
+    this.m_physics.update(this.m_apiHandler.getWind());
+
     this.m_enemy.update();
-    this.m_scene.update();
+    this.m_scene.update(this.m_apiHandler.getWind());
     this.m_player.update(this.m_mouseInfo);
     this.updateMouseCursor();
 

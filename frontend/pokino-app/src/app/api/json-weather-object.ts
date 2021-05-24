@@ -8,5 +8,3 @@ export class JsonWeatherObject implements JsonObject {
 
 	constructor() {}
 }
-
-
