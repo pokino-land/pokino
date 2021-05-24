@@ -231,9 +231,6 @@ export class RenderComponent implements OnInit, OnDestroy {
       });
   }
 
-
-  public openDownStr
-
     // TODO Leo refactor into service, would probably make more sense to have it there
     // TODO Steven use this wherever you like
     private sendGameState(): void {

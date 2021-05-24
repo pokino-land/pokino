@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 
@@ -14,18 +15,25 @@ public class Game {
 
     private final String id;
     private final Tuple<Player, Player> players;
+
+    private String startingPlayerId;
+
     private final GameStateMachine gameStateMachine;
     private final static Logger LOGGER = LoggerFactory.getLogger(Game.class);
-
     public Game(Tuple<Player, Player> players) {
         this.id = GameIdCreator.createId();
         this.players = players;
         this.gameStateMachine = new GameStateMachine(getPlayerIds());
-        LOGGER.info("Initialized new game " + id + " with players " + players);
+        this.setRandomStartingPlayerId();
+        LOGGER.info("Initialized new game " + id + " with players " + players + ". Starting player: " + this.startingPlayerId);
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getStartingPlayerId() {
+        return startingPlayerId;
     }
 
     public void handleGameEvent(GameEvent event) {
@@ -62,6 +70,15 @@ public class Game {
 
     public void registerGameStateChangeListener(GameStateChangeListener listener) {
         this.gameStateMachine.registerGameStateChangedListeners(listener);
+    }
+
+    private void setRandomStartingPlayerId() {
+        Random random = new Random();
+        if (random.nextInt(2) == 0) {
+            this.startingPlayerId = this.players.first.getId();
+        } else {
+            this.startingPlayerId = this.players.second.getId();
+        }
     }
 
 }
