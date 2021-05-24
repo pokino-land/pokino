@@ -11,7 +11,6 @@ export class GameStreamingService {
 
   private webSocketUrl = ApiConfig.getWebsocketUrl().href;
   declare currentGameId: string;
-<<<<<<< HEAD
   declare playerTurnId: string;
 =======
 >>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd

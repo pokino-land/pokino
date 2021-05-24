@@ -3,7 +3,6 @@ package ch.pokino.game.messaging;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class GameStartsPushMessenger {
 

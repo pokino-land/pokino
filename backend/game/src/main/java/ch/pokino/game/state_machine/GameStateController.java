@@ -13,13 +13,14 @@ public class GameStateController {
         this.gameManager = gameManager;
     }
 
-    @PostMapping("/game/hit")
+    @GetMapping("/game/hit")
     public void pokeHit(@RequestParam String playerId) {
         this.gameManager.handlePokeHitRequest(playerId);
     }
 
-    @PostMapping("/game/ready")
+    @GetMapping("/game/ready")
     public String confirmStartup(@RequestParam String playerId) {
+        System.out.println("Incoming ready confirmation request from player " + playerId);
         return this.gameManager.handleStartupConfirmationRequest(playerId);
     }
 }

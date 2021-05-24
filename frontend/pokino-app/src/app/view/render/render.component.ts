@@ -1,21 +1,17 @@
-import {HostListener, Component, ElementRef, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as THREE from 'three'
-import { PokinoScene } from "../../model/render/PokinoScene"
-import { player } from "../../model/render/player"
-import { enemy } from "../../model/render/enemy"
-import { mouseInfo } from "../../model/render/handleInput"
-import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/render/physics';
-import { ApiService } from '../../api/api.service';
-import { apiHandler } from '../../model/render/apiHandler';
+import {PokinoScene} from "../../model/render/PokinoScene"
+import {player} from "../../model/render/player"
+import {enemy} from "../../model/render/enemy"
+import {mouseInfo} from "../../model/render/handleInput"
+import {physics} from '../../model/render/physics';
+import {ApiService} from '../../api/api.service';
+import {apiHandler} from '../../model/render/apiHandler';
 import {JsonGameStateObject} from "../../api/json-game-state.object";
 import * as Stomp from "stompjs";
-import {JsonGameInitObject} from "../../api/json-game-init-object";
 import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
 import {Router} from "@angular/router";
-<<<<<<< HEAD
 import {JsonGameEndsObject} from "../../api/json-game-ends-object";
-=======
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
 
 @Component({
   selector: 'app-render',
@@ -180,7 +176,6 @@ export class RenderComponent implements OnInit, OnDestroy {
 <<<<<<< HEAD
   }
 
-
   endGame(gameEndsMessage: JsonGameEndsObject): void {
      // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
       // falls ja wäre hier der Ort dafür, die Methode wird ausgeführt nachdem das Backend die Message
@@ -245,7 +240,7 @@ export class RenderComponent implements OnInit, OnDestroy {
 <<<<<<< HEAD
     // TODO Steven use this wherever you like
     private sendGameState(): void {
-     const gameId = this.gameStreamingService.currentGameId;
+     console.log('Calling sendGameState...');
      this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
 =======
     private sendGameState(): void {
