@@ -4,8 +4,8 @@ export class JsonGameStateObject implements JsonObject {
 
     ball: Ball = new Ball();
     pokemon: Pokemon = new Pokemon();
-    declare currentPlayerId: number;
     scores: Score = new Score();
+    declare currentPlayerId: number;
 
     constructor() {}
 }

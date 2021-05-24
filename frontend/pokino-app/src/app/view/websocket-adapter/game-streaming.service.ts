@@ -13,6 +13,7 @@ export class GameStreamingService {
   declare currentGameId: string;
   declare playerTurnId: string;
   declare player: JsonPlayerObject;
+  downStreamSubscribed: boolean = false;
 
   constructor(private apiService: ApiService) { }
 

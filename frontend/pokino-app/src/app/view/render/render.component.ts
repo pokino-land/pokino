@@ -179,11 +179,14 @@ export class RenderComponent implements OnInit, OnDestroy {
     this.gameState.pokemon.name = this.m_enemy.m_pokemon.name;
     this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
     this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
+    console.log("gameState:");
+    console.log(this.gameState);
     this.gameState.scores.player1Id = this.m_score;
     if (this.gameStreamingService.isMyTurn()) {
+        this.closeDownStreamConnection();
         this.sendGameState();
     } else {
-        this.
+        this.openDownStreamConnection();
     }
   }
 
@@ -195,23 +198,20 @@ export class RenderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.openWebSocketConnections();
+    this.openShutdownConnection();
   }
 
   ngOnDestroy(): void {
-     this.closeWebSocketConnection();
+     this.closeDownStreamConnection();
+     this.closeShutdownConnection();
   }
 
-  private openWebSocketConnections(): void {
+  private openShutdownConnection(): void {
 
     this.webSocket = this.gameStreamingService.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
-        this.client.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
-            console.log('got the game state from backend');
-            this.gameState = JSON.parse(item.body);
-        });
         this.client.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
             const response: JsonGameEndsObject = JSON.parse(item.body);
             const gameEndsMessage: JsonGameEndsObject = response;
@@ -220,6 +220,15 @@ export class RenderComponent implements OnInit, OnDestroy {
             }
         });
     });
+  }
+
+
+  public openDownStreamConnection(): void {
+      this.client.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
+          this.gameStreamingService.downStreamSubscribed = true;
+          console.log('got the game state from backend');
+          this.gameState = JSON.parse(item.body);
+      });
   }
 
 
@@ -233,8 +242,18 @@ export class RenderComponent implements OnInit, OnDestroy {
     }
 
     // TODO Leo refactor into service, would probably make more sense to have it there
-    private closeWebSocketConnection(): void {
+    private closeDownStreamConnection(): void {
         const gameTopic = this.gameStreamingService.getGameDownstreamTopic();
+        if (this.client && this.gameStreamingService.downStreamSubscribed) {
+            this.gameStreamingService.downStreamSubscribed = false;
+            this.webSocket.close();
+            this.client.unsubscribe(gameTopic);
+        }
+    }
+
+    // TODO Leo refactor into service, would probably make more sense to have it there
+    private closeShutdownConnection(): void {
+        const gameTopic = this.gameStreamingService.getGameShutdownTopic();
         if (this.client) {
             this.webSocket.close();
             this.client.unsubscribe(gameTopic);
