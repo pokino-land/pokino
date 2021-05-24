@@ -23,7 +23,7 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     declare webSocket: WebSocket;
     declare client: Stomp.Client;
-    declare gameState: JsonGameStateObject;
+    gameState: JsonGameStateObject = new JsonGameStateObject();
 
   @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
@@ -173,7 +173,18 @@ export class RenderComponent implements OnInit, OnDestroy {
     // render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
 
-<<<<<<< HEAD
+    this.gameState.ball.x = this.m_player.m_ball.position.x;
+    this.gameState.ball.y = this.m_player.m_ball.position.y;
+    this.gameState.pokemon.isHit = this.m_enemy.m_enemyBody.collided;
+    this.gameState.pokemon.name = this.m_enemy.m_pokemon.name;
+    this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
+    this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
+    this.gameState.scores.player1Id = this.m_score;
+    if (this.gameStreamingService.isMyTurn()) {
+        this.sendGameState();
+    } else {
+        this.
+    }
   }
 
   endGame(gameEndsMessage: JsonGameEndsObject): void {
@@ -183,20 +194,6 @@ export class RenderComponent implements OnInit, OnDestroy {
       this.router.navigate(['/mainMenu']);
   }
 
-
-=======
-  }
-
-
-  endGame(): void {
-     // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
-      // falls ja wäre hier der Ort dafür, die Methode wird ausgeführt nachdem das Backend die Message
-      // schickt mit der das Game beendet wird
-      this.router.navigate(['/mainMenu']);
-  }
-
-
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
   ngOnInit(): void {
     this.openWebSocketConnections();
   }
@@ -205,26 +202,15 @@ export class RenderComponent implements OnInit, OnDestroy {
      this.closeWebSocketConnection();
   }
 
-<<<<<<< HEAD
   private openWebSocketConnections(): void {
-=======
-  private openWebSocketConnection(): void {
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
+
     this.webSocket = this.gameStreamingService.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
-        this.client.subscribe(this.gameStreamingService.getGameInitTopic(), (item) => {
-<<<<<<< HEAD
-=======
-            const response: JsonGameStateObject = JSON.parse(item.body);
-            this.gameState = response;
-        });
-        this.client.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
-            const response: JsonGameStateObject = JSON.parse(item.body);
-            this.gameState = response;
-            this.endGame();
+        this.client.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
+            console.log('got the game state from backend');
+            this.gameState = JSON.parse(item.body);
         });
         this.client.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
             const response: JsonGameEndsObject = JSON.parse(item.body);
@@ -236,26 +222,19 @@ export class RenderComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  public openDownStr
+
     // TODO Leo refactor into service, would probably make more sense to have it there
-<<<<<<< HEAD
     // TODO Steven use this wherever you like
     private sendGameState(): void {
      console.log('Calling sendGameState...');
      this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
-=======
-    private sendGameState(): void {
-     const gameId = this.gameStreamingService.currentGameId;
-     this.client.send(`/pokino/game/${gameId}` , {}, JSON.stringify(this.gameState));
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
     }
 
     // TODO Leo refactor into service, would probably make more sense to have it there
     private closeWebSocketConnection(): void {
-<<<<<<< HEAD
         const gameTopic = this.gameStreamingService.getGameDownstreamTopic();
-=======
-        const gameTopic = this.gameStreamingService.getGameTopic();
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
         if (this.client) {
             this.webSocket.close();
             this.client.unsubscribe(gameTopic);

@@ -53,12 +53,11 @@ export class ApiService {
 	}
 
 
-<<<<<<< HEAD
 	public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<string> {
 		// returns the starting player's id
 		const url: URL = ApiConfig.getConfirmGameStartsUrl(player.id);
 
-		return await this.post(url.href, {})
+		return await this.get(url.href)
 			.toPromise()
 			.then((data: any) => {
 				console.log("sent game confirmation message to backend");
@@ -76,15 +75,6 @@ export class ApiService {
 			.toPromise()
 			.then((data: any) => {
 				console.log("sent ball thrown; did it hit? " + didHit);
-=======
-	public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<void> {
-		const url: URL = ApiConfig.getConfirmGameStartsUrl(player.id);
-
-		return await this.get(url.href)
-			.toPromise()
-			.then((data: any) => {
-				console.log("sent game confirmation message to backend");
->>>>>>> c0d45c60b2a1ffcfe2ee9e8e6e720b1182e799cd
 			});
 	}
 
