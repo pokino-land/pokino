@@ -29,6 +29,6 @@ public class GameStartsMessage {
     }
 
     public String toString() {
-        return "GameMessage(playerId1=" + playerId1 + ", " + "playerId2=" + playerId2 + ", " + "gameId=" + gameId + ")";
+        return "GameStartsMessage(playerId1=" + playerId1 + ", " + "playerId2=" + playerId2 + ", " + "gameId=" + gameId + ")";
     }
 }

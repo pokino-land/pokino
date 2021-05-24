@@ -1,7 +1,10 @@
 package ch.pokino.game;
 
 
+import ch.pokino.game.state_machine.states.GameRunningState;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static ch.pokino.game.PlayerIdCreator.createId;
 
@@ -17,19 +20,22 @@ public class GameServiceController {
 
     @GetMapping(value = "/game/login")
     public String playerLogin(@RequestParam String name) throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
-        return gameManager.addPlayerToWaiting(new Player(createId(), name));
+        return this.gameManager.addPlayerToWaiting(new Player(createId(), name));
     }
 
     @GetMapping("/game/clickReady")
     public void playerClickReady(@RequestParam String playerName, @RequestParam String playerId) {
-        gameManager.addPlayerToReady(playerName, playerId);
+        this.gameManager.addPlayerToReady(playerName, playerId);
     }
 
-    @GetMapping("/game/dummy")
-    public String dummy() {
-        return "Hello";
+    @GetMapping("/game/status")
+    public List<GameStatus> getGamesState() {
+        return this.gameManager.getGameStatuses();
+    }
+
+    @GetMapping("/game/pointsNeededToWin")
+    public Integer getPointsNeededToWin() {
+        return GameRunningState.POINTS_NEEDED_TO_WIN;
     }
 
 }
-
-

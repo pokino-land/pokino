@@ -50,7 +50,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-			  "baseHref": "https://stevenschuerstedt.github.io/",
+			  "baseHref": "34.65.96.186",
               "budgets": [
                 {
                   "type": "initial",

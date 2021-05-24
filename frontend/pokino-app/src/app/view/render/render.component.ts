@@ -1,4 +1,4 @@
-import { HostListener, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {HostListener, Component, ElementRef, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import * as THREE from 'three'
 import { PokinoScene } from "../../model/render/PokinoScene"
 import { player } from "../../model/render/player"
@@ -8,13 +8,23 @@ import { physics, ballPhysicsObject, enemyPhysicsObject } from '../../model/rend
 import { ApiService } from '../../api/api.service';
 import { apiHandler } from '../../model/render/apiHandler';
 import { Config } from '../../model/render/config'
+import {JsonGameStateObject} from "../../api/json-game-state.object";
+import * as Stomp from "stompjs";
+import {JsonGameInitObject} from "../../api/json-game-init-object";
+import {WebsocketService} from "../websocket-adapter/websocket.service";
+
 
 @Component({
   selector: 'app-render',
   templateUrl: './render.component.html',
   styleUrls: ['./render.component.scss']
 })
-export class RenderComponent implements OnInit {
+export class RenderComponent implements OnInit, OnDestroy {
+
+
+    declare webSocket: WebSocket;
+    declare client: Stomp.Client;
+    declare gameState: JsonGameStateObject;
 
   @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
@@ -74,9 +84,9 @@ export class RenderComponent implements OnInit {
   m_mouseCursor: THREE.Mesh = new THREE.Mesh();
   updated: boolean = false;
 
-  constructor(private apiService: ApiService) {
-    this.config = require('../../model/render/config.json');
+ constructor(private apiService: ApiService, private websocketService: WebsocketService) {
 
+    this.config = require('../../model/render/config.json');
     this.m_apiHandler = new apiHandler(apiService);
 
     this.m_scene = new PokinoScene();
@@ -169,6 +179,36 @@ export class RenderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.openWebSocketConnection();
   }
+
+  ngOnDestroy(): void {
+     this.closeWebSocketConnection();
+  }
+
+  private openWebSocketConnection(): void {
+    this.webSocket = this.websocketService.getWebSocket();
+    this.client = Stomp.over(this.webSocket);
+
+    this.client.connect({}, () => {
+        this.client.subscribe(this.websocketService.getGameInitTopic(), (item) => {
+            const response: JsonGameStateObject = JSON.parse(item.body);
+            this.gameState = response;
+        });
+    });
+    }
+
+    // TODO refactor into service, would probably make more sense to have it there
+    private sendGameState(): void {
+     this.client.send('/pokino/gameState' , {}, JSON.stringify(this.gameState));
+    }
+
+    // TODO refactor into service, would probably make more sense to have it there
+    private closeWebSocketConnection(): void {
+        if (this.client) {
+            this.webSocket.close();
+            this.client.unsubscribe("/gameState");
+        }
+    }
 
 }

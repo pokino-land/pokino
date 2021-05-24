@@ -1,5 +1,7 @@
 package ch.pokino.game;
 
+import static ch.pokino.game.PlayerIdCreator.createId;
+
 public class Player {
 
     private String id;
@@ -7,6 +9,11 @@ public class Player {
 
     public Player(String id, String name) {
         this.id = id;
+        this.name = name;
+    }
+
+    public Player(String name) {
+        this.id = createId();
         this.name = name;
     }
 
