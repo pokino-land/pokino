@@ -11,6 +11,7 @@ export class ApiConfig {
     private static readonly POKE_ENDPOINT: string = 'pokemon';
     private static readonly RANDOM_ENDPOINT: string = 'random';
     private static readonly WEATHER_ENDPOINT: string = 'weather';
+    private static readonly BALL_THROWN_ENDPOINT: string = 'ballThrown';
     private static readonly GAME_ENDPOINT: string = 'game';
     private static readonly LOGIN_ENDPOINT: string = 'login';
     private static readonly CLICK_READY_ENDPOINT: string = 'clickReady';
@@ -68,11 +69,20 @@ export class ApiConfig {
 
     static getConfirmGameStartsUrl(playerId: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
-        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT, playerId];
-        return this.buildUrl(root, endpoints);
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?playerId=' + playerId);
+        return new URL(url);
     }
 
-    // /topic/greetings
+    static getBallThrownUrl(didHit: boolean): URL {
+        const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.BALL_THROWN_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?didHit=' + didHit);
+        return new URL(url);
+    }
+
     public static getWebsocketGreetingsTopic(): string {
         return this.WEBSOCKET_INIT_TOPIC;
     }

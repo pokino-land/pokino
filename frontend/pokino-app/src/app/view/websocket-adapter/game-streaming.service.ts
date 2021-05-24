@@ -11,6 +11,7 @@ export class GameStreamingService {
 
   private webSocketUrl = ApiConfig.getWebsocketUrl().href;
   declare currentGameId: string;
+  declare playerTurnId: string;
 
   constructor(private apiService: ApiService) { }
 
@@ -22,11 +23,19 @@ export class GameStreamingService {
     return ApiConfig.getWebsocketGreetingsTopic();
   }
 
-  public sendGameStartsConfirmation(player: JsonPlayerObject): void {
-    this.apiService.sendGameStartsConfirmation(player);
+  public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<void> {
+    this.playerTurnId = await this.apiService.sendGameStartsConfirmation(player);
   }
 
-  public getGameTopic(): string {
+  public getGameDownstreamTopic(): string {
     return `/queue/${this.currentGameId}/downstream`;
+  }
+
+  public getGameUpstreamTopic(): string {
+    return `/queue/${this.currentGameId}/upstream`;
+  }
+
+  public getGameShutdownTopic(): string {
+    return `/topic/shutdown`;
   }
 }

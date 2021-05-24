@@ -12,6 +12,7 @@ import * as Stomp from "stompjs";
 import {JsonGameInitObject} from "../../api/json-game-init-object";
 import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
 import {Router} from "@angular/router";
+import {JsonGameEndsObject} from "../../api/json-game-ends-object";
 
 @Component({
   selector: 'app-render',
@@ -176,7 +177,7 @@ export class RenderComponent implements OnInit, OnDestroy {
   }
 
 
-  endGame(): void {
+  endGame(gameEndsMessage: JsonGameEndsObject): void {
      // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
       // falls ja wäre hier der Ort dafür, die Methode wird ausgeführt nachdem das Backend die Message
       // schickt mit der das Game beendet wird
@@ -185,14 +186,14 @@ export class RenderComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.openWebSocketConnection();
+    this.openWebSocketConnections();
   }
 
   ngOnDestroy(): void {
      this.closeWebSocketConnection();
   }
 
-  private openWebSocketConnection(): void {
+  private openWebSocketConnections(): void {
     this.webSocket = this.gameStreamingService.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
@@ -202,22 +203,25 @@ export class RenderComponent implements OnInit, OnDestroy {
             this.gameState = response;
         });
         this.client.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
-            const response: JsonGameStateObject = JSON.parse(item.body);
-            this.gameState = response;
-            this.endGame();
+            const response: JsonGameEndsObject = JSON.parse(item.body);
+            const gameEndsMessage: JsonGameEndsObject = response;
+            if (gameEndsMessage.gameId === this.gameStreamingService.currentGameId) {
+                this.endGame(gameEndsMessage);
+            }
         });
     });
   }
 
     // TODO Leo refactor into service, would probably make more sense to have it there
+    // TODO Steven use this wherever you like
     private sendGameState(): void {
      const gameId = this.gameStreamingService.currentGameId;
-     this.client.send(`/pokino/game/${gameId}` , {}, JSON.stringify(this.gameState));
+     this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
     }
 
     // TODO Leo refactor into service, would probably make more sense to have it there
     private closeWebSocketConnection(): void {
-        const gameTopic = this.gameStreamingService.getGameTopic();
+        const gameTopic = this.gameStreamingService.getGameDownstreamTopic();
         if (this.client) {
             this.webSocket.close();
             this.client.unsubscribe(gameTopic);
