@@ -74,7 +74,7 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
     const relevantGameStarts: boolean = ((response.playerId1.toString() === this.player.id.toString())
         || (response.playerId2.toString()) === this.player.id.toString());
     if (relevantGameStarts) {
-      this.gameStreamingService.currentGameId = response.gameId;
+      this.gameStreamingService.initGameIds(response);
       this.gotoGameScreen();
       this.gameStreamingService.sendGameStartsConfirmation(this.player);
     }

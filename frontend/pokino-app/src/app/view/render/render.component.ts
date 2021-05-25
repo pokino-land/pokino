@@ -275,7 +275,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  // TODO Leo refactor these into service, would probably make more sense to have them there
   public openDownStreamConnection(): void {
     this.client.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
       this.gameStreamingService.downStreamSubscribed = true;
@@ -284,14 +284,11 @@ export class RenderComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TODO Leo refactor into service, would probably make more sense to have it there
-  // TODO Steven use this wherever you like
   private sendGameState(): void {
     console.log('Calling sendGameState...');
     this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
   }
 
-  // TODO Leo refactor into service, would probably make more sense to have it there
   private closeDownStreamConnection(): void {
     const gameTopic = this.gameStreamingService.getGameDownstreamTopic();
     if (this.client && this.gameStreamingService.downStreamSubscribed) {
@@ -301,7 +298,6 @@ export class RenderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // TODO Leo refactor into service, would probably make more sense to have it there
   private closeShutdownConnection(): void {
     const gameTopic = this.gameStreamingService.getGameShutdownTopic();
     if (this.client) {
