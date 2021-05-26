@@ -17,16 +17,28 @@ public class GameStateController {
         this.gameManager = gameManager;
     }
 
+    /**
+     * Whenever a player threw a ball, he has to issue a request to the backend and inform the game manager that he
+     * did hit or miss the pokemon.
+     */
     @GetMapping("/game/ballThrown")
     public void pokeHit(@RequestParam String playerId, @RequestParam boolean didHit) {
         this.gameManager.handlePokeHitOrMissRequest(playerId, didHit);
     }
 
+    /**
+     * Query the current standings (packed into the GameState object) for a particular game.
+     */
     @GetMapping("game/{gameId}/standings")
     public GameStatus getStandings(@PathVariable String gameId) {
         return this.gameManager.getGameStatusFor(gameId);
     }
 
+    /**
+     * Once a player has switched into the game play screen, he will inform the backend that he is ready and receive
+     * the id of the player that starts the game. If the id matches its own, he can start, otherwise the other player
+     * will start (for which the id will match).
+     */
     @GetMapping("/game/ready")
     public String confirmStartup(@RequestParam String playerId) {
         this.logger.info("Incoming ready confirmation request from player " + playerId);

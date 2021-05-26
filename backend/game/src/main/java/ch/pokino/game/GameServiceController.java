@@ -32,18 +32,25 @@ public class GameServiceController {
     }
 
     /**
-     *
+     * A player who is waiting in the waiting room can click ready. He will be removed from the waiting list
+     * and added to the ready queue from which he will be matched to other players in the queue.
      */
     @GetMapping("/game/clickReady")
     public void playerClickReady(@RequestParam String playerName, @RequestParam String playerId) throws PlayerIsNotFoundInWaitingRoom {
         this.gameManager.addPlayerToReady(playerName, playerId);
     }
 
+    /**
+     * Returns a list of all game statuses (i.e. standings, participating players etc).
+     */
     @GetMapping("/game/status")
     public List<GameStatus> getGamesState() {
         return this.gameManager.getGameStatusesAsList();
     }
 
+    /**
+     * The points a player needs to win are configured in the backend. One can use this endpoint to query this value.
+     */
     @GetMapping("/game/pointsNeededToWin")
     public Integer getPointsNeededToWin() {
         return GameRunningState.POINTS_NEEDED_TO_WIN;
