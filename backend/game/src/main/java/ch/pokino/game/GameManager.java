@@ -13,6 +13,7 @@ import ch.pokino.game.state_machine.GameStateChangeListener;
 import ch.pokino.game.state_machine.events.GameEvent;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
 import ch.pokino.game.state_machine.events.PokeMissEvent;
+import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
 import ch.pokino.game.state_machine.states.GameShutdownState;
 import ch.pokino.game.state_machine.states.GameState;
 import ch.pokino.game.utils.GameStatus;
@@ -95,7 +96,9 @@ public class GameManager implements GameStateChangeListener {
     }
 
     public String handleStartupConfirmationRequest(String playerId) {
-        return games.get(getGameIdForPlayerId(playerId)).getStartingPlayerId();
+        Game associatedGame = games.get(getGameIdForPlayerId(playerId));
+        associatedGame.handleGameEvent(new StartupConfirmationEvent(playerId, associatedGame.getGameId()));
+        return associatedGame.getStartingPlayerId();
     }
 
     /**
