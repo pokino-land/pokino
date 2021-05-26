@@ -169,7 +169,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     if (this.gameStreamingService.isMyTurn()) {
 
       if (this.m_webSocket == WebSocketConnection.UNDEFINED || this.m_webSocket == WebSocketConnection.OPEN) {
-        this.closeDownStreamConnection();
+        this.gameStreamingService.closeDownStreamConnection();
         this.m_webSocket = WebSocketConnection.CLOSED;
       }
 
@@ -181,16 +181,16 @@ export class RenderComponent implements OnInit, OnDestroy {
       this.updateMouseCursor();
 
       this.fillGameState();
-      this.sendGameState();
+      this.gameStreamingService.sendGameState(this.gameState);
 
 
       if (this.m_enemy.m_enemyBody.collided && !this.updated) {
         this.m_score++;
         this.updated = true;
-        if (this.gameState.currentPlayerId == 0)
-          this.gameState.currentPlayerId = 1;
+        if (this.gameState.currentPlayerId == "0")
+          this.gameState.currentPlayerId = "1";
         else
-          this.gameState.currentPlayerId = 0;
+          this.gameState.currentPlayerId = "0";
       }
       if (!this.m_enemy.m_enemyBody.collided && this.updated) {
         this.updated = false;
@@ -220,7 +220,10 @@ export class RenderComponent implements OnInit, OnDestroy {
       }
 
       if (this.m_webSocket == WebSocketConnection.UNDEFINED || this.m_webSocket == WebSocketConnection.CLOSED) {
-        this.openDownStreamConnection();
+        this.gameStreamingService.openDownStreamConnection();
+        this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
+          this.gameState = gameState;
+        });
         this.m_webSocket = WebSocketConnection.OPEN;
       }
 
@@ -228,7 +231,6 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     // render
     this.renderer.render(this.m_scene, this.m_scene.m_camera);
-
   }
 
 
@@ -251,59 +253,16 @@ export class RenderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.openShutdownConnection();
+    this.gameStreamingService.openShutdownConnection();
+    this.gameStreamingService.gameEndState.subscribe((gameEndsMessage: JsonGameEndsObject) => {
+      this.endGame(gameEndsMessage);
+    });
   }
 
   ngOnDestroy(): void {
-    this.closeDownStreamConnection();
-    this.closeShutdownConnection();
+    this.gameStreamingService.closeDownStreamConnection();
+    this.gameStreamingService.closeShutdownConnection();
   }
 
-  private openShutdownConnection(): void {
-
-    this.webSocket = this.gameStreamingService.getWebSocket();
-    this.client = Stomp.over(this.webSocket);
-
-    this.client.connect({}, () => {
-      this.client.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
-        const response: JsonGameEndsObject = JSON.parse(item.body);
-        const gameEndsMessage: JsonGameEndsObject = response;
-        if (gameEndsMessage.gameId === this.gameStreamingService.currentGameId) {
-          this.endGame(gameEndsMessage);
-        }
-      });
-    });
-  }
-
-  // TODO Leo refactor these into service, would probably make more sense to have them there
-  public openDownStreamConnection(): void {
-    this.client.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
-      this.gameStreamingService.downStreamSubscribed = true;
-      console.log('got the game state from backend');
-      this.gameState = JSON.parse(item.body);
-    });
-  }
-
-  private sendGameState(): void {
-    console.log('Calling sendGameState...');
-    this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
-  }
-
-  private closeDownStreamConnection(): void {
-    const gameTopic = this.gameStreamingService.getGameDownstreamTopic();
-    if (this.client && this.gameStreamingService.downStreamSubscribed) {
-      this.gameStreamingService.downStreamSubscribed = false;
-      this.webSocket.close();
-      this.client.unsubscribe(gameTopic);
-    }
-  }
-
-  private closeShutdownConnection(): void {
-    const gameTopic = this.gameStreamingService.getGameShutdownTopic();
-    if (this.client) {
-      this.webSocket.close();
-      this.client.unsubscribe(gameTopic);
-    }
-  }
 
 }

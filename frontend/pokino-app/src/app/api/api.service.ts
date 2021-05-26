@@ -71,7 +71,7 @@ export class ApiService {
 	public async sendBallThrown(playerId: string, didHit: boolean): Promise<void> {
 		const url: URL = ApiConfig.getBallThrownUrl(playerId, didHit);
 
-		return await this.post(url.href, {})
+		return await this.get(url.href)
 			.toPromise()
 			.then((data: any) => {
 				console.log("sent ball thrown; did it hit? " + didHit);

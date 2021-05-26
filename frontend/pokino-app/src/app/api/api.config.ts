@@ -49,7 +49,7 @@ export class ApiConfig {
     }
 
     /**
-     * example: http://localhost:8001/game/login?playerName={playerName}
+     * example: http://localhost:8001/game/login?name={playerName}
      */
     public static getLoginUrl(playerName: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
@@ -59,7 +59,9 @@ export class ApiConfig {
         return new URL(url);
     }
 
-    // ws://localhost:8002/pokino-websocket
+    /**
+     * example: ws://localhost:8001/pokino-websocket
+     */
     public static getWebsocketUrl(): URL {
         const root: Array<string> = [this.WEBSOCKET_ROOT_URL, this.WEBSOCKET_PORT];
         const endpoints: Array<string> = [this.WEBSOCKET_INIT_BASE];
@@ -80,7 +82,7 @@ export class ApiConfig {
         const endpoints: Array<string> = [this.GAME_ENDPOINT, this.BALL_THROWN_ENDPOINT];
         let url = this.buildUrl(root, endpoints).href;
         url += ('?playerId=' + playerId);
-        url += ('?didHit=' + didHit);
+        url += ('&didHit=' + (didHit ? '1' : '0'));
         return new URL(url);
     }
 
