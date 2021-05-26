@@ -68,7 +68,6 @@ export class GameStreamingService {
   public openDownStreamConnection(): void {
     this.client.subscribe(this.getGameDownstreamTopic(), (item) => {
       this.downStreamSubscribed = true;
-      console.log('got the game state from backend');
       this.gameStateChanged(JSON.parse(item.body));
     });
   }
@@ -135,18 +134,22 @@ export class GameStreamingService {
   }
 
   private changePlayerTurn(): void {
+    // TODO: Here should be a call to backend to get the current standings to update scores.
+
     this.playerChanging = true;
     this.playerTurnId = (this.playerTurnId === this.player.id) ? this.opponentId : this.player.id;
+
     // this.gameState.pipe(first()).subscribe((gameState: JsonGameStateObject) => {
     //   const nextPlayerGameState: JsonGameStateObject = gameState;
     //   gameState.currentPlayerId = this.playerTurnId;
     //   this.gameState.next(nextPlayerGameState);
     // });
+    //
     // this.gameState.pipe(first()).subscribe((gameState: JsonGameStateObject) => {
     //   this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(gameState));
     // });
 
-
+    // TODO: Does this really work?
     this.gameState.pipe(
         finalize(() => {
           console.log("GAME STATE SENT FINALLY");
