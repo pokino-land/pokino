@@ -182,8 +182,12 @@ public class GameManager implements GameStateChangeListener {
             GameEndsMessage gameEndsMessage = new GameEndsMessage(
                     players.first.getId(),
                     players.first.getName(),
+                    game.getNumberOfHitsForPlayer(players.first.getId()),
+                    game.getNumberOfMissesForPlayer(players.first.getId()),
                     players.second.getId(),
                     players.second.getName(),
+                    game.getNumberOfHitsForPlayer(players.second.getId()),
+                    game.getNumberOfMissesForPlayer(players.second.getId()),
                     game.getGameId(),
                     game.getStandings());
             this.gameEndsPushMessenger.sendGameEndsMessage(gameEndsMessage);

@@ -11,6 +11,9 @@ public class LeaderboardController {
 
     LeaderboardApplicationService leaderboardApplicationService;
 
+    /**
+     * Returns the complete leaderboard to the frontend ready for rendering.
+     */
     @GetMapping(value = "/leaderboard")
     public LeaderboardResponse leaderboard(@RequestParam int topNFilter) {
         return leaderboardApplicationService.getLeaderboardResponse(topNFilter);

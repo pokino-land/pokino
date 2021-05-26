@@ -17,10 +17,6 @@ public class LeaderboardResponse {
         this.leaderboardEntries = leaderboardEntries;
     }
 
-    public List<LeaderboardEntry> getLeaderboardEntries() {
-        return leaderboardEntries;
-    }
-
     public static LeaderboardResponse buildFrom(PastGameStore pastGameStore, int topNFilter) {
 
         List<LeaderboardEntry> leaderboardEntries = new ArrayList<>();
@@ -33,14 +29,27 @@ public class LeaderboardResponse {
         for (String playerName : uniquePlayerNames) {
             int numberOfWins = 0;
             int numberOfLosses = 0;
+            int numberOfPokeHits = 0;
+            int numberOfPokeMisses = 0;
             for (GameEndsMessage message : gameEndsMessageList) {
                 if (playerName.equals(message.getWinnerName())) {
                     numberOfWins += 1;
                 } else {
                     numberOfLosses += 1;
                 }
+                if (message.getNames().contains(playerName)) {
+                    if (message.isFirstPlayer(message.getPlayerIdForPlayerName(playerName))) {
+                        numberOfPokeHits += message.getPlayer1Hits();
+                        numberOfPokeMisses += message.getPlayer1Misses();
+                    } else {
+                        numberOfPokeHits += message.getPlayer2Hits();
+                        numberOfPokeMisses += message.getPlayer2Misses();
+                    }
+                }
             }
-            leaderboardEntries.add(new LeaderboardEntry(playerName, numberOfWins, numberOfLosses));
+            leaderboardEntries.add(
+                    new LeaderboardEntry(playerName, numberOfWins, numberOfLosses, numberOfPokeHits, numberOfPokeMisses)
+            );
         }
 
         if (topNFilter > leaderboardEntries.size()) {
@@ -50,6 +59,10 @@ public class LeaderboardResponse {
         return new LeaderboardResponse(leaderboardEntries);
     }
 
+    public List<LeaderboardEntry> getLeaderboardEntries() {
+        return leaderboardEntries;
+    }
+
     public static class LeaderboardEntry {
 
         private final String playerName;
@@ -57,14 +70,6 @@ public class LeaderboardResponse {
         private final int gamesLost;
         private final int numberOfPokeHits;
         private final int numberOfPokeMisses;
-
-        public LeaderboardEntry(String playerName, int gamesWon, int gamesLost) {
-            this.playerName = playerName;
-            this.gamesWon = gamesWon;
-            this.gamesLost = gamesLost;
-            this.numberOfPokeHits = 0;
-            this.numberOfPokeMisses = 0;
-        }
 
         public LeaderboardEntry(String playerName, int gamesWon, int gamesLost, int numberOfPokeHits, int numberOfPokeMisses) {
             this.playerName = playerName;
