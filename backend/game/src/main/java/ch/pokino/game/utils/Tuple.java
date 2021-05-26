@@ -1,4 +1,4 @@
-package ch.pokino.game;
+package ch.pokino.game.utils;
 
 public class Tuple<X, Y> {
     public final X first;

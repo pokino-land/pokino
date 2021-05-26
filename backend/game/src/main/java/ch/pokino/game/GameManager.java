@@ -1,16 +1,22 @@
 package ch.pokino.game;
 
+import ch.pokino.game.exceptions.MaximumPlayersLimitReachedException;
+import ch.pokino.game.exceptions.PlayerIsNotFoundInWaitingRoom;
+import ch.pokino.game.exceptions.PlayerNameNotAvailableException;
 import ch.pokino.game.leaderboard.PastGameStore;
 import ch.pokino.game.messaging.GameEndsMessage;
 import ch.pokino.game.messaging.GameEndsPushMessenger;
 import ch.pokino.game.messaging.GameStartsMessage;
 import ch.pokino.game.messaging.GameStartsPushMessenger;
+import ch.pokino.game.player.Player;
+import ch.pokino.game.state_machine.GameStateChangeListener;
 import ch.pokino.game.state_machine.events.GameEvent;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
 import ch.pokino.game.state_machine.events.PokeMissEvent;
-import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
 import ch.pokino.game.state_machine.states.GameShutdownState;
 import ch.pokino.game.state_machine.states.GameState;
+import ch.pokino.game.utils.GameStatus;
+import ch.pokino.game.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,7 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class GameManager implements GameStateChangeListener{
+public class GameManager implements GameStateChangeListener {
 
     private final GameStartsPushMessenger gameStartsPushMessenger;
     private final GameEndsPushMessenger gameEndsPushMessenger;
@@ -56,13 +62,13 @@ public class GameManager implements GameStateChangeListener{
         return player.getId();
     }
 
-    public void addPlayerToReady(String playerName, String playerId) {
+    public void addPlayerToReady(String playerName, String playerId) throws PlayerIsNotFoundInWaitingRoom {
         synchronized (readyPlayers) {
             if (!waitingPlayers.values().stream().map(Player::getName).collect(toList()).contains(playerName)) {
-                throw new RuntimeException("Provided player name is not in waiting list.");
+                throw new PlayerIsNotFoundInWaitingRoom("Provided player name is not in waiting list.");
             }
             if (!waitingPlayers.values().stream().map(Player::getId).collect(toList()).contains(playerId)) {
-                throw new RuntimeException("Provided player id is not in waiting list.");
+                throw new PlayerIsNotFoundInWaitingRoom("Provided player id is not in waiting list.");
             }
             Player player = waitingPlayers.get(playerId);
             if (!player.getName().equals(playerName)) {
@@ -70,7 +76,7 @@ public class GameManager implements GameStateChangeListener{
             }
             waitingPlayers.remove(playerId);
             readyPlayers.add(player);
-            logger.info("Added new ready player: " + player);
+            logger.info("Player ready: " + player);
             if (readyPlayers.size() > 1) {
                 Player firstPlayer = readyPlayers.poll();
                 Player secondPlayer = readyPlayers.poll();

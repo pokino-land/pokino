@@ -1,6 +1,6 @@
-package ch.pokino.game;
+package ch.pokino.game.player;
 
-import static ch.pokino.game.PlayerIdCreator.createId;
+import static ch.pokino.game.player.PlayerIdCreator.createId;
 
 public class Player {
 

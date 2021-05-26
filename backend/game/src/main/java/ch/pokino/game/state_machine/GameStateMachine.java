@@ -1,6 +1,5 @@
 package ch.pokino.game.state_machine;
 
-import ch.pokino.game.GameStateChangeListener;
 import ch.pokino.game.state_machine.events.GameEvent;
 import ch.pokino.game.state_machine.events.GameInitializedEvent;
 import ch.pokino.game.state_machine.states.GameStartupState;

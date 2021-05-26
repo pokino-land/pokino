@@ -1,7 +1,7 @@
 package ch.pokino.game.state_machine;
 
 import ch.pokino.game.GameManager;
-import ch.pokino.game.GameStatus;
+import ch.pokino.game.utils.GameStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

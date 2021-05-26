@@ -1,4 +1,4 @@
-package ch.pokino.game;
+package ch.pokino.game.state_machine;
 
 import ch.pokino.game.state_machine.states.GameState;
 
