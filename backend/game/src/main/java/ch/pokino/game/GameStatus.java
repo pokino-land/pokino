@@ -16,6 +16,9 @@ public class GameStatus {
         this.gameState = gameState;
     }
 
+    public static GameStatus of(Game game) {
+        return new GameStatus(game.getGameId(), game.getPlayers().toString(), game.getStandings(), game.getGameStateAsString());
+    }
 
     public String getGameId() {
         return gameId;

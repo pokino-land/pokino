@@ -1,6 +1,7 @@
 package ch.pokino.game.state_machine;
 
 import ch.pokino.game.GameManager;
+import ch.pokino.game.GameStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +22,10 @@ public class GameStateController {
         this.gameManager.handlePokeHitOrMissRequest(playerId, didHit);
     }
 
-//    @GetMapping("game/{gameId}/standings")
-//    public GameStandings getStandings(@PathVariable String gameId) {
-//        // TODO(matt): Return the game status such that frontend can request it before every turn.
-//    }
+    @GetMapping("game/{gameId}/standings")
+    public GameStatus getStandings(@PathVariable String gameId) {
+        return this.gameManager.getGameStatusFor(gameId);
+    }
 
     @GetMapping("/game/ready")
     public String confirmStartup(@RequestParam String playerId) {

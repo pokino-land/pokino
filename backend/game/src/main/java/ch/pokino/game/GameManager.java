@@ -149,7 +149,7 @@ public class GameManager implements GameStateChangeListener{
         return associatedGameId;
     }
 
-    public List<GameStatus> getGameStatuses() {
+    public List<GameStatus> getGameStatusesAsList() {
         Collection<Game> games = getGames();
         List<GameStatus> gameStatuses = new ArrayList<>();
         for (Game game : games) {
@@ -161,6 +161,10 @@ public class GameManager implements GameStateChangeListener{
                     ));
         }
     return gameStatuses;
+    }
+
+    public GameStatus getGameStatusFor(String gameId) {
+        return GameStatus.of(this.games.get(gameId));
     }
 
     @Override

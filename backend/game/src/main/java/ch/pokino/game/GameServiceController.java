@@ -30,7 +30,7 @@ public class GameServiceController {
 
     @GetMapping("/game/status")
     public List<GameStatus> getGamesState() {
-        return this.gameManager.getGameStatuses();
+        return this.gameManager.getGameStatusesAsList();
     }
 
     @GetMapping("/game/pointsNeededToWin")
