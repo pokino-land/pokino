@@ -24,6 +24,7 @@ export class GameStreamingService {
 
   declare webSocket: WebSocket;
   declare client: Stomp.Client;
+  declare tempGameStateToBeSent: JsonGameStateObject;
 
   downStreamSubscribed: boolean = false;
   gameState: Subject<JsonGameStateObject> = new Subject<JsonGameStateObject>();
@@ -73,6 +74,7 @@ export class GameStreamingService {
 
   public gameStateChanged(gameState: JsonGameStateObject): any {
     this.gameState.next(gameState);
+    this.playerTurnId = gameState.currentPlayerId;
   }
 
   public sendGameState(gameState: JsonGameStateObject): void {
@@ -119,7 +121,12 @@ export class GameStreamingService {
   }
 
   public isMyTurn(): boolean {
-    return this.playerTurnId === this.player.id;
+    console.log('player id: ' + this.player.id + ' , ' + typeof this.player.id);
+    console.log('player turn id: ' + this.playerTurnId + ' , ' + typeof this.playerTurnId);
+    let isMyTurnCheck = parseInt(this.playerTurnId) === parseInt(this.player.id);
+    console.log('is it my turn? ' + isMyTurnCheck);
+
+    return isMyTurnCheck;
   }
 
   /**
@@ -132,30 +139,31 @@ export class GameStreamingService {
 
   private changePlayerTurn(): void {
     // TODO: Here should be a call to backend to get the current standings to update scores.
-
-    this.playerChanging = true;
+    // TODO: delete
     this.playerTurnId = (this.playerTurnId === this.player.id) ? this.opponentId : this.player.id;
-
+    this.tempGameStateToBeSent.currentPlayerId = this.playerTurnId;
+    this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(this.tempGameStateToBeSent));
+      // const nextPlayerGameState: JsonGameStateObject = this.gameState.;
+    // gameState.currentPlayerId = this.playerTurnId;
+    // this.gameState.next(nextPlayerGameState);
+    //
+    //
+    // this.gameState.subscribe(
+    //     gameState = new GameState
+    // ).subscribe(
+    //
+    // )
+    //
     // this.gameState.pipe(first()).subscribe((gameState: JsonGameStateObject) => {
-    //   const nextPlayerGameState: JsonGameStateObject = gameState;
-    //   gameState.currentPlayerId = this.playerTurnId;
-    //   this.gameState.next(nextPlayerGameState);
+    //   console.log("sent final game state");
+    //
+    //
+    //   console.log(JSON.stringify(this.gameState));
+    //   this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
     // });
     //
     // this.gameState.pipe(first()).subscribe((gameState: JsonGameStateObject) => {
-    //   this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(gameState));
-    // });
 
-    // TODO: Does this really work?
-    this.gameState.pipe(
-        finalize(() => {
-          console.log("GAME STATE SENT FINALLY");
-          this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(this.gameState));
-        })
-    ).pipe(first()).subscribe((gameState: JsonGameStateObject) => {
-      const nextPlayerGameState: JsonGameStateObject = gameState;
-      gameState.currentPlayerId = this.playerTurnId;
-      this.gameState.next(nextPlayerGameState);
-    });
+    //  this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(this.tempGameStateToBeSent));
   }
 }

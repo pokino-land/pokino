@@ -176,14 +176,13 @@ export class RenderComponent implements OnInit, OnDestroy {
         console.log('------------')
         console.log('gameState.currentPlayerId              ' + this.gameState.currentPlayerId);
         console.log('gameStreamingService.playerTurnId      ' + this.gameStreamingService.playerTurnId);
-        console.log('gameStreamingService.playerChanging    ' + this.gameStreamingService.playerChanging);
         console.log('gameStreamingService.player.id:        ' + this.gameStreamingService.player.id);
         console.log('------------')
 
         if (this.gameStreamingService.isMyTurn()) {
             console.log("my turn");
 
-            if (this.m_webSocket == DownStreamWebSocketState.UNDEFINED || this.m_webSocket == DownStreamWebSocketState.OPEN) {
+            if (this.m_webSocket == DownStreamWebSocketState.OPEN) {
                 this.gameStreamingService.closeDownStreamConnection();
                 this.m_webSocket = DownStreamWebSocketState.CLOSED;
             }
@@ -258,7 +257,8 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.name = this.m_enemy.m_pokemon.name;
         this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
-        //this.gameState.scores.player1Id = this.m_score;
+        this.gameState.currentPlayerId = this.gameStreamingService.player.id;
+        this.gameStreamingService.tempGameStateToBeSent = this.gameState;
 
     }
 
