@@ -4,7 +4,9 @@ dist: bionic
 
 services:
   - docker
-
+addons:
+  chrome: stable
+  
 jobs:
   include:
     - stage: test
