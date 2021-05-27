@@ -1,21 +1,29 @@
-import { Component } from '@angular/core';
-import { ApiService } from '../api/api.service';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { AppComponent } from '../view/app.component';
 
-import { Router } from '@angular/router';
+describe('AppComponent', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule
+      ],
+      declarations: [
+        AppComponent
+      ],
+    }).compileComponents();
+  });
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './leaderboard.component.html',
-  styleUrls: ['./leaderboard.component.scss', './common.scss']
-})
-export class LeaderboardComponent {
-  title = 'pokino';
-  ready = false;
-  
-  constructor(private router: Router, private apiService: ApiService) {
-  }
-  
-  public gotoMainMenu(){
-    this.router.navigate(['/mainMenu']);
-  }
-}
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it(`should have as title 'pokino'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('pokino');
+  });
+
+});
