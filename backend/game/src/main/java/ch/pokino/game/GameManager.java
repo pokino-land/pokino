@@ -4,10 +4,7 @@ import ch.pokino.game.exceptions.MaximumPlayersLimitReachedException;
 import ch.pokino.game.exceptions.PlayerIsNotFoundInWaitingRoom;
 import ch.pokino.game.exceptions.PlayerNameNotAvailableException;
 import ch.pokino.game.leaderboard.PastGameStore;
-import ch.pokino.game.messaging.GameEndsMessage;
-import ch.pokino.game.messaging.GameEndsPushMessenger;
-import ch.pokino.game.messaging.GameStartsMessage;
-import ch.pokino.game.messaging.GameStartsPushMessenger;
+import ch.pokino.game.messaging.*;
 import ch.pokino.game.player.Player;
 import ch.pokino.game.state_machine.GameStateChangeListener;
 import ch.pokino.game.state_machine.events.GameEvent;
@@ -33,6 +30,7 @@ public class GameManager implements GameStateChangeListener {
 
     private final GameStartsPushMessenger gameStartsPushMessenger;
     private final GameEndsPushMessenger gameEndsPushMessenger;
+    private final TurnSwitchPushMessenger turnSwitchPushMessenger;
     private final Map<String, Player> waitingPlayers = new ConcurrentHashMap<>();
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
     public static final int MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED = 1000;
@@ -42,9 +40,10 @@ public class GameManager implements GameStateChangeListener {
 
     public GameManager(GameStartsPushMessenger gameStartsPushMessenger,
                        GameEndsPushMessenger gameEndsPushMessenger,
-                       PastGameStore pastGameStore) {
+                       TurnSwitchPushMessenger turnSwitchPushMessenger, PastGameStore pastGameStore) {
         this.gameStartsPushMessenger = gameStartsPushMessenger;
         this.gameEndsPushMessenger = gameEndsPushMessenger;
+        this.turnSwitchPushMessenger = turnSwitchPushMessenger;
         this.pastGameStore = pastGameStore;
     }
 
@@ -93,6 +92,8 @@ public class GameManager implements GameStateChangeListener {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
         GameEvent hitOrMissEvent = didHit ? new PokeHitEvent(playerId, associatedGame.getGameId()) : new PokeMissEvent(playerId, associatedGame.getGameId());
         associatedGame.handleGameEvent(hitOrMissEvent);
+        associatedGame.toggleCurrentPlayerId();
+        this.turnSwitchPushMessenger.sendTurnSwitchMessage(associatedGame.getGameId());
     }
 
     public String handleStartupConfirmationRequest(String playerId) {
@@ -110,6 +111,10 @@ public class GameManager implements GameStateChangeListener {
     private void writeGameStartsMessageOnWebsocket(Game game) {
         var playerTuple = game.getPlayers();
         gameStartsPushMessenger.sendGameStartsMessage(new GameStartsMessage(playerTuple.first.getId(), playerTuple.second.getId(), game.getId()));
+    }
+
+    public Game getGameById(String gameId) {
+        return this.games.get(gameId);
     }
 
     public Collection<Game> getGames() {

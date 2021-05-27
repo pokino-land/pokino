@@ -19,6 +19,7 @@ public class Game {
     private Map<String, Integer> missCounts;
 
     private String startingPlayerId;
+    private String currentPlayerId;
 
     private final GameStateMachine gameStateMachine;
     private final static Logger LOGGER = LoggerFactory.getLogger(Game.class);
@@ -27,6 +28,7 @@ public class Game {
         this.players = players;
         this.gameStateMachine = new GameStateMachine(getPlayerIds());
         this.setRandomStartingPlayerId();
+        this.currentPlayerId = this.startingPlayerId;
         this.hitCounts = Map.of(players.first.getId(), 0, players.second.getId(), 0);
         this.missCounts = Map.of(players.first.getId(), 0, players.second.getId(), 0);
         LOGGER.info("Initialized new game " + id + " with players " + players + ". Starting player: " + this.startingPlayerId);
@@ -95,6 +97,20 @@ public class Game {
         } else {
             this.startingPlayerId = this.players.second.getId();
         }
+    }
+
+    public void toggleCurrentPlayerId() {
+        if (this.currentPlayerId.equals(this.players.first.getId())) {
+            this.currentPlayerId = this.players.second.getId();
+        } else if (this.currentPlayerId.equals(this.players.second.getId())) {
+            this.currentPlayerId = this.players.first.getId();
+        } else {
+            throw new RuntimeException("Invalid current player id.");
+        }
+    }
+
+    public String getCurrentPlayerId() {
+        return this.currentPlayerId;
     }
 
     public String toString() {

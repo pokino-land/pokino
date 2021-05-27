@@ -5,7 +5,7 @@ public class GameStateMessage {
     private final Ball ball;
     private final Pokemon pokemon;
     private final Score score;
-    private final String currentPlayerId;
+    private final String sendingPlayerId;
 
     public Ball getBall() {
         return ball;
@@ -19,8 +19,12 @@ public class GameStateMessage {
         return score;
     }
 
-    public String getCurrentPlayerId() {
-        return currentPlayerId;
+    public String getSendingPlayerId() {
+        return sendingPlayerId;
+    }
+
+    public String toString() {
+        return "GameState(currentPlayerId=" + this.sendingPlayerId + ", " + this.ball + ", " + this.pokemon + ")";
     }
 
 
@@ -28,7 +32,7 @@ public class GameStateMessage {
         this.ball = ball;
         this.pokemon = pokemon;
         this.score = score;
-        this.currentPlayerId = currentPlayerId;
+        this.sendingPlayerId = currentPlayerId;
     }
 
     static class Ball {
@@ -80,6 +84,10 @@ public class GameStateMessage {
 
         public boolean isHit() {
             return isHit;
+        }
+
+        public String toString() {
+            return "Pokemon(x=" + this.x + ", y=" + this.y + ", isHit= + " + this.isHit + ")";
         }
     }
 

@@ -173,19 +173,14 @@ export class RenderComponent implements OnInit, OnDestroy {
         // render loop
         window.requestAnimationFrame(() => this.renderScene());
 
-        console.log('------------')
-        console.log('gameState.currentPlayerId              ' + this.gameState.currentPlayerId);
-        console.log('gameStreamingService.playerTurnId      ' + this.gameStreamingService.playerTurnId);
-        console.log('gameStreamingService.player.id:        ' + this.gameStreamingService.player.id);
-        console.log('------------')
+        // console.log('------------')
+        // console.log('gameState.currentPlayerId              ' + this.gameState.currentPlayerId);
+        // console.log('gameStreamingService.playerTurnId      ' + this.gameStreamingService.playerTurnId);
+        // console.log('gameStreamingService.player.id:        ' + this.gameStreamingService.player.id);
+        // console.log('------------')
 
         if (this.gameStreamingService.isMyTurn()) {
             console.log("my turn");
-
-            if (this.m_webSocket == DownStreamWebSocketState.OPEN) {
-                this.gameStreamingService.closeDownStreamConnection();
-                this.m_webSocket = DownStreamWebSocketState.CLOSED;
-            }
 
             // update
             this.m_physics.update();
@@ -213,7 +208,7 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.m_physics.enemy = this.m_enemy.m_enemyBody;
             }
         } else {
-            console.log("not my turn.")
+            console.log("not my turn")
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
@@ -227,25 +222,8 @@ export class RenderComponent implements OnInit, OnDestroy {
             if (this.gameState.pokemon.name != this.m_pokemonMaterialName) {
                 this.m_pokemonMaterialSet = false;
             }
-
-            if (this.m_webSocket == DownStreamWebSocketState.UNDEFINED || this.m_webSocket == DownStreamWebSocketState.CLOSED) {
-                this.gameStreamingService.openDownStreamConnection();
-                this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
-                    // TODO: Here should be some logic that the listening player can switch into playing when receiving a message where currentPlayerId is set to himself.
-                    this.gameState = gameState;
-                    console.log("SUBSCRIBE DOWNSTREAM")
-                    console.log("gameState.currentPlayerId: " + gameState.currentPlayerId);
-                    console.log("gameStreamingService.player.id " + this.gameStreamingService.player.id);
-                    if (gameState.currentPlayerId === this.gameStreamingService.player.id) {
-                        this.gameStreamingService.playerTurnId = gameState.currentPlayerId;
-                    }
-                });
-                this.m_webSocket = DownStreamWebSocketState.OPEN;
-            }
-
         }
 
-        // render
         this.renderer.render(this.m_scene, this.m_scene.m_camera);
     }
 
@@ -257,9 +235,8 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.name = this.m_enemy.m_pokemon.name;
         this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
-        this.gameState.currentPlayerId = this.gameStreamingService.player.id;
+        this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
         this.gameStreamingService.tempGameStateToBeSent = this.gameState;
-
     }
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {

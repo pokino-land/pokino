@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class UpstreamDownstreamMessenger {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final GameManager gameManager;
     private final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
-    public UpstreamDownstreamMessenger(SimpMessagingTemplate simpMessagingTemplate) {
+    public UpstreamDownstreamMessenger(SimpMessagingTemplate simpMessagingTemplate, GameManager gameManager) {
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.gameManager = gameManager;
     }
 
     /**
@@ -26,10 +28,12 @@ public class UpstreamDownstreamMessenger {
     @CrossOrigin(origins = "*", allowedHeaders="Access-Control-Allow-Origin")
     @MessageMapping("/upstream/{gameId}")
     public void listen(@DestinationVariable String gameId, GameStateMessage message) {
-//            logger.info("Game state from + " + gameId + ": ");
-//            logger.info(message.toString());
-//            logger.info("===================================");
+//        if (gameManager.getGameById(gameId).getCurrentPlayerId().equals(message.getSendingPlayerId())) {
+        logger.info("Game state from game " + gameId + ", player " + message.getSendingPlayerId() + ": ");
+        logger.info(message.toString());
+        logger.info("===================================");
         this.simpMessagingTemplate.convertAndSend("/queue/downstream/" + gameId, message);
+//        }
     }
 
 }

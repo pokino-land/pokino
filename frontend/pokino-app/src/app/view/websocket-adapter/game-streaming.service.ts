@@ -18,19 +18,21 @@ export class GameStreamingService {
 
   private webSocketUrl = ApiConfig.getWebsocketUrl().href;
   declare currentGameId: string;
-  declare playerTurnId: string;
   declare opponentId: string;
   declare player: JsonPlayerObject;
 
   declare webSocket: WebSocket;
   declare client: Stomp.Client;
   declare tempGameStateToBeSent: JsonGameStateObject;
+  declare isMyTurn: boolean
 
   downStreamSubscribed: boolean = false;
   gameState: Subject<JsonGameStateObject> = new Subject<JsonGameStateObject>();
   gameEndState: Subject<JsonGameEndsObject> = new Subject<JsonGameEndsObject>();
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService) {
+        this.webSocket = this.getWebSocket();
+  }
 
   public getWebSocket(): WebSocket {
     return new WebSocket(this.webSocketUrl);
@@ -41,7 +43,9 @@ export class GameStreamingService {
   }
 
   public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<void> {
-    this.playerTurnId = await this.apiService.sendGameStartsConfirmation(player);
+    const playerStartingId: string = await this.apiService.sendGameStartsConfirmation(player);
+    this.isMyTurn = (parseInt(this.player.id) === parseInt(playerStartingId));
+    console.log('Send start confirmation. Received starting player id ' + playerStartingId + '. Turn? ' + this.isMyTurn);
   }
 
 
@@ -66,7 +70,10 @@ export class GameStreamingService {
   }
 
   public openDownStreamConnection(): void {
-    this.client.subscribe(this.getGameDownstreamTopic(), (item) => {
+
+    // this.webSocket = this.getWebSocket();
+    this.downstreamClient = Stomp.over(this.webSocket);
+    this.downstreamClient.subscribe(this.getGameDownstreamTopic(), (item) => {
       this.downStreamSubscribed = true;
       this.gameStateChanged(JSON.parse(item.body));
     });
@@ -74,7 +81,6 @@ export class GameStreamingService {
 
   public gameStateChanged(gameState: JsonGameStateObject): any {
     this.gameState.next(gameState);
-    this.playerTurnId = gameState.currentPlayerId;
   }
 
   public sendGameState(gameState: JsonGameStateObject): void {
@@ -118,15 +124,6 @@ export class GameStreamingService {
 
   public getGameShutdownTopic(): string {
     return `/topic/shutdown`;
-  }
-
-  public isMyTurn(): boolean {
-    console.log('player id: ' + this.player.id + ' , ' + typeof this.player.id);
-    console.log('player turn id: ' + this.playerTurnId + ' , ' + typeof this.playerTurnId);
-    let isMyTurnCheck = parseInt(this.playerTurnId) === parseInt(this.player.id);
-    console.log('is it my turn? ' + isMyTurnCheck);
-
-    return isMyTurnCheck;
   }
 
   /**
