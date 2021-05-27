@@ -26,7 +26,6 @@ export class GameStreamingService {
   declare client: Stomp.Client;
 
   downStreamSubscribed: boolean = false;
-  playerChanging: boolean = false;
   gameState: Subject<JsonGameStateObject> = new Subject<JsonGameStateObject>();
   gameEndState: Subject<JsonGameEndsObject> = new Subject<JsonGameEndsObject>();
 
@@ -78,9 +77,7 @@ export class GameStreamingService {
 
   public sendGameState(gameState: JsonGameStateObject): void {
     // ignore sending if the players are changing turns because they shouldn't send anymore during the process of it
-    if (!this.playerChanging) {
-      this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(gameState));
-    }
+    this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(gameState));
   }
 
   public closeDownStreamConnection(): void {

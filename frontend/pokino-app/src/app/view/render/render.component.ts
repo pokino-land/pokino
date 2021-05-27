@@ -181,6 +181,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         console.log('------------')
 
         if (this.gameStreamingService.isMyTurn()) {
+            console.log("my turn");
 
             if (this.m_webSocket == DownStreamWebSocketState.UNDEFINED || this.m_webSocket == DownStreamWebSocketState.OPEN) {
                 this.gameStreamingService.closeDownStreamConnection();
@@ -213,6 +214,7 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.m_physics.enemy = this.m_enemy.m_enemyBody;
             }
         } else {
+            console.log("not my turn.")
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
@@ -232,9 +234,12 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
                     // TODO: Here should be some logic that the listening player can switch into playing when receiving a message where currentPlayerId is set to himself.
                     this.gameState = gameState;
-                    // if (gameState.currentPlayerId === this.gameStreamingService.player.id) {
-                    //     this.gameStreamingService.playerTurnId = gameState.currentPlayerId;
-                    // }
+                    console.log("SUBSCRIBE DOWNSTREAM")
+                    console.log("gameState.currentPlayerId: " + gameState.currentPlayerId);
+                    console.log("gameStreamingService.player.id " + this.gameStreamingService.player.id);
+                    if (gameState.currentPlayerId === this.gameStreamingService.player.id) {
+                        this.gameStreamingService.playerTurnId = gameState.currentPlayerId;
+                    }
                 });
                 this.m_webSocket = DownStreamWebSocketState.OPEN;
             }

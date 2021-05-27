@@ -26,9 +26,9 @@ public class UpstreamDownstreamMessenger {
     @CrossOrigin(origins = "*", allowedHeaders="Access-Control-Allow-Origin")
     @MessageMapping("/upstream/{gameId}")
     public void listen(@DestinationVariable String gameId, GameStateMessage message) {
-        logger.info("Game state from + " + gameId + ": ");
-        logger.info(message.toString());
-        logger.info("===================================");
+//            logger.info("Game state from + " + gameId + ": ");
+//            logger.info(message.toString());
+//            logger.info("===================================");
         this.simpMessagingTemplate.convertAndSend("/queue/downstream/" + gameId, message);
     }
 

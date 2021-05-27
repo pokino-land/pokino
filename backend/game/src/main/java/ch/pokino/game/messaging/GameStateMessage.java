@@ -5,6 +5,7 @@ public class GameStateMessage {
     private final Ball ball;
     private final Pokemon pokemon;
     private final Score score;
+    private final String currentPlayerId;
 
     public Ball getBall() {
         return ball;
@@ -18,11 +19,16 @@ public class GameStateMessage {
         return score;
     }
 
+    public String getCurrentPlayerId() {
+        return currentPlayerId;
+    }
 
-    public GameStateMessage(Ball ball, Pokemon pokemon, Score score) {
+
+    public GameStateMessage(Ball ball, Pokemon pokemon, Score score, String currentPlayerId) {
         this.ball = ball;
         this.pokemon = pokemon;
         this.score = score;
+        this.currentPlayerId = currentPlayerId;
     }
 
     static class Ball {
