@@ -6,5 +6,5 @@ COPY package.json package-lock.json ./
 ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN npm install
 COPY . .
-#RUN npm run test -- --watch=false
+RUN npm run test-prod
 RUN npm run build
