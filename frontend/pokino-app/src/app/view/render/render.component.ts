@@ -179,7 +179,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         // console.log('gameStreamingService.player.id:        ' + this.gameStreamingService.player.id);
         // console.log('------------')
 
-        if (this.gameStreamingService.isMyTurn()) {
+        if (this.gameStreamingService.isMyTurn) {
             console.log("my turn");
 
             // update
@@ -248,13 +248,23 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.gameStreamingService.openShutdownConnection();
+        this.gameStreamingService.openPlayerSwitchStreamConnection();
+        this.gameStreamingService.openDownStreamConnection();
+        this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
+            if (!this.gameStreamingService.isMyTurn) {
+                this.gameState = gameState;
+            }
+            // console.log("--- DOWNSTREAM MESSAGE ---")
+            // console.log("   gameState.currentPlayerId: " + gameState.currentPlayerId);
+            // console.log("   gameStreamingService.player.id " + this.gameStreamingService.player.id);
+        });
         this.gameStreamingService.gameEndState.subscribe((gameEndsMessage: JsonGameEndsObject) => {
             this.endGame(gameEndsMessage);
         });
     }
 
     ngOnDestroy(): void {
-        this.gameStreamingService.closeDownStreamConnection();
+        // this.gameStreamingService.closeDownStreamConnection();
         this.gameStreamingService.closeShutdownConnection();
     }
 

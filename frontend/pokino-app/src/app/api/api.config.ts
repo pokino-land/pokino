@@ -45,6 +45,7 @@ export class ApiConfig {
         const endpoints: Array<string> = [this.GAME_ENDPOINT, this.CLICK_READY_ENDPOINT];
         let url = this.buildUrl(root, endpoints).href;
         url += ('?playerName=' + playerName + '&playerId=' + playerId);
+        console.log(url);
         return new URL(url);
     }
 

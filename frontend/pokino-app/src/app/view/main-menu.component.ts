@@ -95,6 +95,7 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
 
     this.client.connect({}, () => {
       this.client.subscribe(this.gameStreamingService.getGameInitTopic(), (item) => {
+        console.log('game starts');
         const response: JsonGameInitObject = JSON.parse(item.body);
         this.checkIfRelevantGameStarts(response);
       });

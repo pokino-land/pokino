@@ -23,6 +23,8 @@ export class GameStreamingService {
 
   declare webSocket: WebSocket;
   declare client: Stomp.Client;
+  declare switchClient: Stomp.Client;
+  declare downstreamClient: Stomp.Client;
   declare tempGameStateToBeSent: JsonGameStateObject;
   declare isMyTurn: boolean
 
@@ -51,7 +53,7 @@ export class GameStreamingService {
 
   public openShutdownConnection(): void {
 
-    this.webSocket = this.getWebSocket();
+    // this.webSocket = this.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
@@ -76,6 +78,16 @@ export class GameStreamingService {
     this.downstreamClient.subscribe(this.getGameDownstreamTopic(), (item) => {
       this.downStreamSubscribed = true;
       this.gameStateChanged(JSON.parse(item.body));
+    });
+  }
+
+  public openPlayerSwitchStreamConnection(): void {
+
+    // this.webSocket = this.getWebSocket();
+    this.switchClient = Stomp.over(this.webSocket);
+    this.switchClient.subscribe(this.getPlayerSwitchTopic(), (item) => {
+      console.log('switch message received');
+      this.isMyTurn = !this.isMyTurn;
     });
   }
 
@@ -118,6 +130,10 @@ export class GameStreamingService {
     return `/queue/downstream/${this.currentGameId}`;
   }
 
+  public getPlayerSwitchTopic(): string {
+    return `/topic/switch/${this.currentGameId}`;
+  }
+
   public getGameUpstreamTopic(): string {
     return `/pokino/upstream/${this.currentGameId}`;
   }
@@ -130,17 +146,20 @@ export class GameStreamingService {
    * changes the turn, regardless of whether the player hits or misses
    */
   public sendBallThrown(didHit: boolean): void {
-      this.apiService.sendBallThrown(this.playerTurnId, didHit);
-      this.changePlayerTurn();
+      this.apiService.sendBallThrown(this.player.id, didHit);
   }
 
   private changePlayerTurn(): void {
+
+
+
     // TODO: Here should be a call to backend to get the current standings to update scores.
     // TODO: delete
-    this.playerTurnId = (this.playerTurnId === this.player.id) ? this.opponentId : this.player.id;
-    this.tempGameStateToBeSent.currentPlayerId = this.playerTurnId;
-    this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(this.tempGameStateToBeSent));
-      // const nextPlayerGameState: JsonGameStateObject = this.gameState.;
+    // this.playerTurnId = (this.playerTurnId === this.player.id) ? this.opponentId : this.player.id;
+    // this.tempGameStateToBeSent.currentPlayerId = this.playerTurnId;
+    // this.client.send(this.getGameUpstreamTopic(), {}, JSON.stringify(this.tempGameStateToBeSent));
+
+    // const nextPlayerGameState: JsonGameStateObject = this.gameState.;
     // gameState.currentPlayerId = this.playerTurnId;
     // this.gameState.next(nextPlayerGameState);
     //
