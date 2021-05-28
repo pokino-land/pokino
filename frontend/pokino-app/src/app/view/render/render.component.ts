@@ -12,6 +12,7 @@ import * as Stomp from "stompjs";
 import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
 import {Router} from "@angular/router";
 import {JsonGameEndsObject} from "../../api/json-game-ends-object";
+import {JsonGameInitObject} from "../../api/json-game-init-object";
 
 
 enum DownStreamWebSocketState { UNDEFINED, OPEN, CLOSED }
@@ -25,7 +26,11 @@ export class RenderComponent implements OnInit, OnDestroy {
 
 
     declare webSocket: WebSocket;
+    declare downstreamwebSocket: WebSocket;
+    declare shutdownwebSocket: WebSocket;
     declare client: Stomp.Client;
+    declare shutdownclient: Stomp.Client;
+    declare downstreamclient: Stomp.Client;
     gameState: JsonGameStateObject = new JsonGameStateObject();
 
     @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
@@ -190,7 +195,7 @@ export class RenderComponent implements OnInit, OnDestroy {
             this.updateMouseCursor();
 
             this.fillGameState();
-            this.gameStreamingService.sendGameState(this.gameState);
+            this.sendGameState(this.gameState);
 
             if (this.m_enemy.m_enemyBody.collided && !this.updated) {
                 this.updated = true;
@@ -236,7 +241,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
-        this.gameStreamingService.tempGameStateToBeSent = this.gameState;
+        // this.gameStreamingService.tempGameStateToBeSent = this.gameState;
     }
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {
@@ -247,25 +252,63 @@ export class RenderComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.gameStreamingService.openShutdownConnection();
-        this.gameStreamingService.openPlayerSwitchStreamConnection();
-        this.gameStreamingService.openDownStreamConnection();
-        this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
-            if (!this.gameStreamingService.isMyTurn) {
-                this.gameState = gameState;
-            }
+        this.openWebSocketConnections();
+        // this.gameStreamingService.openDownStreamConnection();
+        // this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
+        //     if (!this.gameStreamingService.isMyTurn) {
+        //         this.gameState = gameState;
+        //     }
             // console.log("--- DOWNSTREAM MESSAGE ---")
             // console.log("   gameState.currentPlayerId: " + gameState.currentPlayerId);
             // console.log("   gameStreamingService.player.id " + this.gameStreamingService.player.id);
-        });
-        this.gameStreamingService.gameEndState.subscribe((gameEndsMessage: JsonGameEndsObject) => {
-            this.endGame(gameEndsMessage);
-        });
+        // });
+        // this.gameStreamingService.gameEndState.subscribe((gameEndsMessage: JsonGameEndsObject) => {
+        //     this.endGame(gameEndsMessage);
+        // });
     }
+
+
 
     ngOnDestroy(): void {
         // this.gameStreamingService.closeDownStreamConnection();
-        this.gameStreamingService.closeShutdownConnection();
+        // this.gameStreamingService.closeShutdownConnection();
+    }
+
+
+
+
+    public openWebSocketConnections(): void {
+        this.webSocket = this.gameStreamingService.getWebSocket();
+        this.downstreamwebSocket = this.gameStreamingService.getWebSocket();
+        this.shutdownwebSocket = this.gameStreamingService.getWebSocket();
+        this.client = Stomp.over(this.webSocket);
+        this.downstreamclient = Stomp.over(this.downstreamwebSocket);
+        this.shutdownclient = Stomp.over(this.shutdownwebSocket);
+        console.log('connecting to downstream topic');
+        this.downstreamclient.connect({}, () => {
+            this.downstreamclient.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
+                console.log('receiving game state from backend');
+                this.gameState = JSON.parse(item.body);
+            });
+        });
+        this.shutdownclient.connect({}, () => {
+            this.shutdownclient.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
+                console.log('game ends!');
+                const gameEndsObject: JsonGameEndsObject = JSON.parse(item.body);
+                this.endGame(gameEndsObject);
+            });
+        });
+        this.client.connect({}, () => {
+            this.client.subscribe(this.gameStreamingService.getPlayerSwitchTopic(), (item) => {
+                console.log('switch message received!');
+                this.gameStreamingService.isMyTurn = !this.gameStreamingService.isMyTurn;
+            });
+        });
+    }
+
+    public sendGameState(gameState: JsonGameStateObject): void {
+        // ignore sending if the players are changing turns because they shouldn't send anymore during the process of it
+        this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(gameState));
     }
 
 

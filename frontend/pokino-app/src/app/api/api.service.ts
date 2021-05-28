@@ -70,7 +70,7 @@ export class ApiService {
 	// TODO Steven use this wherever you need it
 	public async sendBallThrown(playerId: string, didHit: boolean): Promise<void> {
 		const url: URL = ApiConfig.getBallThrownUrl(playerId, didHit);
-
+		console.log('send ball thrown!');
 		return await this.get(url.href)
 			.toPromise()
 			.then((data: any) => {

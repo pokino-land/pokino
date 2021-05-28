@@ -23,6 +23,7 @@ public class GameStateController {
      */
     @GetMapping("/game/ballThrown")
     public void pokeHit(@RequestParam String playerId, @RequestParam boolean didHit) {
+        logger.info("ball thrown request received");
         this.gameManager.handlePokeHitOrMissRequest(playerId, didHit);
     }
 
