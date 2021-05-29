@@ -39,7 +39,7 @@ export class GameStreamingService {
   }
 
   public getGameInitTopic(): string {
-    return ApiConfig.getWebsocketGreetingsTopic();
+    return ApiConfig.getWebsocketInitTopic();
   }
 
   public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<void> {
