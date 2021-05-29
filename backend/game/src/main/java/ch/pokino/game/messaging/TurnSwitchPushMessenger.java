@@ -1,6 +1,7 @@
 package ch.pokino.game.messaging;
 
 import ch.pokino.game.GameManager;
+import ch.pokino.game.utils.GameStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,10 +23,10 @@ public class TurnSwitchPushMessenger {
      * the downstream queue.
      */
     @CrossOrigin(origins = "*", allowedHeaders="Access-Control-Allow-Origin")
-    public void sendTurnSwitchMessage(String gameId) {
+    public void sendTurnSwitchMessage(String gameId, GameStatus standings) {
         String destination = "/topic/switch/" + gameId;
         logger.info("Switching players in game " + gameId + ". Destination: " + destination);
-        this.simpMessagingTemplate.convertAndSend(destination, "Hello");
+        this.simpMessagingTemplate.convertAndSend(destination, standings);
     }
 
 }
