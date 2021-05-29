@@ -10,6 +10,7 @@ import { apiHandler } from '../../model/render/apiHandler';
 import { Config } from '../../model/render/config'
 import TextSprite from '@seregpie/three.text-sprite';
 import { JsonGameStateObject } from "../../api/json-game-state.object";
+import { JsonGameStatusObject } from "../../api/json-game-status.object";
 import * as Stomp from "stompjs";
 import { GameStreamingService } from "../websocket-adapter/game-streaming.service";
 import { Router } from "@angular/router";
@@ -33,6 +34,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     declare shutdownclient: Stomp.Client;
     declare downstreamclient: Stomp.Client;
     gameState: JsonGameStateObject = new JsonGameStateObject();
+    standings: Map<string, number> = new Map();
 
     @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
@@ -409,6 +411,8 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.client.connect({}, () => {
             this.client.subscribe(this.gameStreamingService.getPlayerSwitchTopic(), (item) => {
                 console.log('switch message received!');
+                const gameStatus: JsonGameStatusObject = JSON.parse(item.body);
+                this.standings = gameStatus.standings;
                 this.gameStreamingService.isMyTurn = !this.gameStreamingService.isMyTurn;
             });
         });
