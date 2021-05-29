@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { player } from "../../model/render/player"
 import { enemy } from "../../model/render/enemy"
-import {JsonWeatherObject} from "../../api/json-weather-object";
+import { JsonWeatherObject } from "../../api/json-weather-object";
 import TextSprite from '@seregpie/three.text-sprite';
 export class PokinoScene extends THREE.Scene {
 
@@ -49,7 +49,6 @@ export class PokinoScene extends THREE.Scene {
         const material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/Arrow_white.png'), transparent: true, alphaTest: 0.5 });
         this.m_windArrow = new THREE.Mesh(geometry, material);
         var margin = 20;
-        this.m_windArrow.translateX(- this.m_sceneWidth / 2 + windArrowSize / 2 + margin);
         this.m_windArrow.translateY(this.m_sceneHeight / 2 - windArrowSize / 2 - margin);
 
         this.add(this.m_windArrow);
@@ -61,14 +60,13 @@ export class PokinoScene extends THREE.Scene {
             fontSize: 20,
             fontStyle: 'normal',
             text: [
-              'Wind Speed:'  
+                'Wind Speed:'
             ].join('\n'),
-          });
-          this.m_windText.translateX(- this.m_sceneWidth / 2 + windArrowSize / 2 + margin * 4);
-          this.m_windText.translateY(this.m_sceneHeight / 2 - windArrowSize / 2 - margin * 4);
-          this.add(this.m_windText);
-        }
-    initWindArrow(){
+        });
+        this.m_windText.translateY(this.m_sceneHeight / 2 - windArrowSize / 2 - margin * 4);
+        this.add(this.m_windText);
+    }
+    initWindArrow() {
         var windArrowSize = 30;
         const geometry = new THREE.PlaneGeometry(windArrowSize, windArrowSize);
         const loader = new THREE.TextureLoader();
@@ -77,7 +75,7 @@ export class PokinoScene extends THREE.Scene {
         var margin = 20;
         this.m_windArrow.translateX(- this.m_sceneWidth / 2 + windArrowSize / 2 + margin);
         this.m_windArrow.translateY(this.m_sceneHeight / 2 - windArrowSize / 2 - margin);
- 
+
         this.add(this.m_windArrow);
     }
 
@@ -90,7 +88,7 @@ export class PokinoScene extends THREE.Scene {
         this.m_windText.text = [
             'Wind Speed:',
             wind.windSpeedKmh.toLocaleString(),
-          ].join(' ');
+        ].join(' ');
 
 
     }

@@ -3,7 +3,7 @@
     "ballLoadUpSpeed": 0.01,
     "ballForceMultiplicator": 500,
     "enemySize": 50,
-    "enemyStartPositionX": 200,
+    "enemyStartPositionX": 0,
     "enemyMovementRadiusMul": 1.6,
     "enemySpeedMul": 0.5,
     "enemyFlyingHeight": 80,
