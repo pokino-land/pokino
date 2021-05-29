@@ -111,7 +111,10 @@ public class GameManager implements GameStateChangeListener {
      */
     private void writeGameStartsMessageOnWebsocket(Game game) {
         var playerTuple = game.getPlayers();
-        gameStartsPushMessenger.sendGameStartsMessage(new GameStartsMessage(playerTuple.first.getId(), playerTuple.second.getId(), game.getId()));
+        gameStartsPushMessenger.sendGameStartsMessage(
+                new GameStartsMessage(playerTuple.first.getId(), playerTuple.first.getName(),
+                                      playerTuple.second.getId(), playerTuple.second.getName(),
+                                      game.getId()));
     }
 
     public Game getGameById(String gameId) {
