@@ -5,10 +5,8 @@ import {JsonPlayerObject} from "../../api/json-player-object";
 import {JsonGameInitObject} from "../../api/json-game-init-object";
 import * as Stomp from "stompjs";
 import {JsonGameEndsObject} from "../../api/json-game-ends-object";
-import {RenderComponent} from "../render/render.component";
 import {JsonGameStateObject} from "../../api/json-game-state.object";
 import {Subject} from "rxjs";
-import {finalize, first} from "rxjs/operators";
 
 // TODO look up if we need that annotation, the feeling is that it is obsolete
 @Injectable({
@@ -18,15 +16,15 @@ export class GameStreamingService {
 
   private webSocketUrl = ApiConfig.getWebsocketUrl().href;
   declare currentGameId: string;
-  declare opponentId: string;
   declare player: JsonPlayerObject;
+  declare opponent: JsonPlayerObject;
 
   declare webSocket: WebSocket;
   declare client: Stomp.Client;
   declare switchClient: Stomp.Client;
   declare downstreamClient: Stomp.Client;
   declare tempGameStateToBeSent: JsonGameStateObject;
-  declare isMyTurn: boolean
+  declare isMyTurn: boolean;
 
   downStreamSubscribed: boolean = false;
   gameState: Subject<JsonGameStateObject> = new Subject<JsonGameStateObject>();
@@ -58,9 +56,9 @@ export class GameStreamingService {
   public initGameIds(gameInitMessage: JsonGameInitObject): void {
     this.currentGameId = gameInitMessage.gameId;
     if (this.player.id.toString() === gameInitMessage.playerId1.toString()) {
-      this.opponentId = gameInitMessage.playerId2;
+      this.opponent = new JsonPlayerObject(gameInitMessage.playerId2, gameInitMessage.playerName2);
     } else {
-      this.opponentId = gameInitMessage.playerId1;
+      this.opponent = new JsonPlayerObject(gameInitMessage.playerId1, gameInitMessage.playerName1);
     }
   }
 

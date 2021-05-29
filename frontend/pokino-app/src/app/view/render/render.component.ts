@@ -1,22 +1,22 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three'
-import {PokinoScene} from "../../model/render/PokinoScene"
-import {player} from "../../model/render/player"
-import {enemy} from "../../model/render/enemy"
-import {mouseInfo} from "../../model/render/handleInput"
-import {physics} from '../../model/render/physics';
-import {ApiService} from '../../api/api.service';
-import {apiHandler} from '../../model/render/apiHandler';
+import { PokinoScene } from "../../model/render/PokinoScene"
+import { player } from "../../model/render/player"
+import { enemy } from "../../model/render/enemy"
+import { mouseInfo } from "../../model/render/handleInput"
+import { physics } from '../../model/render/physics';
+import { ApiService } from '../../api/api.service';
+import { apiHandler } from '../../model/render/apiHandler';
 import { Config } from '../../model/render/config'
-import {JsonGameStateObject} from "../../api/json-game-state.object";
+import TextSprite from '@seregpie/three.text-sprite';
+import { JsonGameStateObject } from "../../api/json-game-state.object";
+import { JsonGameStatusObject } from "../../api/json-game-status.object";
 import * as Stomp from "stompjs";
-import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
-import {Router} from "@angular/router";
-import {JsonGameEndsObject} from "../../api/json-game-ends-object";
-import {JsonGameInitObject} from "../../api/json-game-init-object";
+import { GameStreamingService } from "../websocket-adapter/game-streaming.service";
+import { Router } from "@angular/router";
+import { JsonGameEndsObject } from "../../api/json-game-ends-object";
+import { JsonGameInitObject } from "../../api/json-game-init-object";
 
-
-enum DownStreamWebSocketState { UNDEFINED, OPEN, CLOSED }
 
 
 @Component({
@@ -34,6 +34,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     declare shutdownClient: Stomp.Client;
     declare downstreamClient: Stomp.Client;
     gameState: JsonGameStateObject = new JsonGameStateObject();
+    standings: Map<string, number> = new Map();
 
     @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
@@ -43,7 +44,7 @@ export class RenderComponent implements OnInit, OnDestroy {
 
         //get position of html element to account for offsets
         const node = event.target as HTMLElement;
-        const {left, top} = node.getBoundingClientRect();
+        const { left, top } = node.getBoundingClientRect();
         //transform mouse coordinates into threejs coordinate frame
         this.m_mouseInfo.x = (event.x - this.m_sceneWidth / 2) + left;
         this.m_mouseInfo.y = (event.y - this.m_sceneHeight / 2) * -1 + top;
@@ -78,7 +79,7 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     renderer = new THREE.WebGLRenderer();
 
-    m_sceneWidth: number = 1024;
+    m_sceneWidth: number = 1624;
     m_sceneHeight: number = 540;
     m_scene: PokinoScene;
     m_player: player;
@@ -86,20 +87,21 @@ export class RenderComponent implements OnInit, OnDestroy {
     m_physics: physics;
     m_mouseInfo: mouseInfo;
     m_assetPath = '../../assets/';
-    m_webSocket: DownStreamWebSocketState = DownStreamWebSocketState.UNDEFINED;
     m_pokemonMaterialSet = false;
     m_pokemonMaterialName = 'Pikachu';
     m_apiHandler: apiHandler;
     config: Config;
+    m_infoTextPlayer1: TextSprite = new TextSprite();
+    m_infoTextPlayer2: TextSprite = new TextSprite();
 
     m_mouseCursor: THREE.Mesh = new THREE.Mesh();
     updated: boolean = false;
 
     constructor(private apiService: ApiService, private gameStreamingService: GameStreamingService, private router: Router) {
-        
-      
+
+
         this.config = require('../../model/render/config.json');
-      
+
         this.m_apiHandler = new apiHandler(apiService);
 
         this.m_scene = new PokinoScene();
@@ -121,6 +123,59 @@ export class RenderComponent implements OnInit, OnDestroy {
 
         this.setupMouseCursor();
         this.setupSecondPlayer();
+        this.setupInfoText();
+    }
+
+    setupInfoText() {
+
+        //player info
+        this.m_infoTextPlayer1 = new TextSprite({
+            alignment: 'left',
+            color: '#ff0000',
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: 20,
+            fontStyle: 'normal',
+            text: [
+                'Your Name: ',
+                'Your Score: '
+            ].join('\n'),
+        });
+        var margin = 20;
+        this.m_infoTextPlayer1.translateX(- this.m_sceneWidth / 2 + margin * 4);
+        this.m_infoTextPlayer1.translateY(this.m_sceneHeight / 2 - margin * 4);
+
+        //enemy info
+        this.m_infoTextPlayer2 = new TextSprite({
+            alignment: 'left',
+            color: '#ff00ff',
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: 20,
+            fontStyle: 'normal',
+            text: [
+                'Enemy Name: ',
+                'Enemy Score: '
+            ].join('\n'),
+        });
+        var margin = 20;
+        this.m_infoTextPlayer2.translateX(this.m_sceneWidth / 2 - margin * 4);
+        this.m_infoTextPlayer2.translateY(this.m_sceneHeight / 2 - margin * 4);
+
+        this.m_scene.add(this.m_infoTextPlayer1);
+        this.m_scene.add(this.m_infoTextPlayer2);
+    }
+
+    updateInfoText() {
+        //player info
+        this.m_infoTextPlayer1.text = [
+            this.gameStreamingService.player.name,
+            this.gameState.score.player1Id
+        ].join('\n');
+
+        //enemy info
+        this.m_infoTextPlayer2.text = [
+            "not available yet",
+            this.gameState.score.player2Id
+        ].join('\n');
     }
 
     setupSecondPlayer() {
@@ -155,7 +210,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.m_scene.add(this.m_mouseCursor);
     }
 
-  updateMouseCursor() {
+    updateMouseCursor() {
         var direction = new THREE.Vector2(this.m_mouseInfo.x - this.m_player.m_mesh.position.x, this.m_mouseInfo.y - this.m_player.m_mesh.position.y);
         direction.normalize();
 
@@ -172,15 +227,17 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     }
 
-  ngAfterViewInit() {
-
-    //setup render context
-    this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
-    if (this.rendererContainer != undefined)
-      this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
-    this.renderScene();
-  }
-
+    ngAfterViewInit() {
+      
+        //setup render context
+        this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
+        if (this.rendererContainer != undefined)
+            this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+        this.renderScene();
+    }
+    highlightTextureSet: boolean = false;
+    unhighlightTextureSet: boolean = false;
+    ballIsFlying: boolean = false;
     renderScene() {
         // render loop
         window.requestAnimationFrame(() => this.renderScene());
@@ -193,6 +250,19 @@ export class RenderComponent implements OnInit, OnDestroy {
 
         if (this.gameStreamingService.isMyTurn) {
 
+            //highlight player
+            if (!this.highlightTextureSet) {
+                const loader = new THREE.TextureLoader();
+                this.m_player.m_mesh.material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/ash_highlighted.png'), transparent: true, alphaTest: 0.5 });
+                this.highlightTextureSet = true;
+                this.unhighlightTextureSet = false;
+            }
+
+
+            //unhide throw progress bar and arrow
+            this.m_mouseCursor.visible = true;
+            this.m_player.m_throwForceProgressBar.visible = true;
+
             // update
             this.m_physics.update(this.m_apiHandler.getWind());
             this.m_enemy.update();
@@ -203,8 +273,24 @@ export class RenderComponent implements OnInit, OnDestroy {
             this.fillGameState();
             this.sendGameState(this.gameState);
 
+
+
+            if (this.m_player.m_ball.m_ballBody.activate == true && this.ballIsFlying == false) {
+                //set ball status to flying, does it hit?
+                this.ballIsFlying = true;
+            }
+            if (this.ballIsFlying == true) {
+                if (this.m_player.m_ball.m_ballBody.activate == false) {
+                    //ball did not hit
+                    this.gameStreamingService.sendBallThrown(false);
+                    this.ballIsFlying = false;
+                }
+
+            }
+
             if (this.m_enemy.m_enemyBody.collided && !this.updated) {
                 this.updated = true;
+                //enemy collided with ball, player has hit
                 this.gameStreamingService.sendBallThrown(true);
             }
             if (!this.m_enemy.m_enemyBody.collided && this.updated) {
@@ -219,6 +305,26 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.m_physics.enemy = this.m_enemy.m_enemyBody;
             }
         } else {
+
+            console.log("not my turn")
+
+            //unhighlight player
+            if (!this.unhighlightTextureSet) {
+                const loader = new THREE.TextureLoader();
+                this.m_player.m_mesh.material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/ash.png'), transparent: true, alphaTest: 0.5 });
+                this.unhighlightTextureSet = true;
+                this.highlightTextureSet = false;
+            }
+
+            //hide throw progress bar and arrow
+            this.m_mouseCursor.visible = false;
+            this.m_player.m_throwForceProgressBar.visible = false;
+
+            //unsquish pokemon
+            this.m_enemy.m_mesh.scale.x = 1;
+            this.m_enemy.m_mesh.scale.y = 1;
+
+
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
@@ -233,7 +339,7 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.m_pokemonMaterialSet = false;
             }
         }
-
+        this.updateInfoText();
         this.renderer.render(this.m_scene, this.m_scene.m_camera);
     }
 
@@ -246,7 +352,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
-  }
+
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {
         // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
@@ -296,6 +402,8 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.client.connect({}, () => {
             this.client.subscribe(this.gameStreamingService.getPlayerSwitchTopic(), (item) => {
                 console.log('switch message received!');
+                const gameStatus: JsonGameStatusObject = JSON.parse(item.body);
+                this.standings = gameStatus.standings;
                 this.gameStreamingService.isMyTurn = !this.gameStreamingService.isMyTurn;
             });
         });
