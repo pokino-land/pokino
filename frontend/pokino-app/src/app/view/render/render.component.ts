@@ -226,7 +226,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-
+      
         //setup render context
         this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
         if (this.rendererContainer != undefined)
