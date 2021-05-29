@@ -17,8 +17,6 @@ import { JsonGameEndsObject } from "../../api/json-game-ends-object";
 import { JsonGameInitObject } from "../../api/json-game-init-object";
 
 
-enum DownStreamWebSocketState { UNDEFINED, OPEN, CLOSED }
-
 
 @Component({
     selector: 'app-render',
@@ -79,7 +77,7 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     renderer = new THREE.WebGLRenderer();
 
-    m_sceneWidth: number = 1024;
+    m_sceneWidth: number = 1624;
     m_sceneHeight: number = 540;
     m_scene: PokinoScene;
     m_player: player;
@@ -87,7 +85,6 @@ export class RenderComponent implements OnInit, OnDestroy {
     m_physics: physics;
     m_mouseInfo: mouseInfo;
     m_assetPath = '../../assets/';
-    m_webSocket: DownStreamWebSocketState = DownStreamWebSocketState.UNDEFINED;
     m_pokemonMaterialSet = false;
     m_pokemonMaterialName = 'Pikachu';
     m_apiHandler: apiHandler;
@@ -229,14 +226,16 @@ export class RenderComponent implements OnInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-
+      
         //setup render context
         this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
         if (this.rendererContainer != undefined)
             this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
         this.renderScene();
     }
-
+    highlightTextureSet: boolean = false;
+    unhighlightTextureSet: boolean = false;
+    ballIsFlying: boolean = false;
     renderScene() {
         // render loop
         window.requestAnimationFrame(() => this.renderScene());
@@ -250,6 +249,19 @@ export class RenderComponent implements OnInit, OnDestroy {
         if (this.gameStreamingService.isMyTurn) {
             console.log("my turn");
 
+            //highlight player
+            if (!this.highlightTextureSet) {
+                const loader = new THREE.TextureLoader();
+                this.m_player.m_mesh.material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/ash_highlighted.png'), transparent: true, alphaTest: 0.5 });
+                this.highlightTextureSet = true;
+                this.unhighlightTextureSet = false;
+            }
+
+
+            //unhide throw progress bar and arrow
+            this.m_mouseCursor.visible = true;
+            this.m_player.m_throwForceProgressBar.visible = true;
+
             // update
             this.m_physics.update(this.m_apiHandler.getWind());
             this.m_enemy.update();
@@ -260,8 +272,24 @@ export class RenderComponent implements OnInit, OnDestroy {
             this.fillGameState();
             this.sendGameState(this.gameState);
 
+
+
+            if (this.m_player.m_ball.m_ballBody.activate == true && this.ballIsFlying == false) {
+                //set ball status to flying, does it hit?
+                this.ballIsFlying = true;
+            }
+            if (this.ballIsFlying == true) {
+                if (this.m_player.m_ball.m_ballBody.activate == false) {
+                    //ball did not hit
+                    this.gameStreamingService.sendBallThrown(false);
+                    this.ballIsFlying = false;
+                }
+
+            }
+
             if (this.m_enemy.m_enemyBody.collided && !this.updated) {
                 this.updated = true;
+                //enemy collided with ball, player has hit
                 this.gameStreamingService.sendBallThrown(true);
             }
             if (!this.m_enemy.m_enemyBody.collided && this.updated) {
@@ -277,6 +305,23 @@ export class RenderComponent implements OnInit, OnDestroy {
             }
         } else {
             console.log("not my turn")
+
+            //unhighlight player
+            if (!this.unhighlightTextureSet) {
+                const loader = new THREE.TextureLoader();
+                this.m_player.m_mesh.material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/ash.png'), transparent: true, alphaTest: 0.5 });
+                this.unhighlightTextureSet = true;
+                this.highlightTextureSet = false;
+            }
+
+            //hide throw progress bar and arrow
+            this.m_mouseCursor.visible = false;
+            this.m_player.m_throwForceProgressBar.visible = false;
+
+            //unsquish pokemon
+            this.m_enemy.m_mesh.scale.x = 1;
+            this.m_enemy.m_mesh.scale.y = 1;
+
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
