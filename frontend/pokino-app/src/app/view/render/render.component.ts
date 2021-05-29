@@ -185,7 +185,6 @@ export class RenderComponent implements OnInit, OnDestroy {
         // console.log('------------')
 
         if (this.gameStreamingService.isMyTurn) {
-            console.log("my turn");
 
             // update
             this.m_physics.update();
@@ -213,7 +212,6 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.m_physics.enemy = this.m_enemy.m_enemyBody;
             }
         } else {
-            console.log("not my turn")
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
@@ -285,12 +283,13 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.downstreamclient = Stomp.over(this.downstreamwebSocket);
         this.shutdownclient = Stomp.over(this.shutdownwebSocket);
         console.log('connecting to downstream topic');
+        this.downstreamclient.debug = () => {};
         this.downstreamclient.connect({}, () => {
             this.downstreamclient.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
-                console.log('receiving game state from backend');
                 this.gameState = JSON.parse(item.body);
             });
         });
+        this.shutdownclient.debug = () => {};
         this.shutdownclient.connect({}, () => {
             this.shutdownclient.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
                 console.log('game ends!');
@@ -298,6 +297,7 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.endGame(gameEndsObject);
             });
         });
+        this.client.debug = () => {};
         this.client.connect({}, () => {
             this.client.subscribe(this.gameStreamingService.getPlayerSwitchTopic(), (item) => {
                 console.log('switch message received!');

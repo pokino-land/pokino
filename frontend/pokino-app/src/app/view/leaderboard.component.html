@@ -5,10 +5,22 @@
 	<div class="container">
 		<div class="leaderboard">
 			<img class="leaderboard-banner" src="../../assets/images/leaderboard.jpg"/>
-			<ol class="leaderboard-name">
-				<li class="player-name"><span>Me</span></li>
-				<li class="player-name"><span>Another player</span></li>
-			</ol>
+			<div *ngIf="leaderboardEntries">
+				<ol class="leaderboard-name">
+					<li *ngFor="let entry of leaderboardEntries.leaderboardEntries">
+						{{entry.playerName}}
+						{{entry.gamesWon}}
+						{{entry.gamesLost}}
+						{{entry.numberOfPokeHits}}
+						{{entry.numberOfPokeMisses}}
+					</li>
+					<li class="player-name"><span>Me</span></li>
+					<li class="player-name"><span>Another player</span></li>
+				</ol>
+			</div>
+			<div *ngIf="!leaderboardEntries">
+				<p>there are no entries in the leaderboard</p>
+			</div>
 		</div>
 		<button class="button" (click)="gotoMainMenu()">Main Menu</button>
 	</div>

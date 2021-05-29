@@ -5,6 +5,7 @@ import { JsonPokemonObject } from './json-pokemon-object';
 import { ApiConfig } from "./api.config";
 import {JsonWeatherObject} from "./json-weather-object";
 import {JsonPlayerObject} from "./json-player-object";
+import {JsonLeaderboardObject} from "./json-leaderboard-object";
 
 
 @Injectable()
@@ -53,6 +54,17 @@ export class ApiService {
 	}
 
 
+	public async getLeaderboard(): Promise<JsonLeaderboardObject> {
+		// returns the starting player's id
+		const url: URL = ApiConfig.getLeaderboardUrl();
+
+		return await this.get(url.href)
+			.toPromise()
+			.then((data: JsonLeaderboardObject) => {
+				return data;
+			});
+	}
+
 	public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<string> {
 		// returns the starting player's id
 		const url: URL = ApiConfig.getConfirmGameStartsUrl(player.id);
@@ -66,8 +78,6 @@ export class ApiService {
 			});
 	}
 
-
-	// TODO Steven use this wherever you need it
 	public async sendBallThrown(playerId: string, didHit: boolean): Promise<void> {
 		const url: URL = ApiConfig.getBallThrownUrl(playerId, didHit);
 		console.log('send ball thrown!');
