@@ -196,8 +196,8 @@ export class RenderComponent implements OnInit, OnDestroy {
 
             // update
             this.m_physics.update(this.m_apiHandler.getWind());
-            this.m_enemy.update(this.m_apiHandler.getWind());
-            this.m_scene.update();
+            this.m_enemy.update();
+            this.m_scene.update(this.m_apiHandler.getWind());
             this.m_player.update(this.m_mouseInfo);
             this.updateMouseCursor();
 
