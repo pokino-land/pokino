@@ -93,7 +93,8 @@ public class GameManager implements GameStateChangeListener {
         GameEvent hitOrMissEvent = didHit ? new PokeHitEvent(playerId, associatedGame.getGameId()) : new PokeMissEvent(playerId, associatedGame.getGameId());
         associatedGame.handleGameEvent(hitOrMissEvent);
         associatedGame.toggleCurrentPlayerId();
-        this.turnSwitchPushMessenger.sendTurnSwitchMessage(associatedGame.getGameId());
+        this.turnSwitchPushMessenger.sendTurnSwitchMessage(associatedGame.getGameId(),
+                this.getGameStatusFor(associatedGame.getGameId()));
     }
 
     public String handleStartupConfirmationRequest(String playerId) {
