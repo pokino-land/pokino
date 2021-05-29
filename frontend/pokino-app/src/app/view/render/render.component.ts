@@ -7,6 +7,7 @@ import {mouseInfo} from "../../model/render/handleInput"
 import {physics} from '../../model/render/physics';
 import {ApiService} from '../../api/api.service';
 import {apiHandler} from '../../model/render/apiHandler';
+import { Config } from '../../model/render/config'
 import {JsonGameStateObject} from "../../api/json-game-state.object";
 import * as Stomp from "stompjs";
 import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
@@ -16,6 +17,7 @@ import {JsonGameInitObject} from "../../api/json-game-init-object";
 
 
 enum DownStreamWebSocketState { UNDEFINED, OPEN, CLOSED }
+
 
 @Component({
     selector: 'app-render',
@@ -56,8 +58,8 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.m_mouseInfo.isPressed = true;
         //start timer
         const timerInterval: number = 10;
-        const timerIncrement: number = 0.01;
-        const maxTime: number = 1.4;
+        const timerIncrement: number = this.config.ballLoadUpSpeed;
+        const maxTime: number = this.config.maxTimeLoadUpBall;
         this.interval = setInterval(() => {
             if (this.m_mouseInfo.secondsClicked < maxTime)
                 this.m_mouseInfo.secondsClicked += timerIncrement;
@@ -74,7 +76,6 @@ export class RenderComponent implements OnInit, OnDestroy {
         clearInterval(this.interval);
     }
 
-
     renderer = new THREE.WebGLRenderer();
 
     m_sceneWidth: number = 1024;
@@ -89,12 +90,16 @@ export class RenderComponent implements OnInit, OnDestroy {
     m_pokemonMaterialSet = false;
     m_pokemonMaterialName = 'Pikachu';
     m_apiHandler: apiHandler;
+    config: Config;
 
     m_mouseCursor: THREE.Mesh = new THREE.Mesh();
     updated: boolean = false;
 
     constructor(private apiService: ApiService, private gameStreamingService: GameStreamingService, private router: Router) {
-
+        
+      
+        this.config = require('../../model/render/config.json');
+      
         this.m_apiHandler = new apiHandler(apiService);
 
         this.m_scene = new PokinoScene();
@@ -112,6 +117,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         //add ball and enemy to physics entities
         this.m_physics.ball = this.m_player.m_ball.m_ballBody;
         this.m_physics.enemy = this.m_enemy.m_enemyBody;
+
 
         this.setupMouseCursor();
         this.setupSecondPlayer();
@@ -149,7 +155,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.m_scene.add(this.m_mouseCursor);
     }
 
-    updateMouseCursor() {
+  updateMouseCursor() {
         var direction = new THREE.Vector2(this.m_mouseInfo.x - this.m_player.m_mesh.position.x, this.m_mouseInfo.y - this.m_player.m_mesh.position.y);
         direction.normalize();
 
@@ -166,13 +172,14 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     }
 
-    ngAfterViewInit() {
-        //setup render context
-        this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
-        if (this.rendererContainer != undefined)
-            this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
-        this.renderScene();
-    }
+  ngAfterViewInit() {
+
+    //setup render context
+    this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
+    if (this.rendererContainer != undefined)
+      this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+    this.renderScene();
+  }
 
     renderScene() {
         // render loop
@@ -188,8 +195,8 @@ export class RenderComponent implements OnInit, OnDestroy {
             console.log("my turn");
 
             // update
-            this.m_physics.update();
-            this.m_enemy.update();
+            this.m_physics.update(this.m_apiHandler.getWind());
+            this.m_enemy.update(this.m_apiHandler.getWind());
             this.m_scene.update();
             this.m_player.update(this.m_mouseInfo);
             this.updateMouseCursor();
@@ -242,7 +249,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
         // this.gameStreamingService.tempGameStateToBeSent = this.gameState;
-    }
+  }
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {
         // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;

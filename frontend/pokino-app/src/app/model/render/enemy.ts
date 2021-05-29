@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { enemyPhysicsObject } from './physics';
 import { JsonPokemonObject } from "../../api/json-pokemon-object";
-
+import { Config } from '../../model/render/config'
 
 enum FaceDirection { RIGHT, LEFT };
 
@@ -26,24 +26,29 @@ export class enemy {
     m_pokemonPath = '../../assets/images/pokemons/';
     m_faceDirection: FaceDirection = FaceDirection.RIGHT;
     m_changeDirection: boolean = false;
+    config: Config;
 
     constructor(pokemon: JsonPokemonObject, height: number) {
 
-        const enemySize = 50;
+        this.config = require('../../model/render/config.json');
+
+        const enemySize = this.config.enemySize;
         const geometry = new THREE.PlaneGeometry(enemySize, enemySize);
 
         var material = this.getMaterialFromName(pokemon.name);
         this.m_mesh = new THREE.Mesh(geometry, material);
         this.m_mesh.translateY(- height / 2 + enemySize / 2);
-        const pokemonStartHeight = 0;
+
+        const pokemonStartHeight = this.config.enemyStartPositionX;
+
         this.m_mesh.translateX(pokemonStartHeight);
 
         this.m_startPosition = new THREE.Vector2(this.m_mesh.position.x, this.m_mesh.position.y);
         this.m_enemyBody = new enemyPhysicsObject(enemySize, enemySize, new THREE.Vector2(this.m_mesh.position.x, this.m_mesh.position.y));
 
         this.m_pokemon = pokemon;
-        this.m_velocity = new THREE.Vector2(pokemon.healthPoints / 2, 0);
-        this.m_movementRadius = pokemon.defensePoints * 1.6;
+        this.m_velocity = new THREE.Vector2(pokemon.healthPoints * this.config.enemySpeedMul, 0);
+        this.m_movementRadius = pokemon.defensePoints * this.config.enemyMovementRadiusMul;
 
     }
 
@@ -117,7 +122,7 @@ export class enemy {
             this.changeDirectionHelper();
 
             if (this.m_pokemon.type2 == 'Flying') {
-                const pokemonFlyHeight = 80;
+                const pokemonFlyHeight = this.config.enemyFlyingHeight;
                 this.m_enemyBody.position.y = pokemonFlyHeight;
             }
 

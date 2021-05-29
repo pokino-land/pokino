@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { ballPhysicsObject, physics } from './physics';
-
+import { Config } from '../../model/render/config'
 export class ball {
 
     m_mesh: THREE.Mesh;
@@ -12,9 +12,11 @@ export class ball {
     radius: number;
     position: THREE.Vector2 = new THREE.Vector2(0, 0);
     m_assetPath = '../../assets/';
-
+    config: Config;
 
     constructor(radius: number, width: number, height: number) {
+
+        this.config = require('../../model/render/config.json');
 
         this.m_sceneWidth = width;
         this.m_sceneHeight = height;
@@ -27,7 +29,7 @@ export class ball {
         this.m_mesh = new THREE.Mesh(geometry, material);
 
         //move ball out of screen when its not needed
-        const restPositionOfBall = new THREE.Vector2(1000,0);
+        const restPositionOfBall = new THREE.Vector2(1000, 0);
         this.setPosition(restPositionOfBall.x, restPositionOfBall.y);
 
         this.m_ballBody = new ballPhysicsObject(radius, new THREE.Vector2(restPositionOfBall.x, restPositionOfBall.y));
@@ -47,7 +49,7 @@ export class ball {
             const playerPosX = - this.m_sceneWidth / 2 + playerWidth / 2;
             const playerPosY = - this.m_sceneHeight / 2 + playerHeight / 2;
             this.m_ballBody.setPosition(playerPosX, playerPosY);
-            const multiplicator = 500;
+            const multiplicator = this.config.ballForceMultiplicator;
             this.m_ballBody.force = new THREE.Vector2(forceDir.x * multiplicator * strength, forceDir.y * multiplicator * strength);
             this.m_ballBody.activate = true;
         } else {
