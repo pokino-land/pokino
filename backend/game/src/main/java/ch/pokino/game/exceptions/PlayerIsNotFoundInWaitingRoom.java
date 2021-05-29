@@ -1,12 +1,12 @@
-package ch.pokino.game;
+package ch.pokino.game.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class MaximumPlayersLimitReachedException extends Exception {
+public class PlayerIsNotFoundInWaitingRoom extends Exception {
 
-    public MaximumPlayersLimitReachedException(String message) {
+    public PlayerIsNotFoundInWaitingRoom(String message) {
         super(message);
     }
 

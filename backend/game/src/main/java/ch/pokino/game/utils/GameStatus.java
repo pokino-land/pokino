@@ -1,7 +1,13 @@
-package ch.pokino.game;
+package ch.pokino.game.utils;
+
+import ch.pokino.game.Game;
 
 import java.util.Map;
 
+
+/**
+ * Value object class to send to frontend to inform about the current status.
+ */
 public class GameStatus {
 
     private final String gameId;
@@ -16,6 +22,9 @@ public class GameStatus {
         this.gameState = gameState;
     }
 
+    public static GameStatus of(Game game) {
+        return new GameStatus(game.getGameId(), game.getPlayers().toString(), game.getStandings(), game.getGameStateAsString());
+    }
 
     public String getGameId() {
         return gameId;

@@ -5,6 +5,7 @@ import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameStartupState extends GameState {
 
@@ -12,7 +13,7 @@ public class GameStartupState extends GameState {
 
     public GameStartupState(Map<String, Integer> standings, GameEvent entryEvent) {
         super(standings, entryEvent);
-        this.isConfirmed = new HashMap<>();
+        this.isConfirmed = new ConcurrentHashMap<>();
         for (String playerId : standings.keySet()) {
             this.isConfirmed.put(playerId, false);
         }

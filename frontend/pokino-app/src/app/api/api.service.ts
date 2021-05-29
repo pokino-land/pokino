@@ -52,6 +52,32 @@ export class ApiService {
 			});
 	}
 
+
+	public async sendGameStartsConfirmation(player: JsonPlayerObject): Promise<string> {
+		// returns the starting player's id
+		const url: URL = ApiConfig.getConfirmGameStartsUrl(player.id);
+
+		return await this.get(url.href)
+			.toPromise()
+			.then((data: any) => {
+				console.log("sent game confirmation message to backend");
+				const playerStartsId: string = data;
+				return playerStartsId;
+			});
+	}
+
+
+	// TODO Steven use this wherever you need it
+	public async sendBallThrown(playerId: string, didHit: boolean): Promise<void> {
+		const url: URL = ApiConfig.getBallThrownUrl(playerId, didHit);
+		console.log('send ball thrown!');
+		return await this.get(url.href)
+			.toPromise()
+			.then((data: any) => {
+				console.log("sent ball thrown; did it hit? " + didHit);
+			});
+	}
+
 	private get(url: string): any {
 		return this.http.get(url);
 	}
@@ -59,5 +85,4 @@ export class ApiService {
 	private post(url: string, payload: any): any {
 		return this.http.post(url, payload);
 	}
-
 }

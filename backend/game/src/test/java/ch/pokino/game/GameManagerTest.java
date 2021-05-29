@@ -1,6 +1,10 @@
 package ch.pokino.game;
 
 import ch.pokino.game.application.GameApplication;
+import ch.pokino.game.exceptions.MaximumPlayersLimitReachedException;
+import ch.pokino.game.exceptions.PlayerIsNotFoundInWaitingRoom;
+import ch.pokino.game.exceptions.PlayerNameNotAvailableException;
+import ch.pokino.game.player.Player;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
 import ch.pokino.game.state_machine.states.GameShutdownState;
 import org.hamcrest.Matchers;
@@ -11,7 +15,6 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.HashMap;
 
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -25,7 +28,7 @@ public class GameManagerTest {
     GameManager gameManager;
 
     @Test
-    void registerPlayerConsecutivelyInitializesGames() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException{
+    void registerPlayerConsecutivelyInitializesGames() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException, PlayerIsNotFoundInWaitingRoom {
         assertThat(gameManager.getGames(), is(Matchers.empty()));
         assertThat(gameManager.getWaitingPlayersAsList(), is(Matchers.empty()));
 
@@ -53,7 +56,7 @@ public class GameManagerTest {
     }
 
     @Test
-    void gameIsBeingTakenDownWhenGameStateChangesToShutdownAndPlayersAreAddedToWaitingList() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException {
+    void gameIsBeingTakenDownWhenGameStateChangesToShutdownAndPlayersAreAddedToWaitingList() throws PlayerNameNotAvailableException, MaximumPlayersLimitReachedException, PlayerIsNotFoundInWaitingRoom {
         gameManager.addPlayerToWaiting(new Player("Tom"));
         gameManager.addPlayerToWaiting(new Player("Jerry"));
         gameManager.addPlayerToReady("Tom", "0");
@@ -64,4 +67,6 @@ public class GameManagerTest {
         assertThat(gameManager.getWaitingPlayersAsList().stream().map(Player::getName).collect(toList()),
                 containsInAnyOrder("Tom", "Jerry"));
     }
+
+
 }

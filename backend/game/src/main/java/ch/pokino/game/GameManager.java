@@ -1,14 +1,20 @@
 package ch.pokino.game;
 
+import ch.pokino.game.exceptions.MaximumPlayersLimitReachedException;
+import ch.pokino.game.exceptions.PlayerIsNotFoundInWaitingRoom;
+import ch.pokino.game.exceptions.PlayerNameNotAvailableException;
 import ch.pokino.game.leaderboard.PastGameStore;
-import ch.pokino.game.messaging.GameEndsMessage;
-import ch.pokino.game.messaging.GameEndsPushMessenger;
-import ch.pokino.game.messaging.GameStartsMessage;
-import ch.pokino.game.messaging.GameStartsPushMessenger;
+import ch.pokino.game.messaging.*;
+import ch.pokino.game.player.Player;
+import ch.pokino.game.state_machine.GameStateChangeListener;
+import ch.pokino.game.state_machine.events.GameEvent;
 import ch.pokino.game.state_machine.events.PokeHitEvent;
+import ch.pokino.game.state_machine.events.PokeMissEvent;
 import ch.pokino.game.state_machine.events.StartupConfirmationEvent;
 import ch.pokino.game.state_machine.states.GameShutdownState;
 import ch.pokino.game.state_machine.states.GameState;
+import ch.pokino.game.utils.GameStatus;
+import ch.pokino.game.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,10 +26,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class GameManager implements GameStateChangeListener{
+public class GameManager implements GameStateChangeListener {
 
     private final GameStartsPushMessenger gameStartsPushMessenger;
     private final GameEndsPushMessenger gameEndsPushMessenger;
+    private final TurnSwitchPushMessenger turnSwitchPushMessenger;
     private final Map<String, Player> waitingPlayers = new ConcurrentHashMap<>();
     private final Queue<Player> readyPlayers = new ConcurrentLinkedQueue<>();
     public static final int MAXIMUM_NUMBER_OF_PLAYERS_ALLOWED = 1000;
@@ -33,9 +40,10 @@ public class GameManager implements GameStateChangeListener{
 
     public GameManager(GameStartsPushMessenger gameStartsPushMessenger,
                        GameEndsPushMessenger gameEndsPushMessenger,
-                       PastGameStore pastGameStore) {
+                       TurnSwitchPushMessenger turnSwitchPushMessenger, PastGameStore pastGameStore) {
         this.gameStartsPushMessenger = gameStartsPushMessenger;
         this.gameEndsPushMessenger = gameEndsPushMessenger;
+        this.turnSwitchPushMessenger = turnSwitchPushMessenger;
         this.pastGameStore = pastGameStore;
     }
 
@@ -54,13 +62,13 @@ public class GameManager implements GameStateChangeListener{
         return player.getId();
     }
 
-    public void addPlayerToReady(String playerName, String playerId) {
+    public void addPlayerToReady(String playerName, String playerId) throws PlayerIsNotFoundInWaitingRoom {
         synchronized (readyPlayers) {
             if (!waitingPlayers.values().stream().map(Player::getName).collect(toList()).contains(playerName)) {
-                throw new RuntimeException("Provided player name is not in waiting list.");
+                throw new PlayerIsNotFoundInWaitingRoom("Provided player name is not in waiting list.");
             }
             if (!waitingPlayers.values().stream().map(Player::getId).collect(toList()).contains(playerId)) {
-                throw new RuntimeException("Provided player id is not in waiting list.");
+                throw new PlayerIsNotFoundInWaitingRoom("Provided player id is not in waiting list.");
             }
             Player player = waitingPlayers.get(playerId);
             if (!player.getName().equals(playerName)) {
@@ -68,7 +76,7 @@ public class GameManager implements GameStateChangeListener{
             }
             waitingPlayers.remove(playerId);
             readyPlayers.add(player);
-            logger.info("Added new ready player: " + player);
+            logger.info("Player ready: " + player);
             if (readyPlayers.size() > 1) {
                 Player firstPlayer = readyPlayers.poll();
                 Player secondPlayer = readyPlayers.poll();
@@ -80,14 +88,18 @@ public class GameManager implements GameStateChangeListener{
         }
     }
 
-    public void handlePokeHitRequest(String playerId) {
+    public void handlePokeHitOrMissRequest(String playerId, boolean didHit) {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
-        associatedGame.handleGameEvent(new PokeHitEvent(playerId, associatedGame.getGameId()));
+        GameEvent hitOrMissEvent = didHit ? new PokeHitEvent(playerId, associatedGame.getGameId()) : new PokeMissEvent(playerId, associatedGame.getGameId());
+        associatedGame.handleGameEvent(hitOrMissEvent);
+        associatedGame.toggleCurrentPlayerId();
+        this.turnSwitchPushMessenger.sendTurnSwitchMessage(associatedGame.getGameId());
     }
 
-    public void handleStartupConfirmationRequest(String playerId) {
+    public String handleStartupConfirmationRequest(String playerId) {
         Game associatedGame = games.get(getGameIdForPlayerId(playerId));
         associatedGame.handleGameEvent(new StartupConfirmationEvent(playerId, associatedGame.getGameId()));
+        return associatedGame.getStartingPlayerId();
     }
 
     /**
@@ -99,6 +111,10 @@ public class GameManager implements GameStateChangeListener{
     private void writeGameStartsMessageOnWebsocket(Game game) {
         var playerTuple = game.getPlayers();
         gameStartsPushMessenger.sendGameStartsMessage(new GameStartsMessage(playerTuple.first.getId(), playerTuple.second.getId(), game.getId()));
+    }
+
+    public Game getGameById(String gameId) {
+        return this.games.get(gameId);
     }
 
     public Collection<Game> getGames() {
@@ -147,7 +163,7 @@ public class GameManager implements GameStateChangeListener{
         return associatedGameId;
     }
 
-    public List<GameStatus> getGameStatuses() {
+    public List<GameStatus> getGameStatusesAsList() {
         Collection<Game> games = getGames();
         List<GameStatus> gameStatuses = new ArrayList<>();
         for (Game game : games) {
@@ -161,6 +177,10 @@ public class GameManager implements GameStateChangeListener{
     return gameStatuses;
     }
 
+    public GameStatus getGameStatusFor(String gameId) {
+        return GameStatus.of(this.games.get(gameId));
+    }
+
     @Override
     public void handleGameStateChanged(GameState newGameState) {
         if (newGameState instanceof GameShutdownState) {
@@ -170,8 +190,12 @@ public class GameManager implements GameStateChangeListener{
             GameEndsMessage gameEndsMessage = new GameEndsMessage(
                     players.first.getId(),
                     players.first.getName(),
+                    game.getNumberOfHitsForPlayer(players.first.getId()),
+                    game.getNumberOfMissesForPlayer(players.first.getId()),
                     players.second.getId(),
                     players.second.getName(),
+                    game.getNumberOfHitsForPlayer(players.second.getId()),
+                    game.getNumberOfMissesForPlayer(players.second.getId()),
                     game.getGameId(),
                     game.getStandings());
             this.gameEndsPushMessenger.sendGameEndsMessage(gameEndsMessage);

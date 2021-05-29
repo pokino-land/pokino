@@ -2,10 +2,10 @@ import {JsonObject} from "./json-object";
 
 export class JsonGameStateObject implements JsonObject {
 
-    declare ball: Ball;
-    declare pokemon: Pokemon;
-    declare currentPlayerId: number;
-    declare scores: Score;
+    ball: Ball = new Ball();
+    pokemon: Pokemon = new Pokemon();
+    scores: Score = new Score();
+    declare sendingPlayerId: string;
 
     constructor() {}
 }

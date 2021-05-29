@@ -1,4 +1,4 @@
-package ch.pokino.game;
+package ch.pokino.game.player;
 
 
 import java.util.concurrent.atomic.AtomicLong;

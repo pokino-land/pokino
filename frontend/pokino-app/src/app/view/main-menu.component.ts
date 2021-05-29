@@ -6,7 +6,7 @@ import {JsonPokemonObject} from "../api/json-pokemon-object";
 import {JsonWeatherObject} from "../api/json-weather-object";
 import {JsonPlayerObject} from "../api/json-player-object";
 import * as Stomp from "stompjs";
-import {WebsocketService} from "./websocket-adapter/websocket.service";
+import {GameStreamingService} from "./websocket-adapter/game-streaming.service";
 import {JsonGameInitObject} from "../api/json-game-init-object";
 
 @Component({
@@ -28,7 +28,7 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   declare weather: JsonWeatherObject;
 
 
-  constructor(private router: Router, private apiService: ApiService, private websocketService: WebsocketService) {
+  constructor(private router: Router, private apiService: ApiService, private gameStreamingService: GameStreamingService) {
     this.getRandomPokemon();
   }
 
@@ -63,6 +63,7 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   public async loginPlayer(playerName: string): Promise<void> {
     const playerId: string = await this.apiService.loginPlayer(playerName);
     this.player = new JsonPlayerObject(playerId, playerName);
+    this.gameStreamingService.player = this.player;
     this.loggedIn = true;
   }
 
@@ -72,8 +73,9 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
     const relevantGameStarts: boolean = ((response.playerId1.toString() === this.player.id.toString())
         || (response.playerId2.toString()) === this.player.id.toString());
     if (relevantGameStarts) {
-      this.websocketService.currentGameId = response.gameId;
+      this.gameStreamingService.initGameIds(response);
       this.gotoGameScreen();
+      this.gameStreamingService.sendGameStartsConfirmation(this.player);
     }
   }
 
@@ -87,11 +89,12 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
 
 
   public openWebSocketConnection(): void {
-    this.webSocket = this.websocketService.getWebSocket();
+    this.webSocket = this.gameStreamingService.getWebSocket();
     this.client = Stomp.over(this.webSocket);
 
     this.client.connect({}, () => {
-      this.client.subscribe(this.websocketService.getGameInitTopic(), (item) => {
+      this.client.subscribe(this.gameStreamingService.getGameInitTopic(), (item) => {
+        console.log('game starts');
         const response: JsonGameInitObject = JSON.parse(item.body);
         this.checkIfRelevantGameStarts(response);
       });
@@ -100,8 +103,8 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
 
   closeWebSocketConnection(): void {
     if (this.client) {
+      this.client.unsubscribe("sub-0");
       this.webSocket.close();
-      this.client.unsubscribe("/message");
     }
   }
 

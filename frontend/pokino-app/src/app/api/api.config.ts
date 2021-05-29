@@ -11,11 +11,13 @@ export class ApiConfig {
     private static readonly POKE_ENDPOINT: string = 'pokemon';
     private static readonly RANDOM_ENDPOINT: string = 'random';
     private static readonly WEATHER_ENDPOINT: string = 'weather';
+    private static readonly BALL_THROWN_ENDPOINT: string = 'ballThrown';
     private static readonly GAME_ENDPOINT: string = 'game';
     private static readonly LOGIN_ENDPOINT: string = 'login';
-    private static readonly READY_ENDPOINT: string = 'clickReady';
-    private static readonly WEBSOCKET_INIT_ENDPOINT: string = 'pokino-websocket';
-    private static readonly WEBSOCKET_GREETINGS_TOPIC: string = '/topic/init';
+    private static readonly CLICK_READY_ENDPOINT: string = 'clickReady';
+    private static readonly READY_ENDPOINT: string = 'ready';
+    private static readonly WEBSOCKET_INIT_BASE: string = 'pokino-websocket';
+    private static readonly WEBSOCKET_INIT_TOPIC: string = '/topic/init';
 
     /**
      * example: http://localhost:8000/pokemon/random
@@ -40,14 +42,15 @@ export class ApiConfig {
      */
     public static getPlayerReadyUrl(playerName: string, playerId: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
-        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT];
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.CLICK_READY_ENDPOINT];
         let url = this.buildUrl(root, endpoints).href;
         url += ('?playerName=' + playerName + '&playerId=' + playerId);
+        console.log(url);
         return new URL(url);
     }
 
     /**
-     * example: http://localhost:8001/game/login?playerName={playerName}
+     * example: http://localhost:8001/game/login?name={playerName}
      */
     public static getLoginUrl(playerName: string): URL {
         const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
@@ -57,16 +60,35 @@ export class ApiConfig {
         return new URL(url);
     }
 
-    // ws://localhost:8002/pokino-websocket
+    /**
+     * example: ws://localhost:8001/pokino-websocket
+     */
     public static getWebsocketUrl(): URL {
         const root: Array<string> = [this.WEBSOCKET_ROOT_URL, this.WEBSOCKET_PORT];
-        const endpoints: Array<string> = [this.WEBSOCKET_INIT_ENDPOINT];
+        const endpoints: Array<string> = [this.WEBSOCKET_INIT_BASE];
         return this.buildUrl(root, endpoints);
     }
 
-    // /topic/greetings
+
+    static getConfirmGameStartsUrl(playerId: string): URL {
+        const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.READY_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?playerId=' + playerId);
+        return new URL(url);
+    }
+
+    static getBallThrownUrl(playerId: string, didHit: boolean): URL {
+        const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
+        const endpoints: Array<string> = [this.GAME_ENDPOINT, this.BALL_THROWN_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?playerId=' + playerId);
+        url += ('&didHit=' + (didHit ? '1' : '0'));
+        return new URL(url);
+    }
+
     public static getWebsocketGreetingsTopic(): string {
-        return this.WEBSOCKET_GREETINGS_TOPIC;
+        return this.WEBSOCKET_INIT_TOPIC;
     }
 
 

@@ -10,7 +10,7 @@ import { ApiService } from '../api/api.service';
 import {MainMenuComponent} from "../view/main-menu.component";
 import {LeaderboardComponent} from "../view/leaderboard.component";
 import {FormsModule} from "@angular/forms";
-import {WebsocketService} from "../view/websocket-adapter/websocket.service";
+import {GameStreamingService} from "../view/websocket-adapter/game-streaming.service";
 import {WebsocketTestComponent} from "../view/websocket-adapter/websocket-test.component";
 
 @NgModule({
@@ -27,7 +27,7 @@ import {WebsocketTestComponent} from "../view/websocket-adapter/websocket-test.c
         HttpClientModule,
         FormsModule
     ],
-    providers: [ApiService, WebsocketService],
+    providers: [ApiService, GameStreamingService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
