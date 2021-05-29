@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from '../view/app.component';
+import {ApiService} from "../api/api.service";
+import {JsonPokemonObject} from "../api/json-pokemon-object";
 
 describe('AppComponent', () => {
   beforeEach(async () => {
