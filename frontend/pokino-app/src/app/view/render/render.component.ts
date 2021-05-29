@@ -1,19 +1,20 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three'
-import {PokinoScene} from "../../model/render/PokinoScene"
-import {player} from "../../model/render/player"
-import {enemy} from "../../model/render/enemy"
-import {mouseInfo} from "../../model/render/handleInput"
-import {physics} from '../../model/render/physics';
-import {ApiService} from '../../api/api.service';
-import {apiHandler} from '../../model/render/apiHandler';
+import { PokinoScene } from "../../model/render/PokinoScene"
+import { player } from "../../model/render/player"
+import { enemy } from "../../model/render/enemy"
+import { mouseInfo } from "../../model/render/handleInput"
+import { physics } from '../../model/render/physics';
+import { ApiService } from '../../api/api.service';
+import { apiHandler } from '../../model/render/apiHandler';
 import { Config } from '../../model/render/config'
-import {JsonGameStateObject} from "../../api/json-game-state.object";
+import TextSprite from '@seregpie/three.text-sprite';
+import { JsonGameStateObject } from "../../api/json-game-state.object";
 import * as Stomp from "stompjs";
-import {GameStreamingService} from "../websocket-adapter/game-streaming.service";
-import {Router} from "@angular/router";
-import {JsonGameEndsObject} from "../../api/json-game-ends-object";
-import {JsonGameInitObject} from "../../api/json-game-init-object";
+import { GameStreamingService } from "../websocket-adapter/game-streaming.service";
+import { Router } from "@angular/router";
+import { JsonGameEndsObject } from "../../api/json-game-ends-object";
+import { JsonGameInitObject } from "../../api/json-game-init-object";
 
 
 enum DownStreamWebSocketState { UNDEFINED, OPEN, CLOSED }
@@ -43,7 +44,7 @@ export class RenderComponent implements OnInit, OnDestroy {
 
         //get position of html element to account for offsets
         const node = event.target as HTMLElement;
-        const {left, top} = node.getBoundingClientRect();
+        const { left, top } = node.getBoundingClientRect();
         //transform mouse coordinates into threejs coordinate frame
         this.m_mouseInfo.x = (event.x - this.m_sceneWidth / 2) + left;
         this.m_mouseInfo.y = (event.y - this.m_sceneHeight / 2) * -1 + top;
@@ -91,15 +92,17 @@ export class RenderComponent implements OnInit, OnDestroy {
     m_pokemonMaterialName = 'Pikachu';
     m_apiHandler: apiHandler;
     config: Config;
+    m_infoTextPlayer1: TextSprite = new TextSprite();
+    m_infoTextPlayer2: TextSprite = new TextSprite();
 
     m_mouseCursor: THREE.Mesh = new THREE.Mesh();
     updated: boolean = false;
 
     constructor(private apiService: ApiService, private gameStreamingService: GameStreamingService, private router: Router) {
-        
-      
+
+
         this.config = require('../../model/render/config.json');
-      
+
         this.m_apiHandler = new apiHandler(apiService);
 
         this.m_scene = new PokinoScene();
@@ -121,6 +124,60 @@ export class RenderComponent implements OnInit, OnDestroy {
 
         this.setupMouseCursor();
         this.setupSecondPlayer();
+        this.setupInfoText();
+    }
+
+
+    setupInfoText() {
+
+        //player info
+        this.m_infoTextPlayer1 = new TextSprite({
+            alignment: 'left',
+            color: '#ff0000',
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: 20,
+            fontStyle: 'normal',
+            text: [
+                'Your Name: ',
+                'Your Score: '
+            ].join('\n'),
+        });
+        var margin = 20;
+        this.m_infoTextPlayer1.translateX(- this.m_sceneWidth / 2 + margin * 4);
+        this.m_infoTextPlayer1.translateY(this.m_sceneHeight / 2 - margin * 4);
+
+        //enemy info
+        this.m_infoTextPlayer2 = new TextSprite({
+            alignment: 'left',
+            color: '#ff00ff',
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: 20,
+            fontStyle: 'normal',
+            text: [
+                'Enemy Name: ',
+                'Enemy Score: '
+            ].join('\n'),
+        });
+        var margin = 20;
+        this.m_infoTextPlayer2.translateX(this.m_sceneWidth / 2 - margin * 4);
+        this.m_infoTextPlayer2.translateY(this.m_sceneHeight / 2 - margin * 4);
+
+        this.m_scene.add(this.m_infoTextPlayer1);
+        this.m_scene.add(this.m_infoTextPlayer2);
+    }
+
+    updateInfoText() {
+        //player info
+        this.m_infoTextPlayer1.text = [
+            this.gameStreamingService.player.name,
+            this.gameState.score.player1Id
+        ].join('\n');
+
+        //enemy info
+        this.m_infoTextPlayer2.text = [
+            "not available yet",
+            this.gameState.score.player2Id
+        ].join('\n');
     }
 
     setupSecondPlayer() {
@@ -155,7 +212,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.m_scene.add(this.m_mouseCursor);
     }
 
-  updateMouseCursor() {
+    updateMouseCursor() {
         var direction = new THREE.Vector2(this.m_mouseInfo.x - this.m_player.m_mesh.position.x, this.m_mouseInfo.y - this.m_player.m_mesh.position.y);
         direction.normalize();
 
@@ -172,14 +229,14 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     }
 
-  ngAfterViewInit() {
+    ngAfterViewInit() {
 
-    //setup render context
-    this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
-    if (this.rendererContainer != undefined)
-      this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
-    this.renderScene();
-  }
+        //setup render context
+        this.renderer.setSize(this.m_sceneWidth, this.m_sceneHeight);
+        if (this.rendererContainer != undefined)
+            this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+        this.renderScene();
+    }
 
     renderScene() {
         // render loop
@@ -221,6 +278,11 @@ export class RenderComponent implements OnInit, OnDestroy {
             }
         } else {
             console.log("not my turn")
+
+            //unsquish pokemon
+            this.m_enemy.m_mesh.scale.x = 1;
+            this.m_enemy.m_mesh.scale.y = 1;
+
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
@@ -236,6 +298,8 @@ export class RenderComponent implements OnInit, OnDestroy {
             }
         }
 
+
+        this.updateInfoText();
         this.renderer.render(this.m_scene, this.m_scene.m_camera);
     }
 
@@ -249,7 +313,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
         // this.gameStreamingService.tempGameStateToBeSent = this.gameState;
-  }
+    }
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {
         // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
@@ -265,9 +329,9 @@ export class RenderComponent implements OnInit, OnDestroy {
         //     if (!this.gameStreamingService.isMyTurn) {
         //         this.gameState = gameState;
         //     }
-            // console.log("--- DOWNSTREAM MESSAGE ---")
-            // console.log("   gameState.currentPlayerId: " + gameState.currentPlayerId);
-            // console.log("   gameStreamingService.player.id " + this.gameStreamingService.player.id);
+        // console.log("--- DOWNSTREAM MESSAGE ---")
+        // console.log("   gameState.currentPlayerId: " + gameState.currentPlayerId);
+        // console.log("   gameStreamingService.player.id " + this.gameStreamingService.player.id);
         // });
         // this.gameStreamingService.gameEndState.subscribe((gameEndsMessage: JsonGameEndsObject) => {
         //     this.endGame(gameEndsMessage);
