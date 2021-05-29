@@ -31,8 +31,8 @@ export class RenderComponent implements OnInit, OnDestroy {
     declare downstreamwebSocket: WebSocket;
     declare shutdownwebSocket: WebSocket;
     declare client: Stomp.Client;
-    declare shutdownclient: Stomp.Client;
-    declare downstreamclient: Stomp.Client;
+    declare shutdownClient: Stomp.Client;
+    declare downstreamClient: Stomp.Client;
     gameState: JsonGameStateObject = new JsonGameStateObject();
 
     @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
@@ -192,7 +192,6 @@ export class RenderComponent implements OnInit, OnDestroy {
         // console.log('------------')
 
         if (this.gameStreamingService.isMyTurn) {
-            console.log("my turn");
 
             // update
             this.m_physics.update(this.m_apiHandler.getWind());
@@ -220,7 +219,6 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.m_physics.enemy = this.m_enemy.m_enemyBody;
             }
         } else {
-            console.log("not my turn")
             //render game according to game state
             this.m_player.m_ball.m_mesh.position.x = this.gameState.ball.x * -1; //flip x axis
             this.m_player.m_ball.m_mesh.position.y = this.gameState.ball.y;
@@ -248,7 +246,6 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
-        // this.gameStreamingService.tempGameStateToBeSent = this.gameState;
   }
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {
@@ -260,18 +257,6 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.openWebSocketConnections();
-        // this.gameStreamingService.openDownStreamConnection();
-        // this.gameStreamingService.gameState.subscribe((gameState: JsonGameStateObject) => {
-        //     if (!this.gameStreamingService.isMyTurn) {
-        //         this.gameState = gameState;
-        //     }
-            // console.log("--- DOWNSTREAM MESSAGE ---")
-            // console.log("   gameState.currentPlayerId: " + gameState.currentPlayerId);
-            // console.log("   gameStreamingService.player.id " + this.gameStreamingService.player.id);
-        // });
-        // this.gameStreamingService.gameEndState.subscribe((gameEndsMessage: JsonGameEndsObject) => {
-        //     this.endGame(gameEndsMessage);
-        // });
     }
 
 
@@ -289,22 +274,25 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.downstreamwebSocket = this.gameStreamingService.getWebSocket();
         this.shutdownwebSocket = this.gameStreamingService.getWebSocket();
         this.client = Stomp.over(this.webSocket);
-        this.downstreamclient = Stomp.over(this.downstreamwebSocket);
-        this.shutdownclient = Stomp.over(this.shutdownwebSocket);
+        this.downstreamClient = Stomp.over(this.downstreamwebSocket);
+        this.shutdownClient = Stomp.over(this.shutdownwebSocket);
         console.log('connecting to downstream topic');
-        this.downstreamclient.connect({}, () => {
-            this.downstreamclient.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
+        this.downstreamClient.debug = () => {};
+        this.downstreamClient.connect({}, () => {
+            this.downstreamClient.subscribe(this.gameStreamingService.getGameDownstreamTopic(), (item) => {
                 console.log('receiving game state from backend');
                 this.gameState = JSON.parse(item.body);
             });
         });
-        this.shutdownclient.connect({}, () => {
-            this.shutdownclient.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
+        this.shutdownClient.debug = () => {};
+        this.shutdownClient.connect({}, () => {
+            this.shutdownClient.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
                 console.log('game ends!');
                 const gameEndsObject: JsonGameEndsObject = JSON.parse(item.body);
                 this.endGame(gameEndsObject);
             });
         });
+        this.client.debug = () => {};
         this.client.connect({}, () => {
             this.client.subscribe(this.gameStreamingService.getPlayerSwitchTopic(), (item) => {
                 console.log('switch message received!');

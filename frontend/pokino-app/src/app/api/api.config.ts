@@ -14,6 +14,7 @@ export class ApiConfig {
     private static readonly BALL_THROWN_ENDPOINT: string = 'ballThrown';
     private static readonly GAME_ENDPOINT: string = 'game';
     private static readonly LOGIN_ENDPOINT: string = 'login';
+    private static readonly LEADERBOARD_ENDPOINT: string = 'leaderboard';
     private static readonly CLICK_READY_ENDPOINT: string = 'clickReady';
     private static readonly READY_ENDPOINT: string = 'ready';
     private static readonly WEBSOCKET_INIT_BASE: string = 'pokino-websocket';
@@ -87,7 +88,15 @@ export class ApiConfig {
         return new URL(url);
     }
 
-    public static getWebsocketGreetingsTopic(): string {
+    public static getLeaderboardUrl(): URL {
+        const root: Array<string> = [this.ROOT_URL, this.GAME_PORT];
+        const endpoints: Array<string> = [this.LEADERBOARD_ENDPOINT];
+        let url = this.buildUrl(root, endpoints).href;
+        url += ('?topNFilter=10');
+        return new URL(url);
+    }
+
+    public static getWebsocketInitTopic(): string {
         return this.WEBSOCKET_INIT_TOPIC;
     }
 
