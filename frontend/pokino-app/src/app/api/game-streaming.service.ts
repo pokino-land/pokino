@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import {ApiConfig} from "../../api/api.config";
-import {ApiService} from "../../api/api.service";
-import {JsonPlayerObject} from "../../api/json-player-object";
-import {JsonGameInitObject} from "../../api/json-game-init-object";
+import {ApiConfig} from "./api.config";
+import {ApiService} from "./api.service";
+import {JsonPlayerObject} from "./json-player-object";
+import {JsonGameInitObject} from "./json-game-init-object";
 import * as Stomp from "stompjs";
-import {JsonGameEndsObject} from "../../api/json-game-ends-object";
-import {JsonGameStateObject} from "../../api/json-game-state.object";
+import {JsonGameEndsObject} from "./json-game-ends-object";
+import {JsonGameStateObject} from "./json-game-state.object";
 import {Subject} from "rxjs";
 
 // TODO look up if we need that annotation, the feeling is that it is obsolete

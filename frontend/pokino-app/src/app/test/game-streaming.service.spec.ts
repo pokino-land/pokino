@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import {GameStreamingService} from "../view/websocket-adapter/game-streaming.service";
+import {GameStreamingService} from "../api/game-streaming.service";
 
 describe('GameStreamingService', () => {
     beforeEach(async () => {
