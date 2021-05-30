@@ -12,10 +12,6 @@
 <!-- LINKS SECTION -->
 <p align="center">
   <a href="http://34.65.96.186:4200/34.65.96.186/">Play it here</a> •
-  <a href="#how-to-use">How To Use</a> •
-  <a href="#how-to-use">Install Guide</a> •
-  <a href="https://github.com/matthaeusheer/pokino/wiki">Docs</a> •
-  <a href="#license">License</a>
 </p>
 
 <!-- BATCHES SECTION -->
