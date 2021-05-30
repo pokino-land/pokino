@@ -43,7 +43,7 @@ export class ApiService {
 			});
 	}
 
-	public async toggleReadyPlayer(player: JsonPlayerObject): Promise<JsonPlayerObject> {
+	public async makeReadyPlayer(player: JsonPlayerObject): Promise<JsonPlayerObject> {
 		const url: URL = ApiConfig.getPlayerReadyUrl(player.name, player.id);
 
 		return await this.get(url.href)
