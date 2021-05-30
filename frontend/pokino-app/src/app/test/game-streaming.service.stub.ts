@@ -5,8 +5,10 @@ import {JsonGameEndsObject} from "../api/json-game-ends-object";
 import {JsonGameInitObject} from "../api/json-game-init-object";
 
 export const gameStreamingServiceStub: Partial<GameStreamingService> = {
+
+
     getWebSocket(): WebSocket {
-        return new WebSocket('localhost://testurl');
+        return new WebSocket('ws://testurl');
     },
 
     getGameInitTopic(): string {

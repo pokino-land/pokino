@@ -101,7 +101,10 @@ export class RenderComponent implements OnInit, OnDestroy {
     constructor(private apiService: ApiService, private gameStreamingService: GameStreamingService, private router: Router) {
 
         this.config = require('../../model/render/config.json');
+        //init scene so camera is not undefined
+        this.m_scene.init(100,100);
 
+        
         this.m_apiHandler = new apiHandler(apiService);
         // wait for server response to return pokemon data to fully initialise the game
         this.m_apiHandler.fetchRandomPokemon().then((pokemon) =>  {
