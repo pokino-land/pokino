@@ -79,9 +79,9 @@ export class PokinoScene extends THREE.Scene {
         this.add(this.m_windArrow);
     }
 
-    update(wind: JsonWeatherObject) {
+    update(wind: JsonWeatherObject, deg: number) {
 
-        var winddeg = 180;
+        var winddeg = deg;
         var wind_radians = winddeg * 180.0 / Math.PI;
         this.m_windArrow.rotation.z = wind_radians - Math.PI / 2;
 

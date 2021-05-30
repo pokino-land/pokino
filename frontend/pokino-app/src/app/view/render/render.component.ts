@@ -17,6 +17,7 @@ import { JsonPokemonObject } from "../../api/json-pokemon-object";
 import * as Stomp from "stompjs";
 import { GameStreamingService } from "../../api/game-streaming.service";
 import { Router } from "@angular/router";
+import { JsonWeatherObject } from 'src/app/api/json-weather-object';
 
 
 
@@ -94,6 +95,8 @@ export class RenderComponent implements OnInit, OnDestroy {
     config: Config;
     m_infoTextPlayer1: TextSprite = new TextSprite();
     m_infoTextPlayer2: TextSprite = new TextSprite();
+    m_currentWind: JsonWeatherObject = new JsonWeatherObject();
+    m_currenWindDirection: number = 0;
 
     m_mouseCursor: THREE.Mesh = new THREE.Mesh();
     updated: boolean = false;
@@ -254,12 +257,16 @@ export class RenderComponent implements OnInit, OnDestroy {
 
         if (this.gameStreamingService.isMyTurn) {
 
+            
+
             //highlight player
             if (!this.highlightTextureSet) {
                 const loader = new THREE.TextureLoader();
                 this.m_player.m_mesh.material = new THREE.MeshBasicMaterial({ map: loader.load(this.m_assetPath + 'images/ash_highlighted.png'), transparent: true, alphaTest: 0.5 });
                 this.highlightTextureSet = true;
                 this.unhighlightTextureSet = false;
+                this.m_currentWind = this.m_apiHandler.getWind();
+                this.m_currenWindDirection =  Math.random()*180
             }
 
 
@@ -267,10 +274,13 @@ export class RenderComponent implements OnInit, OnDestroy {
             this.m_mouseCursor.visible = true;
             this.m_player.m_throwForceProgressBar.visible = true;
 
+
+
+
             // update
-            this.m_physics.update(this.m_apiHandler.getWind());
+            this.m_physics.update(this.m_currentWind, this.m_currenWindDirection);
             this.m_enemy.update();
-            this.m_scene.update(this.m_apiHandler.getWind());
+            this.m_scene.update(this.m_currentWind, this.m_currenWindDirection);
             this.m_player.update(this.m_mouseInfo);
             this.updateMouseCursor();
 

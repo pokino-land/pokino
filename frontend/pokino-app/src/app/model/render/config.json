@@ -10,5 +10,6 @@
     "gravitationStrength": 2,
     "physicsSimulationStepSize": 0.1,
     "ballSize": 10,
-    "ballStartForce": 0.5
+    "ballStartForce": 0.5,
+    "windMultiplier": 2
 }

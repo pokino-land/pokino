@@ -12,4 +12,5 @@ export interface Config {
     physicsSimulationStepSize: number;
     ballSize: number;
     ballStartForce: number;
+    windMultiplier: number;
 }
