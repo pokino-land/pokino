@@ -15,7 +15,5 @@ jobs:
       before_install:
         - cd frontend/pokino-app
         - docker build -t frontend_image -f Dockerfile_CI .
-      script:
-        - npm run test-coverage
         after_script:
           - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then ./node_modules/.bin/codecov; fi
