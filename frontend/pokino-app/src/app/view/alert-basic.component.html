@@ -1,0 +1,3 @@
+<ngb-alert style="width: 80%" *ngIf="!staticAlertClosed" [dismissible]="true" (close)="closeAlert()">
+    {{getAlertMessage(alertType)}}
+</ngb-alert>

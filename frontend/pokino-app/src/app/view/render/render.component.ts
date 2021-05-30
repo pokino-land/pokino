@@ -11,11 +11,12 @@ import { Config } from '../../model/render/config'
 import TextSprite from '@seregpie/three.text-sprite';
 import { JsonGameStateObject } from "../../api/json-game-state.object";
 import { JsonGameStatusObject } from "../../api/json-game-status.object";
+import { JsonGameEndsObject } from "../../api/json-game-ends-object";
+import { JsonGameInitObject } from "../../api/json-game-init-object";
+import { JsonPokemonObject } from "../../api/json-pokemon-object";
 import * as Stomp from "stompjs";
 import { GameStreamingService } from "../websocket-adapter/game-streaming.service";
 import { Router } from "@angular/router";
-import { JsonGameEndsObject } from "../../api/json-game-ends-object";
-import { JsonGameInitObject } from "../../api/json-game-init-object";
 
 
 
@@ -28,8 +29,8 @@ export class RenderComponent implements OnInit, OnDestroy {
 
 
     declare webSocket: WebSocket;
-    declare downstreamwebSocket: WebSocket;
-    declare shutdownwebSocket: WebSocket;
+    declare downstreamWebSocket: WebSocket;
+    declare shutdownWebSocket: WebSocket;
     declare client: Stomp.Client;
     declare shutdownClient: Stomp.Client;
     declare downstreamClient: Stomp.Client;
@@ -81,11 +82,11 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     m_sceneWidth: number = 1624;
     m_sceneHeight: number = 540;
-    m_scene: PokinoScene;
-    m_player: player;
-    m_enemy: enemy;
-    m_physics: physics;
-    m_mouseInfo: mouseInfo;
+    m_scene: PokinoScene = new PokinoScene();
+    m_player: player = new player(this.m_sceneWidth, this.m_sceneHeight);
+    m_enemy: enemy = new enemy(new JsonPokemonObject(), this.m_sceneHeight);
+    m_physics: physics = new physics(this.m_sceneWidth, this.m_sceneHeight);
+    m_mouseInfo: mouseInfo = new mouseInfo();
     m_assetPath = '../../assets/';
     m_pokemonMaterialSet = false;
     m_pokemonMaterialName = 'Pikachu';
@@ -99,31 +100,34 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     constructor(private apiService: ApiService, private gameStreamingService: GameStreamingService, private router: Router) {
 
-
         this.config = require('../../model/render/config.json');
 
         this.m_apiHandler = new apiHandler(apiService);
+        // wait for server response to return pokemon data to fully initialise the game
+        this.m_apiHandler.fetchRandomPokemon().then((pokemon) =>  {
+            this.m_scene = new PokinoScene();
+            this.m_scene.init(this.m_sceneWidth, this.m_sceneHeight);
+            this.m_player = new player(this.m_sceneWidth, this.m_sceneHeight);
 
-        this.m_scene = new PokinoScene();
-        this.m_scene.init(this.m_sceneWidth, this.m_sceneHeight);
-        this.m_player = new player(this.m_sceneWidth, this.m_sceneHeight);
+            this.m_enemy = new enemy(pokemon, this.m_sceneHeight);
 
-        this.m_enemy = new enemy(this.m_apiHandler.updateRandomPokemon(), this.m_sceneHeight);
+            this.m_scene.addPlayer(this.m_player);
+            this.m_scene.addEnemy(this.m_enemy);
 
-        this.m_scene.addPlayer(this.m_player);
-        this.m_scene.addEnemy(this.m_enemy);
+            this.m_mouseInfo = new mouseInfo();
+            this.m_physics = new physics(this.m_sceneWidth, this.m_sceneHeight);
 
-        this.m_mouseInfo = new mouseInfo();
-        this.m_physics = new physics(this.m_sceneWidth, this.m_sceneHeight);
-
-        //add ball and enemy to physics entities
-        this.m_physics.ball = this.m_player.m_ball.m_ballBody;
-        this.m_physics.enemy = this.m_enemy.m_enemyBody;
+            //add ball and enemy to physics entities
+            this.m_physics.ball = this.m_player.m_ball.m_ballBody;
+            this.m_physics.enemy = this.m_enemy.m_enemyBody;
 
 
-        this.setupMouseCursor();
-        this.setupSecondPlayer();
-        this.setupInfoText();
+            this.setupMouseCursor();
+            this.setupSecondPlayer();
+            this.setupInfoText();
+        });
+
+
     }
 
     setupInfoText() {
@@ -354,10 +358,14 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
     }
 
+
     endGame(gameEndsMessage: JsonGameEndsObject): void {
         // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
         // falls ja wäre hier der Ort dafür, die Methode wird ausgeführt nachdem das Backend die Message
         // schickt mit der das Game beendet wird
+        const playerScore1: string = gameEndsMessage.playerName1 + "'s score: " + gameEndsMessage.finalStandings.get(gameEndsMessage.playerId1);
+        const playerScore2: string = gameEndsMessage.playerName2 + "'s score: " + gameEndsMessage.finalStandings.get(gameEndsMessage.playerId2);
+        alert('game ended! final standings: \n' + playerScore1 + '\n' + playerScore2);
         this.router.navigate(['/mainMenu']);
     }
 
@@ -365,23 +373,17 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.openWebSocketConnections();
     }
 
-
-
     ngOnDestroy(): void {
-        // this.gameStreamingService.closeDownStreamConnection();
-        // this.gameStreamingService.closeShutdownConnection();
+        this.closeWebsocketConnections();
     }
-
-
-
 
     public openWebSocketConnections(): void {
         this.webSocket = this.gameStreamingService.getWebSocket();
-        this.downstreamwebSocket = this.gameStreamingService.getWebSocket();
-        this.shutdownwebSocket = this.gameStreamingService.getWebSocket();
+        this.downstreamWebSocket = this.gameStreamingService.getWebSocket();
+        this.shutdownWebSocket = this.gameStreamingService.getWebSocket();
         this.client = Stomp.over(this.webSocket);
-        this.downstreamClient = Stomp.over(this.downstreamwebSocket);
-        this.shutdownClient = Stomp.over(this.shutdownwebSocket);
+        this.downstreamClient = Stomp.over(this.downstreamWebSocket);
+        this.shutdownClient = Stomp.over(this.shutdownWebSocket);
         console.log('connecting to downstream topic');
         this.downstreamClient.debug = () => {};
         this.downstreamClient.connect({}, () => {
@@ -414,5 +416,19 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.client.send(this.gameStreamingService.getGameUpstreamTopic(), {}, JSON.stringify(gameState));
     }
 
+    public closeWebsocketConnections(): void {
+        if (this.downstreamClient) {
+            this.downstreamClient.unsubscribe("sub-0");
+            this.downstreamWebSocket.close();
+        }
+        if (this.shutdownClient) {
+            this.shutdownClient.unsubscribe("sub-0");
+            this.shutdownWebSocket.close();
+        }
+        if (this.client) {
+            this.client.unsubscribe("sub-0");
+            this.webSocket.close();
+        }
+    }
 
 }
