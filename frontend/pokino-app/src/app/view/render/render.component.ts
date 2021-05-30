@@ -15,7 +15,7 @@ import { JsonGameEndsObject } from "../../api/json-game-ends-object";
 import { JsonGameInitObject } from "../../api/json-game-init-object";
 import { JsonPokemonObject } from "../../api/json-pokemon-object";
 import * as Stomp from "stompjs";
-import { GameStreamingService } from "../websocket-adapter/game-streaming.service";
+import { GameStreamingService } from "../../api/game-streaming.service";
 import { Router } from "@angular/router";
 
 

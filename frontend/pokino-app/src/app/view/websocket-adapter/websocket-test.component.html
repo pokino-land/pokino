@@ -1,9 +1,0 @@
-<div class="message-container">
-  <input class="form-control" type="text" placeholder="message" [(ngModel)]="input">
-  <button class="button" (click)="sendMessage()">Send</button>
-  <div class="content">
-    <div *ngFor="let msg of receivedMessages">
-      {{msg}}
-    </div>
-  </div>
-</div>

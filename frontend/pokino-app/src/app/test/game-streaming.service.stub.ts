@@ -1,5 +1,5 @@
 // functionality is tested in game-streaming.service.spec, so these are just fillers to ensure components work
-import {GameStreamingService} from "../view/websocket-adapter/game-streaming.service";
+import {GameStreamingService} from "../api/game-streaming.service";
 import {JsonPlayerObject} from "../api/json-player-object";
 import {JsonGameEndsObject} from "../api/json-game-ends-object";
 import {JsonGameInitObject} from "../api/json-game-init-object";

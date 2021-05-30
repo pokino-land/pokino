@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import {LeaderboardComponent} from "../view/leaderboard.component";
 import {ApiService} from "../api/api.service";
 import {apiServiceStub} from "./api.service.stub";
-import {GameStreamingService} from "../view/websocket-adapter/game-streaming.service";
+import {GameStreamingService} from "../api/game-streaming.service";
 import {gameStreamingServiceStub} from "./game-streaming.service.stub";
 import {Router} from "@angular/router";
 import {routerStub} from "./router.stub";

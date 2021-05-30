@@ -10,8 +10,7 @@ import { ApiService } from '../api/api.service';
 import {MainMenuComponent} from "../view/main-menu.component";
 import {LeaderboardComponent} from "../view/leaderboard.component";
 import {FormsModule} from "@angular/forms";
-import {GameStreamingService} from "../view/websocket-adapter/game-streaming.service";
-import {WebsocketTestComponent} from "../view/websocket-adapter/websocket-test.component";
+import {GameStreamingService} from "../api/game-streaming.service";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {AlertBasicComponent} from "../view/alert-basic.component";
 
@@ -21,7 +20,6 @@ import {AlertBasicComponent} from "../view/alert-basic.component";
         RenderComponent,
         MainMenuComponent,
         LeaderboardComponent,
-        WebsocketTestComponent,
         AlertBasicComponent
     ],
     imports: [

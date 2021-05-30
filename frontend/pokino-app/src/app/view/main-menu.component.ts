@@ -6,7 +6,7 @@ import {JsonPokemonObject} from "../api/json-pokemon-object";
 import {JsonWeatherObject} from "../api/json-weather-object";
 import {JsonPlayerObject} from "../api/json-player-object";
 import * as Stomp from "stompjs";
-import {GameStreamingService} from "./websocket-adapter/game-streaming.service";
+import {GameStreamingService} from "../api/game-streaming.service";
 import {JsonGameInitObject} from "../api/json-game-init-object";
 import {AlertType} from "./alert-basic.component";
 
