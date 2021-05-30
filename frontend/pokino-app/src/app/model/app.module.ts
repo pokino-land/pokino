@@ -12,6 +12,8 @@ import {LeaderboardComponent} from "../view/leaderboard.component";
 import {FormsModule} from "@angular/forms";
 import {GameStreamingService} from "../view/websocket-adapter/game-streaming.service";
 import {WebsocketTestComponent} from "../view/websocket-adapter/websocket-test.component";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {AlertBasicComponent} from "../view/alert-basic.component";
 
 @NgModule({
     declarations: [
@@ -19,13 +21,15 @@ import {WebsocketTestComponent} from "../view/websocket-adapter/websocket-test.c
         RenderComponent,
         MainMenuComponent,
         LeaderboardComponent,
-        WebsocketTestComponent
+        WebsocketTestComponent,
+        AlertBasicComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         HttpClientModule,
-        FormsModule
+        FormsModule,
+        NgbModule
     ],
     providers: [ApiService, GameStreamingService],
     bootstrap: [AppComponent]

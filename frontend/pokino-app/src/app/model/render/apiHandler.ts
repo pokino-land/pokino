@@ -13,19 +13,19 @@ export class apiHandler{
         this.getRandomPokemonJson();
     }
 
-    public async getRandomPokemonJson(): Promise<JsonPokemonObject> {
-        this.pokemon = await this.apiService.getRandomPokemon();
-        console.log('pokemon initialised');
+    updateRandomPokemon(): JsonPokemonObject {
+        this.getRandomPokemonJson();
         return this.pokemon;
     }
 
-    getRandomPokemonName(): string{
-        this.getRandomPokemonJson();
-        return this.pokemon.name;
+    fetchRandomPokemon(): Promise<JsonPokemonObject> {
+        return this.apiService.getRandomPokemon();
     }
 
-    updateRandomPokemon(): JsonPokemonObject{
-        this.getRandomPokemonJson();
+    // asynchronous version of fetchRandomPokemon for convenience
+    public async getRandomPokemonJson(): Promise<JsonPokemonObject> {
+        this.pokemon = await this.fetchRandomPokemon();
+        console.log('pokemon initialised');
         return this.pokemon;
     }
 
