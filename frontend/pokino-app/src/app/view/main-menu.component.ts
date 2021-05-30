@@ -1,13 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { ApiService } from '../api/api.service';
+import {ApiService} from '../api/api.service';
 
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 import {JsonPokemonObject} from "../api/json-pokemon-object";
 import {JsonWeatherObject} from "../api/json-weather-object";
 import {JsonPlayerObject} from "../api/json-player-object";
 import * as Stomp from "stompjs";
 import {GameStreamingService} from "./websocket-adapter/game-streaming.service";
 import {JsonGameInitObject} from "../api/json-game-init-object";
+import {AlertType} from "./alert-basic.component";
 
 @Component({
   selector: 'app-root',
@@ -20,26 +21,30 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   pokemon: JsonPokemonObject = new JsonPokemonObject();
   declare webSocket: WebSocket;
   declare client: Stomp.Client;
-  receivedMessages: Array<string> = [];
-  input = '';
 
   loggedIn: boolean = false;
+  staticAlertClosed = true;
   declare player: JsonPlayerObject;
   declare weather: JsonWeatherObject;
+  currentAlertType: AlertType = AlertType.DEFAULT;
 
 
   constructor(private router: Router, private apiService: ApiService, private gameStreamingService: GameStreamingService) {
-    this.getRandomPokemon();
   }
 
 
-  toggleReady(): void {
-	  this.ready = true;
-	  this.apiService.toggleReadyPlayer(this.player);
+  clickReady(): void {
+    this.ready = true;
+    if (this.player) {
+      this.apiService.makeReadyPlayer(this.player);
+      this.closeAlert();
+    } else {
+      this.alert(AlertType.NOT_LOGGED_IN);
+    }
   }
 
   public getReadyMessage(): string {
-	  return (this.ready ? '' : 'not ') + 'ready';
+    return (this.ready ? '' : 'not ') + 'ready';
   }
 
   public gotoGameScreen(): void{
@@ -51,20 +56,21 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
   }
 
   public async getRandomPokemon(): Promise<JsonPokemonObject> {
-      this.pokemon = await this.apiService.getRandomPokemon();
-      return this.pokemon;
-  }
-
-  public async getWeather(): Promise<void> {
-    this.weather = await this.apiService.getWeather();
-    console.log(this.weather);
+    this.pokemon = await this.apiService.getRandomPokemon();
+    return this.pokemon;
   }
 
   public async loginPlayer(playerName: string): Promise<void> {
-    const playerId: string = await this.apiService.loginPlayer(playerName);
-    this.player = new JsonPlayerObject(playerId, playerName);
-    this.gameStreamingService.player = this.player;
-    this.loggedIn = true;
+    try {
+      this.closeAlert();
+      const playerId: string = await this.apiService.loginPlayer(playerName);
+      this.player = new JsonPlayerObject(playerId, playerName);
+      this.gameStreamingService.player = this.player;
+      this.loggedIn = true;
+    } catch (e) {
+      this.alert(AlertType.NAME_TAKEN);
+    }
+
   }
 
   public checkIfRelevantGameStarts(response: JsonGameInitObject): void {
@@ -94,7 +100,6 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
 
     this.client.connect({}, () => {
       this.client.subscribe(this.gameStreamingService.getGameInitTopic(), (item) => {
-        console.log('game starts');
         const response: JsonGameInitObject = JSON.parse(item.body);
         this.checkIfRelevantGameStarts(response);
       });
@@ -110,9 +115,19 @@ export class MainMenuComponent implements OnInit, OnDestroy  {
 
   public setUsername(name: string): void {
     if (!this.loggedIn) {
+      this.closeAlert();
       this.loginPlayer(name);
     } else {
-      alert("You have already chosen a name!");
+      this.alert(AlertType.ALREADY_LOGGED_IN);
     }
+  }
+
+  alert(type: AlertType): void {
+    this.currentAlertType = type;
+    this.staticAlertClosed = false;
+  };
+
+  closeAlert(): void {
+    this.staticAlertClosed = true;
   }
 }

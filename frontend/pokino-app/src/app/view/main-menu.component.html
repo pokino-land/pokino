@@ -14,21 +14,12 @@
 			</div>
 		</div>
 
-
-
-		<button class="button" (click)="gotoGameScreen()">test Game</button>
-		<button class="button" (click)="toggleReady()">I Am Ready</button>
+		<button class="button" (click)="clickReady()">I Am Ready</button>
 		<button class="button" (click)="gotoLeaderboard()">Leaderboard</button>
-		<button class="button" (click)="getRandomPokemon()">API Test</button>
-
-		<h3>Active Players:</h3>
-		<ul>
-			<li class="player-name not-ready"><span>Me ({{this.getReadyMessage()}})</span></li>
-			<li class="player-name player-not-me ready"><span title="select player">Another player (ready) </span></li>
-		</ul>
-
-		<span>current Pokemon: {{this.pokemon.name ? this.pokemon.name : 'none'}},
-			type: {{this.pokemon.type1 ? this.pokemon.type1 : 'none'}}</span>
+		<app-alert-basic [(staticAlertClosed)]="staticAlertClosed" [(alertType)]="currentAlertType" (click)="closeAlert()"></app-alert-basic>
+		<br>
+		<p class="player-name" [ngClass]="this.ready ? 'ready' : 'not-ready'">You are {{this.getReadyMessage()}}</p>
+		<p>choose a name and click "I Am Ready" to start the game!</p>
 	</div>
 
 
