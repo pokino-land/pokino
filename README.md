@@ -37,7 +37,7 @@ This guide describes how to install the application for development purposes.
 
 ## Variant 1 :hugs: - Pull pre-built docker images and run locally
 0) Make sure the [docker](https://docs.docker.com/) :whale: engine incl. docker-compose is installed on your system.
-1) Download our docker-compose.yaml file to pull the images from our public docker hub registry & Run the services with
+1) Download our docker-compose.yml file to pull the images from our public docker hub registry & Run the services with
    ```
    docker-compose up
    ```
@@ -48,7 +48,7 @@ This guide describes how to install the application for development purposes.
    ```
     git clone https://github.com/pokino-land/pokino.git
    ```
-2) Build and run the services  
+2) Build the services locally and run the services  
    ```
    docker-compose build  
    docker-compose up
