@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RenderComponent } from './render.component';
 import {ApiService} from "../../api/api.service";
 import {JsonPokemonObject} from "../../api/json-pokemon-object";
-import { GameStreamingService } from "../api/game-streaming.service";
+import { GameStreamingService } from "../../api/game-streaming.service";
 import {JsonPlayerObject} from "../../api/json-player-object";
 import {JsonGameEndsObject} from "../../api/json-game-ends-object";
 import {JsonGameInitObject} from "../../api/json-game-init-object";
