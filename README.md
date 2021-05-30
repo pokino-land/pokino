@@ -22,6 +22,7 @@
 [![Build Status](https://travis-ci.com/pokino-land/pokino.svg?branch=main)](https://travis-ci.com/pokino-land/pokino)
 [![codecov](https://img.shields.io/codecov/c/github/pokino-land/pokino?label=test%20coverage&token=444585811d48493abd0d6c7efe228d2a)](https://app.codecov.io/gh/pokino-land/pokino/)
 [![dockerhub](https://img.shields.io/badge/docker%20hub-registry-blue)](https://hub.docker.com/repository/docker/matthaeusheer/pokino-game)
+[![swagger](https://img.shields.io/badge/swagger-api-yellowgreen)](https://app.swaggerhub.com/apis/matthaeusheer/pokino_api/1.0.0)
 [![documentation](https://img.shields.io/badge/official-documentation-brightgreen)](https://github.com/pokino-land/pokino/wiki/Pokino-Documentation)
   
 
