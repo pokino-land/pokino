@@ -53,7 +53,7 @@ export class enemy {
     }
 
     setMaterial(name: string) {
-        this.m_mesh.material = this.getMaterialFromName(name);
+        this.m_mesh.material = this.getMaterialFromName(name); 
     }
 
     getMaterialFromName(name: string): THREE.MeshBasicMaterial {
