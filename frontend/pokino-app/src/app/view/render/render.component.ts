@@ -36,7 +36,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     declare shutdownClient: Stomp.Client;
     declare downstreamClient: Stomp.Client;
     gameState: JsonGameStateObject = new JsonGameStateObject();
-    standings: Map<string, number> = new Map();
+    declare standings: any;
 
     @ViewChild('rendererContainer') rendererContainer: ElementRef | undefined;
 
@@ -97,6 +97,7 @@ export class RenderComponent implements OnInit, OnDestroy {
     m_infoTextPlayer2: TextSprite = new TextSprite();
     m_currentWind: JsonWeatherObject = new JsonWeatherObject();
     m_currenWindDirection: number = 0;
+    m_score = 0;
 
     m_mouseCursor: THREE.Mesh = new THREE.Mesh();
     updated: boolean = false;
@@ -175,13 +176,13 @@ export class RenderComponent implements OnInit, OnDestroy {
         //player info
         this.m_infoTextPlayer1.text = [
             this.gameStreamingService.player.name,
-            this.standings.get(this.gameStreamingService.player.id.toString())
+            (!this.standings) ? '0' : this.standings[this.gameStreamingService.player.id.toString()]
         ].join('\n');
 
         //enemy info
         this.m_infoTextPlayer2.text = [
            this.gameStreamingService.opponent.name,
-           this.standings.get(this.gameStreamingService.opponent.id.toString())
+           (!this.standings) ? '0' : this.standings[this.gameStreamingService.opponent.id.toString()]
         ].join('\n');
     }
 
@@ -266,6 +267,8 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.highlightTextureSet = true;
                 this.unhighlightTextureSet = false;
                 this.m_currentWind = this.m_apiHandler.getWind();
+                //this.m_currentWind.windSpeedKmh = 4;
+                //this.m_apiHandler.getWind();
                 this.m_currenWindDirection =  Math.random()*180
             }
 
@@ -306,6 +309,7 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.updated = true;
                 //enemy collided with ball, player has hit
                 this.gameStreamingService.sendBallThrown(true);
+                this.m_score++;
             }
             if (!this.m_enemy.m_enemyBody.collided && this.updated) {
                 this.updated = false;
