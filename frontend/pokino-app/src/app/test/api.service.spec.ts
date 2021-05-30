@@ -43,7 +43,7 @@ describe('ApiService', () => {
 
     it('should call the ready endpoint', () => {
         const spy = spyOn(ApiConfig, 'getPlayerReadyUrl');
-        service.toggleReadyPlayer(testPlayer);
+        service.makeReadyPlayer(testPlayer);
         expect(spy).toHaveBeenCalledOnceWith('testPlayer', '1');
     });
 
