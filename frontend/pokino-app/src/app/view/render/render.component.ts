@@ -352,7 +352,7 @@ export class RenderComponent implements OnInit, OnDestroy {
         this.gameState.pokemon.x = this.m_enemy.m_mesh.position.x;
         this.gameState.pokemon.y = this.m_enemy.m_mesh.position.y;
         this.gameState.sendingPlayerId = this.gameStreamingService.player.id;
-
+    }
 
     endGame(gameEndsMessage: JsonGameEndsObject): void {
         // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
