@@ -50,7 +50,7 @@ This guide describes how to install the application for development purposes.
 0) Make sure the [docker](https://docs.docker.com/) :whale: engine incl. docker-compose is installed on your system.
 1) Clone this repo:  
    ```
-    git clone https://github.com/matthaeusheer/pokino.git
+    git clone https://github.com/pokino-land/pokino.git
    ```
 2) Build and run the services  
    ```
