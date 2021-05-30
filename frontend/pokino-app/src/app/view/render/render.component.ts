@@ -172,13 +172,13 @@ export class RenderComponent implements OnInit, OnDestroy {
         //player info
         this.m_infoTextPlayer1.text = [
             this.gameStreamingService.player.name,
-            this.gameState.score.player1Id
+            this.standings.get(this.gameStreamingService.player.id.toString())
         ].join('\n');
 
         //enemy info
         this.m_infoTextPlayer2.text = [
-            "not available yet",
-            this.gameState.score.player2Id
+           this.gameStreamingService.opponent.name,
+           this.standings.get(this.gameStreamingService.opponent.id.toString())
         ].join('\n');
     }
 
