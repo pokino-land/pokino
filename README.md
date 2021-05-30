@@ -11,7 +11,7 @@
 
 <!-- LINKS SECTION -->
 <p align="center">
-  <a href="https://stevenschuerstedt.github.io/">Play it here</a> •
+  <a href="http://34.65.96.186:4200/34.65.96.186/">Play it here</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#how-to-use">Install Guide</a> •
   <a href="https://github.com/matthaeusheer/pokino/wiki">Docs</a> •
@@ -32,7 +32,7 @@
 </p>
 
 # :video_game: How To Use
-Go to https://stevenschuerstedt.github.io/ and start playing. The application is hosted for you with :heart: on
+[Play it here](http://34.65.96.186:4200/34.65.96.186/). The application is hosted for you with :heart: on
 <a href="https://cloud.google.com/"><img src="assets/gcp.png" width="16px"></a>.
 
 # :clipboard: Install Guide
