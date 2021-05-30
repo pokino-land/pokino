@@ -42,7 +42,7 @@ This guide describes how to install the application for development purposes.
     docker-compose pull
     docker-compose up --no-build
    ```
-2) Go to localhost:4200 and play the game (note: as this is a multiplayer game you need to open at least two instances of the browser window and log into a player)
+2) Go to [localhost:4200](http://localhost:4200/) and play the game (note: as this is a multiplayer game you need to open at least two instances of the browser window and log into a player)
 
 ## Variant 2 :roll_eyes: - Build & run docker containers locally
 0) Make sure the [docker](https://docs.docker.com/) :whale: engine incl. docker-compose is installed on your system.
@@ -55,7 +55,7 @@ This guide describes how to install the application for development purposes.
    docker-compose build  
    docker-compose up
    ```
-3) Go to localhost:4200 and play the game (note: as this is a multiplayer game you need to open at least two instances of the browser window and log into a player)
+3) Go to [localhost:4200](http://localhost:4200/) and play the game (note: as this is a multiplayer game you need to open at least two instances of the browser window and log into a player)
 
 ## Variant 3 :dizzy_face: - Run everything locally outside of docker
 **Not recommended!**  
