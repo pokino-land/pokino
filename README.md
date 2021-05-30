@@ -37,11 +37,7 @@ This guide describes how to install the application for development purposes.
 
 ## Variant 1 :hugs: - Pull pre-built docker images and run locally
 0) Make sure the [docker](https://docs.docker.com/) :whale: engine incl. docker-compose is installed on your system.
-1) Pull the images from our public docker hub registry
-   ```
-   ...coming soon
-   ```
-2) Run the services
+1) Download our docker-compose.yaml file to pull the images from our public docker hub registry & Run the services with
    ```
    docker-compose up
    ```
