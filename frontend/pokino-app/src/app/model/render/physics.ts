@@ -62,18 +62,18 @@ export class physics {
     }
 
 
-    updateWindForce(wind: JsonWeatherObject){
-        var windMultiplier = 4;
-        var winddeg = 180;
+    updateWindForce(wind: JsonWeatherObject, deg: number){
+
+        var winddeg = deg;
         var wind_radians = winddeg * 180.0/Math.PI;
-        this.m_windForce.x = Math.cos(wind_radians) * wind.windSpeedKmh * windMultiplier;
-        this.m_windForce.y = Math.sin(wind_radians) * wind.windSpeedKmh * windMultiplier;
+        this.m_windForce.x = Math.cos(wind_radians) * wind.windSpeedKmh * this.config.windMultiplier;
+        this.m_windForce.y = Math.sin(wind_radians) * wind.windSpeedKmh * this.config.windMultiplier;
             
     }
 
-    update( wind: JsonWeatherObject) {
+    update( wind: JsonWeatherObject, deg:number ) {
 
-       this.updateWindForce(wind);
+       this.updateWindForce(wind, deg);
         var stepSize = this.config.physicsSimulationStepSize;
 
         //apply forces until ball is out of screen
