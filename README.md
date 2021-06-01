@@ -11,7 +11,7 @@
 
 <!-- LINKS SECTION -->
 <p align="center">
-  <a href="http://34.65.96.186:4200/34.65.96.186/">Play it here</a>
+  <a href="http://34.65.96.186:4200/">Play it here</a>
 </p>
 
 <!-- BATCHES SECTION -->
@@ -29,7 +29,7 @@
 </p>
 
 # :video_game: How To Use
-[Play it here](http://34.65.96.186:4200/34.65.96.186/). The application is hosted for you with :heart: on
+[Play it here](http://34.65.96.186:4200/). The application is hosted for you with :heart: on
 <a href="https://cloud.google.com/"><img src="assets/gcp.png" width="16px"></a>.
 
 # :clipboard: Install Guide
