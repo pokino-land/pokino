@@ -81,8 +81,8 @@ export class RenderComponent implements OnInit, OnDestroy {
 
     renderer = new THREE.WebGLRenderer();
 
-    m_sceneWidth: number = 1624;
-    m_sceneHeight: number = 540;
+    m_sceneWidth: number = window.innerWidth;
+    m_sceneHeight: number = window.innerHeight;
     m_scene: PokinoScene = new PokinoScene();
     m_player: player = new player(this.m_sceneWidth, this.m_sceneHeight);
     m_enemy: enemy = new enemy(new JsonPokemonObject(), this.m_sceneHeight);
@@ -377,9 +377,10 @@ export class RenderComponent implements OnInit, OnDestroy {
         // TODO Steven: weiss nicht ob du noch was anzeigen willst wenn das Spiel fertig ist oder so;
         // falls ja wäre hier der Ort dafür, die Methode wird ausgeführt nachdem das Backend die Message
         // schickt mit der das Game beendet wird
-        const playerScore1: string = gameEndsMessage.playerName1 + "'s score: " + gameEndsMessage.finalStandings.get(gameEndsMessage.playerId1);
-        const playerScore2: string = gameEndsMessage.playerName2 + "'s score: " + gameEndsMessage.finalStandings.get(gameEndsMessage.playerId2);
-        alert('game ended! final standings: \n' + playerScore1 + '\n' + playerScore2);
+        const playerScore1: number = gameEndsMessage.finalStandings[this.gameStreamingService.player.id.toString()];
+        const playerScore2: number = gameEndsMessage.finalStandings[this.gameStreamingService.opponent.id.toString()];
+        const playerOneHigher: boolean = playerScore1 > playerScore2;
+        alert('game ended! player ' + (playerOneHigher ? gameEndsMessage.playerName1 : gameEndsMessage.playerName2 + ' won!'));
         this.router.navigate(['/mainMenu']);
     }
 
@@ -406,7 +407,6 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.gameState = JSON.parse(item.body);
             });
         });
-        this.shutdownClient.debug = () => {};
         this.shutdownClient.connect({}, () => {
             this.shutdownClient.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
                 console.log('game ends!');
