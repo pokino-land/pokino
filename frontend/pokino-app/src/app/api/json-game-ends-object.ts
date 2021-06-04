@@ -7,7 +7,7 @@ export class JsonGameEndsObject implements JsonObject {
 	declare public playerId2: string;
 	declare public playerName2: string;
 	declare public gameId: string;
-	declare public finalStandings: Map<string, number>;
+	declare public finalStandings: any;
 
 	constructor(playerId1: string, playerName1: string, playerId2: string,
 				playerName2: string, gameId: string, finalStandings: Map<string, number>) {
