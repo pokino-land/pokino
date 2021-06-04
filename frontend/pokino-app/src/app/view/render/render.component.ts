@@ -407,6 +407,7 @@ export class RenderComponent implements OnInit, OnDestroy {
                 this.gameState = JSON.parse(item.body);
             });
         });
+        this.shutdownClient.debug = () => {};
         this.shutdownClient.connect({}, () => {
             this.shutdownClient.subscribe(this.gameStreamingService.getGameShutdownTopic(), (item) => {
                 console.log('game ends!');
